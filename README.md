@@ -1,2 +1,3 @@
-# hypertrophica
+# Hypertrophica
+
 Hypertrophica – Exercise Wiki
