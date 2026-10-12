@@ -532,6 +532,10 @@ function createPlanTabs() {
 function renderPlanTabs() {
   ui.planTabs.hidden = Boolean(state.sharedPlan);
   const slots = plan.getSlots();
+  // Počet cviků v nejdelším tréninku (u sdíleného tréninku jeho délka). Podle něj CSS
+  // na PC spočítá svislou pozici obsahu, aby se při přepínání záložek neposouval.
+  const maxCount = state.sharedPlan ? state.sharedPlan.length : Math.max(...slots.map((s) => s.length));
+  ui.planView.style.setProperty('--plan-max', String(maxCount));
   ui.planTabs.querySelectorAll('[data-slot]').forEach((button) => {
     const index = Number(button.dataset.slot);
     const count = slots[index].length;

@@ -381,6 +381,7 @@ a {
   }
 
   /* Nadpis nad schématem (detail, trénink) vycentrovaný stejně jako obrázek */
+  .list-layout > .body-map h2,
   .detail > .body-map h2,
   .plan > .plan-map h2 {
     text-align: center;
@@ -390,12 +391,26 @@ a {
      Mřížka má nahoře a dole pružný řádek (1fr), mezi nimi řádky pro jednotlivé prvky.
      Zbylé místo se rozdělí rovným dílem nahoru a dolů → obsah je uprostřed.
      Když je obsah vyšší než okno, pružné řádky mají výšku 0 a obsah začíná nahoře.
-     Prvky mají řádek pevně daný, aby první z nich nepřipadl do horního pružného řádku. */
+     Prvky mají řádek pevně daný, aby první z nich nepřipadl do horního pružného řádku.
+     (Trénink má místo horního pružného řádku pevnou mezeru, viz níže.) */
   .plan,
   .detail {
     grid-template-rows: 1fr repeat(8, auto) 1fr;
     min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
     min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+  }
+
+  /* Trénink: horní mezera se nepočítá podle právě zobrazeného obsahu, ale podle
+     tréninku s nejvíce cviky (počet nastaví app.js do --plan-max). Při přepínání
+     1–4 a Týden je tak mezera pořád stejná a záložky se svisle neposouvají.
+     Výška obsahu ≈ pevná část (odkaz zpět, záložky, nadpis, text, tlačítka) + počet cviků × výška řádku
+     (změřeno v prohlížeči: řádek 88 px + mezera 8 px). */
+  .plan {
+    --plan-base: 297px;
+    --plan-item: 96px;
+    --plan-offset: max(0px, calc((100vh - var(--header-h) - 2 * var(--page-pad-y)
+      - var(--plan-base) - var(--plan-max, 0) * var(--plan-item)) / 2));
+    grid-template-rows: var(--plan-offset) repeat(8, auto) 1fr;
   }
 
   .plan > .back-link { grid-row: 2; }
@@ -904,6 +919,8 @@ select:disabled {
   margin-top: 24px;
 }
 
+/* Nadpis „Svaly“ nad schématem v seznamu má stejný vzhled jako nadpis schématu v tréninku */
+.body-map-heading,
 .plan-map h2 {
   margin: 0 0 8px;
   font-family: var(--font-display);
