@@ -168,11 +168,11 @@ a {
   border-bottom: 1px solid var(--border);
 }
 
-/* Řádek hlavičky: název vlevo, přepínač motivu vpravo. */
+/* Řádek hlavičky: název vlevo, odkaz na trénink a přepínač motivu vpravo. */
 .app-header-inner {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   max-width: var(--max-width);
   margin: 0 auto;
   padding-right: 8px;
@@ -185,11 +185,11 @@ a {
   align-items: baseline;
   gap: 8px;
   min-height: var(--tap);
-  padding: 10px 16px;
+  padding: 10px 4px 10px 16px;
   text-decoration: none;
 }
 
-.theme-toggle {
+.header-button {
   flex: none;
   display: inline-grid;
   place-items: center;
@@ -204,12 +204,39 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
-.theme-toggle:hover {
+.header-button:hover,
+.header-button[aria-current="page"] {
   color: var(--text);
   background: var(--chip-bg);
 }
 
-.theme-toggle svg {
+/* Odkaz na trénink: ikona s odznakem počtu cviků v pravém horním rohu */
+.header-button {
+  position: relative;
+  text-decoration: none;
+}
+
+.plan-count {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--accent);
+  border-radius: 999px;
+  color: var(--accent-text);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.plan-count:empty {
+  display: none;
+}
+
+.header-button svg {
   width: 24px;
   height: 24px;
   fill: none;
@@ -228,8 +255,12 @@ a {
 }
 
 .app-subtitle {
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-muted);
   font-size: 0.875rem;
+  white-space: nowrap; /* na úzkém displeji se raději zkrátí („Exercise W…“), než aby se zalomil */
+  text-overflow: ellipsis;
 }
 
 .status {
@@ -532,6 +563,50 @@ select:disabled {
   fill: currentColor;
 }
 
+/* ===== Tlačítko „do tréninku“ (+ / ✓) a ovládání tréninku ===== */
+.plan-button,
+.icon-button {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.plan-button svg,
+.icon-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.plan-button:hover,
+.icon-button:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--chip-bg);
+}
+
+/* Cvik už je v tréninku: zvýrazněný kroužek s fajfkou */
+.plan-button[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.icon-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
 /* ===== Detail cviku ===== */
 .back-link {
   display: inline-flex;
@@ -651,4 +726,103 @@ select:disabled {
 
 .legend .legend-secondary::before {
   background: var(--map-secondary);
+}
+
+/* ===== Trénink ===== */
+.plan h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.plan h1:focus {
+  outline: none;
+}
+
+.plan-intro {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+}
+
+.plan-list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+/* Položka: pořadí | odkaz na cvik | šipky nad sebou | odebrat */
+.plan-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.plan-number {
+  flex: none;
+  width: 28px;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.plan-item .exercise-link {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  margin-right: 4px;
+}
+
+.plan-move {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-top: 20px;
+}
+
+.plan-actions:empty {
+  display: none;
+}
+
+.button-primary {
+  min-height: var(--tap);
+  padding: 8px 16px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Tlačítko-odkaz (např. „Zavřít“) vzhledem jako tlačítko */
+a.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.plan-feedback {
+  min-height: 1.5em;
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Detail: hvězdička a tlačítko „do tréninku“ vedle nadpisu */
+.detail-actions {
+  flex: none;
+  display: flex;
 }

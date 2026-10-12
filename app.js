@@ -1,19 +1,23 @@
 // Vstupní bod aplikace: načte data, drží stav (vyhledávání + filtry)
-// a vykresluje seznam cviků a detail cviku.
+// a vykresluje seznam cviků, detail cviku a trénink.
 
 import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, onExternalChange } from './js/favorites.js';
+import * as plan from './js/plan.js';
 import { initThemeToggle } from './js/theme.js';
 
 // ===== Stav aplikace =====
 const state = {
   exercises: [],
+  byId: new Map(), // id cviku → objekt z exercises.json
   muscles: new Map(), // id svalu → objekt z muscles.json
   filters: { ...EMPTY_FILTERS },
-  listScrollY: 0, // pozice v seznamu, kam se vrátit z detailu
+  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan'
+  scrollY: { list: 0, plan: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
+  returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, nebo trénink)
   bodyMap: null, // hlavní klikací schéma svalů
 };
 
@@ -33,6 +37,16 @@ const ui = {
   count: $('result-count'),
   list: $('exercise-list'),
   bodyMap: $('body-map'),
+  planLink: $('plan-link'),
+  planCount: $('plan-count'),
+  planView: $('plan-view'),
+  planBack: $('plan-back'),
+  planTitle: $('plan-title'),
+  planIntro: $('plan-intro'),
+  planList: $('plan-list'),
+  planActions: $('plan-actions'),
+  planFeedback: $('plan-feedback'),
+  planAnnouncer: $('plan-announcer'),
 };
 
 // Pomocná funkce pro vytvoření HTML prvku:
@@ -74,6 +88,8 @@ async function init() {
     state.exercises = exercises.sort((a, b) =>
       localized(a.name).localeCompare(localized(b.name), 'cs')
     );
+    exercises.forEach((ex) => state.byId.set(ex.id, ex));
+    plan.retainOnly(new Set(state.byId.keys()));
   } catch (error) {
     console.error(error);
     // Pokud selhal už i18n, t() vrátí jen klíč – proto pevný český text navíc.
@@ -91,6 +107,9 @@ async function init() {
     onSelect: (id) => setFilters({ muscle: state.filters.muscle === id ? '' : id }),
   });
   syncFilterControls();
+  ui.planBack.textContent = `← ${t('detail.back')}`;
+  ui.planLink.hidden = false;
+  updatePlanLink();
   bindEvents();
   renderList();
   route();
@@ -136,11 +155,20 @@ function bindEvents() {
     setFilters({ ...EMPTY_FILTERS });
     ui.search.focus();
   });
-  // Hvězdičky v seznamu i v detailu – jeden posluchač pro celou stránku.
+  // Hvězdičky a tlačítka „do tréninku“ v seznamu i v detailu – jeden posluchač pro celou stránku.
   document.addEventListener('click', (event) => {
     const star = event.target.closest('.star-button');
     if (star) onStarClick(star);
+    const planToggle = event.target.closest('.plan-button');
+    if (planToggle) onPlanToggle(planToggle);
   });
+  // Šipky a odebrání v tréninku.
+  ui.planList.addEventListener('click', (event) => {
+    const button = event.target.closest('.icon-button');
+    if (button) onPlanItemAction(button);
+  });
+  // Změna tréninku v jiné záložce.
+  plan.onExternalChange(afterPlanChange);
   // Změna oblíbených v jiné záložce: překresli, co je vidět.
   onExternalChange(() => {
     syncFilterControls();
@@ -192,6 +220,7 @@ function renderList() {
         el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
         el('span', { className: 'exercise-meta', textContent: meta })
       ),
+      planButton(ex.id),
       starButton(ex.id)
     );
   }));
@@ -216,7 +245,7 @@ function starButton(id) {
 // Nastaví stav a popisek tlačítka podle toho, zda je cvik oblíbený.
 function updateStarButton(button) {
   const id = button.dataset.id;
-  const name = localized(state.exercises.find((ex) => ex.id === id)?.name);
+  const name = localized(state.byId.get(id)?.name);
   const on = isFavorite(id);
   button.setAttribute('aria-pressed', String(on));
   button.setAttribute('aria-label', t(on ? 'favorites.remove' : 'favorites.add', { name }));
@@ -242,34 +271,205 @@ function onStarClick(button) {
   }
 }
 
-// ===== Přepínání pohledů podle adresy (#/ = seznam, #/cvik/<id> = detail) =====
-function route() {
-  const match = location.hash.match(/^#\/cvik\/([\w-]+)$/);
-  if (match) {
-    if (!ui.listView.hidden) state.listScrollY = window.scrollY;
-    showDetail(match[1]);
+// ===== Tlačítko „do tréninku“ (+ / ✓) =====
+// Ikony se přepínají v JS (ne v CSS), aby stav byl vidět i se starším style.css v cache.
+const PLAN_ICON_ADD = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"'
+  + ' stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">'
+  + '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
+const PLAN_ICON_ADDED = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"'
+  + ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+  + '<circle cx="12" cy="12" r="9" fill="currentColor"/><path d="M8 12.5l2.8 2.8L16.5 9.5" style="stroke: var(--surface)"/></svg>';
+
+function planButton(id) {
+  const button = el('button', { type: 'button', className: 'plan-button' });
+  button.dataset.id = id;
+  updatePlanButton(button);
+  return button;
+}
+
+// Nastaví ikonu, stav a popisek podle toho, zda je cvik v tréninku.
+function updatePlanButton(button) {
+  const id = button.dataset.id;
+  const name = localized(state.byId.get(id)?.name);
+  const on = plan.isInPlan(id);
+  button.innerHTML = on ? PLAN_ICON_ADDED : PLAN_ICON_ADD; // pevný text z kódu, ne z dat
+  button.setAttribute('aria-pressed', String(on));
+  button.setAttribute('aria-label', t(on ? 'plan.remove' : 'plan.add', { name }));
+  button.title = button.getAttribute('aria-label');
+}
+
+function onPlanToggle(button) {
+  plan.togglePlan(button.dataset.id);
+  afterPlanChange();
+}
+
+// Po jakékoli změně tréninku překresli vše, co ho zobrazuje.
+function afterPlanChange() {
+  document.querySelectorAll('.plan-button').forEach(updatePlanButton);
+  updatePlanLink();
+  if (state.view === 'plan') renderPlan();
+}
+
+// Počet cviků v odznaku u ikony tréninku v hlavičce.
+function updatePlanLink() {
+  const count = plan.getPlan().length;
+  ui.planCount.textContent = count > 0 ? String(count) : '';
+  ui.planLink.setAttribute('aria-label', t('plan.headerLabel', { count }));
+  ui.planLink.title = ui.planLink.getAttribute('aria-label');
+}
+
+// ===== Pohled Trénink =====
+function showPlan(previous) {
+  setView('plan');
+  ui.planFeedback.textContent = '';
+  renderPlan();
+  if (previous === 'detail') {
+    restorePosition('plan', ui.planList);
   } else {
-    showList();
+    window.scrollTo(0, 0);
+    ui.planTitle.focus();
   }
 }
 
-function showList() {
-  const wasInDetail = !ui.detailView.hidden;
-  ui.detailView.hidden = true;
-  ui.listView.hidden = false;
-  if (!wasInDetail) return;
+function renderPlan() {
+  const ids = plan.getPlan();
+  ui.planTitle.textContent = t('plan.title');
+  ui.planIntro.textContent = t(ids.length ? 'plan.hint' : 'plan.empty');
+  ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length)));
+  ui.planActions.replaceChildren(...(ids.length ? [
+    actionButton('button-secondary', t('plan.clear'), onClearPlan),
+  ] : []));
+}
 
-  // Návrat z detailu: obnov pozici v seznamu a fokus na naposledy otevřený cvik.
-  window.scrollTo(0, state.listScrollY);
-  const link = ui.list.querySelector(`a[href="#/cvik/${state.lastOpenedId}"]`);
+function actionButton(className, text, onClick) {
+  const button = el('button', { type: 'button', className, textContent: text });
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+// Šipky a křížek (ikony obrysem, barvu bere z CSS přes currentColor).
+const ICONS = {
+  up: '<path d="M6 15l6-6 6 6"/>',
+  down: '<path d="M6 9l6 6 6-6"/>',
+  remove: '<path d="M6 6l12 12M18 6L6 18"/>',
+};
+
+function iconButton(action, ex, disabled = false) {
+  const labels = { up: 'plan.moveUp', down: 'plan.moveDown', remove: 'plan.remove' };
+  const button = el('button', { type: 'button', className: 'icon-button', disabled });
+  button.dataset.action = action;
+  button.dataset.id = ex.id;
+  button.setAttribute('aria-label', t(labels[action], { name: localized(ex.name) }));
+  button.title = button.getAttribute('aria-label');
+  button.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">'
+    + ICONS[action] + '</svg>';
+  return button;
+}
+
+// Číslo je jen vizuální – čtečka obrazovky pořadí zná ze seznamu <ol>.
+function numberBadge(number) {
+  const span = el('span', { className: 'plan-number', textContent: String(number) });
+  span.setAttribute('aria-hidden', 'true');
+  return span;
+}
+
+// Jedna položka tréninku: pořadí | cvik | ↑ ↓ | ×
+function planItem(ex, index, total) {
+  const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
+  return el('li', { className: 'plan-item' },
+    numberBadge(index + 1),
+    el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
+      el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
+      el('span', { className: 'exercise-meta', textContent: meta })
+    ),
+    el('div', { className: 'plan-move' },
+      iconButton('up', ex, index === 0),
+      iconButton('down', ex, index === total - 1)
+    ),
+    iconButton('remove', ex)
+  );
+}
+
+function onPlanItemAction(button) {
+  const { id, action } = button.dataset;
+  const name = localized(state.byId.get(id)?.name);
+
+  if (action === 'remove') {
+    const index = plan.getPlan().indexOf(id);
+    plan.removeFromPlan(id);
+    afterPlanChange();
+    ui.planAnnouncer.textContent = t('plan.removed', { name });
+    // Fokus na křížek položky, která se posunula na místo odebrané (nebo na nadpis).
+    const remaining = ui.planList.querySelectorAll('[data-action="remove"]');
+    (remaining[Math.min(index, remaining.length - 1)] ?? ui.planTitle).focus();
+    return;
+  }
+
+  const position = plan.movePlanItem(id, action === 'up' ? -1 : 1);
+  afterPlanChange();
+  ui.planAnnouncer.textContent = t('plan.moved', { name, position: position + 1 });
+  // Seznam se překreslil – vrať fokus na stejnou šipku u přesunutého cviku.
+  // Když už je cvik na kraji (šipka nejde použít), přesuň fokus na tu druhou.
+  const same = ui.planList.querySelector(`[data-id="${id}"][data-action="${action}"]`);
+  const other = ui.planList.querySelector(`[data-id="${id}"][data-action="${action === 'up' ? 'down' : 'up'}"]`);
+  (same.disabled ? other : same).focus();
+}
+
+function onClearPlan() {
+  if (!window.confirm(t('plan.clearConfirm'))) return;
+  plan.clearPlan();
+  afterPlanChange();
+  ui.planFeedback.textContent = t('plan.cleared');
+  ui.planTitle.focus();
+}
+
+// ===== Přepínání pohledů podle adresy =====
+// #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink
+function route() {
+  const previous = state.view;
+  // Zapamatuj si, kam se v seznamu / tréninku odscrollovalo, ať se tam dá vrátit.
+  if (previous === 'list' || previous === 'plan') state.scrollY[previous] = window.scrollY;
+
+  const detail = location.hash.match(/^#\/cvik\/([\w-]+)$/);
+  if (detail) {
+    // „Zpět“ z detailu vede tam, odkud byl detail otevřen.
+    if (previous !== 'detail') state.returnHash = previous === 'plan' ? '#/trenink' : '#/';
+    showDetail(detail[1]);
+  } else if (/^#\/trenink$/.test(location.hash)) {
+    showPlan(previous);
+  } else {
+    showList(previous);
+  }
+}
+
+// Zobrazí jeden pohled a ostatní skryje.
+function setView(name) {
+  state.view = name;
+  ui.listView.hidden = name !== 'list';
+  ui.detailView.hidden = name !== 'detail';
+  ui.planView.hidden = name !== 'plan';
+  // Zvýrazní ikonu tréninku v hlavičce, když je trénink otevřený.
+  if (name === 'plan') ui.planLink.setAttribute('aria-current', 'page');
+  else ui.planLink.removeAttribute('aria-current');
+}
+
+// Návrat z detailu: obnov pozici a fokus na naposledy otevřený cvik.
+function restorePosition(view, container) {
+  window.scrollTo(0, state.scrollY[view]);
+  const link = container.querySelector(`a[href="#/cvik/${state.lastOpenedId}"]`);
   link?.focus({ preventScroll: true });
 }
 
+function showList(previous) {
+  setView('list');
+  if (previous === 'detail') restorePosition('list', ui.list);
+  else if (previous === 'plan') window.scrollTo(0, state.scrollY.list);
+}
+
 function showDetail(id) {
-  const ex = state.exercises.find((e) => e.id === id);
+  const ex = state.byId.get(id);
   state.lastOpenedId = id;
-  ui.listView.hidden = true;
-  ui.detailView.hidden = false;
+  setView('detail');
   ui.detailView.replaceChildren(...(ex ? detailContent(ex) : [
     backLink(),
     el('p', { className: 'status', textContent: t('detail.notFound') }),
@@ -280,7 +480,9 @@ function showDetail(id) {
 }
 
 function backLink() {
-  return el('a', { className: 'back-link', href: '#/', textContent: `← ${t('detail.back')}` });
+  const toPlan = state.returnHash !== '#/';
+  const text = t(toPlan ? 'detail.backToPlan' : 'detail.back');
+  return el('a', { className: 'back-link', href: state.returnHash, textContent: `← ${text}` });
 }
 
 function chipList(items, className = 'chip') {
@@ -299,7 +501,7 @@ function detailContent(ex) {
     backLink(),
     el('div', { className: 'detail-heading' },
       el('h1', { tabIndex: -1, textContent: localized(ex.name) }),
-      starButton(ex.id)
+      el('div', { className: 'detail-actions' }, planButton(ex.id), starButton(ex.id))
     ),
   ];
   // Anglický název jako podtitul, pokud se liší od zobrazeného.
