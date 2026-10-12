@@ -230,6 +230,16 @@
     "notes": { "cs": "Opora hrudníku vylučuje švihání a nezatěžuje bedra – vhodné i po náročném tréninku nohou.", "en": "" }
   },
   {
+    "id": "chest-supported-row-machine",
+    "name": { "cs": "Přítah na stroji s oporou hrudníku", "en": "Chest-Supported Machine Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla zhruba ve výšce spodní části hrudníku, a opři se hrudníkem o polštář. Z plného protažení s předsunutými rameny táhni madla k trupu, lokty veď dozadu a lopatky stáhni k sobě. Kontrolovaně vrať do plného natažení paží.", "en": "" },
+    "notes": { "cs": "Opora hrudníku vylučuje švihání i zatížení beder. Lokty blíž u těla víc zapojí široký sval zádový, lokty od těla víc horní část zad a zadní delty.", "en": "" }
+  },
+  {
     "id": "one-arm-row-dumbbell",
     "name": { "cs": "Jednoruční přítah", "en": "One-Arm Dumbbell Row" },
     "type": "compound",
@@ -428,6 +438,16 @@
     "equipment": ["machine"],
     "description": { "cs": "Postav se špičkami na hranu plošiny, ramena pod polštáři stroje. Spusť paty co nejníž do protažení, krátce zastav a pak se zvedni na špičky co nejvýš.", "en": "" },
     "notes": { "cs": "Pauza v dolní pozici omezí odraz od šlach a zvýší práci svalu.", "en": "" }
+  },
+  {
+    "id": "standing-calf-raise-smith",
+    "name": { "cs": "Výpony ve stoje v Smithově stroji", "en": "Smith Machine Standing Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["smith_machine"],
+    "description": { "cs": "Postav se špičkami na vyvýšenou podložku pod osou Smithova stroje, osu opři o horní část zad jako při dřepu a odjisti ji. S téměř propnutými koleny spusť paty co nejníž do protažení, krátce zastav a pak se zvedni na špičky co nejvýš.", "en": "" },
+    "notes": { "cs": "Jako vyvýšení poslouží kotouč, step nebo nášlapný blok – podložka musí stát pevně a neklouzat. Pauza v dolní pozici omezí odraz od šlach.", "en": "" }
   },
   {
     "id": "hack-squat",
