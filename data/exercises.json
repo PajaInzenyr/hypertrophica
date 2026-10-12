@@ -110,6 +110,16 @@
     "notes": { "cs": "Ramena nekruž – pohyb je čistě nahoru a dolů.", "en": "" }
   },
   {
+    "id": "deadlift-barbell",
+    "name": { "cs": "Mrtvý tah", "en": "Deadlift" },
+    "type": "compound",
+    "primary": ["glutes", "hamstrings", "lower_back"],
+    "secondary": ["quads", "adductors", "traps", "upper_back", "lats", "forearms"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Postav se k ose tak, aby byla nad středem chodidel, chodidla na šířku boků. Předkloň se v kyčlích a uchop osu těsně vně kolen nadhmatem nebo obouruč střídavým úchopem. Narovnej záda, stáhni lopatky dolů, nadechni se a zpevni trup. Odtlač se nohama od země a osu veď těsně podél holení a stehen až do vzpřímeného stoje s propnutými kyčlemi. Spouštěj stejnou dráhou zpět – nejdřív boky dozadu, pak pokrč kolena.", "en": "" },
+    "notes": { "cs": "V horní pozici se nezakláněj, stačí propnout kyčle. Záda drž neutrální po celou dobu; jakmile se začnou kulatit, sniž váhu. Když nestačí úchop, použij trhačky.", "en": "" }
+  },
+  {
     "id": "romanian-deadlift-barbell",
     "name": { "cs": "Rumunský mrtvý tah s osou", "en": "Barbell Romanian Deadlift" },
     "type": "compound",
