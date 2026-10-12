@@ -11,6 +11,9 @@ Jak to funguje:
 - Body se spojí hladkou křivkou (Catmull-Rom → Bézier), takže stačí pár bodů.
 - Párové svaly dostanou id <sval>-l / <sval>-r, nepárové id = ID svalu.
   Všechny klikatelné tvary mají class="muscle" a data-muscle = ID z muscles.json.
+- Jeden tvar každého svalu na každém pohledu (u párových levý) má navíc
+  data-label-x / data-label-y = místo pro odznak s číslem (počet cviků v tréninku).
+  Je to průměr bodů tvaru; kde by odznak vyšel nevhodně, určí ho LABEL_POS.
 """
 
 from pathlib import Path
@@ -138,6 +141,23 @@ BACK = [
 SHARED = {m for m, _, _ in FRONT} & {m for m, _, _ in BACK}
 
 
+# Ruční umístění odznaku s číslem tam, kde průměr bodů nevychází dobře
+# (nepárové svaly ve středu těla, sousední odznaky příliš blízko). Klíč (pohled, ID svalu), souřadnice před rozšířením.
+LABEL_POS = {
+    ("front", "abs"): (100, 160),
+    ("back", "traps"): (100, 68),
+    ("front", "quads"): (76, 288),   # dál od odznaku přitahovačů
+}
+
+
+def label_attrs(view, muscle_id, half):
+    """Atributy data-label-x/y: střed tvaru (po rozšíření postavy)."""
+    x, y = LABEL_POS.get((view, muscle_id)) or (
+        sum(p[0] for p in half) / len(half), sum(p[1] for p in half) / len(half))
+    (x, y), = widen([(x, y)])
+    return f' data-label-x="{fmt(x)}" data-label-y="{fmt(y)}"'
+
+
 def abs_path():
     """Břišní svaly: šest „kostek“ + spodní část, jako jeden tvar."""
     parts = []
@@ -149,8 +169,8 @@ def abs_path():
     return " ".join(parts)
 
 
-def muscle(el_id, muscle_id, d):
-    return f'    <path id="{el_id}" class="muscle" data-muscle="{muscle_id}" d="{d}"/>'
+def muscle(el_id, muscle_id, d, label=""):
+    return f'    <path id="{el_id}" class="muscle" data-muscle="{muscle_id}"{label} d="{d}"/>'
 
 
 def figure(view, muscles, offset, extra=()):
@@ -160,11 +180,12 @@ def figure(view, muscles, offset, extra=()):
     lines.extend(extra)
     for muscle_id, half, paired in muscles:
         suffix = "-back" if view == "back" and muscle_id in SHARED else ""
+        label = label_attrs(view, muscle_id, half)
         if paired:
-            lines.append(muscle(f"{muscle_id}{suffix}-l", muscle_id, smooth_closed(half)))
+            lines.append(muscle(f"{muscle_id}{suffix}-l", muscle_id, smooth_closed(half), label))
             lines.append(muscle(f"{muscle_id}{suffix}-r", muscle_id, smooth_closed(mirror(half))))
         else:
-            lines.append(muscle(muscle_id, muscle_id, smooth_closed(symmetric(half))))
+            lines.append(muscle(muscle_id, muscle_id, smooth_closed(symmetric(half)), label))
     lines.append("  </g>")
     return lines
 
@@ -176,7 +197,7 @@ def main():
         "<!-- Hypertrophica – schéma svalů. Vygenerováno skriptem tools/generate-body-map.py, ručně neupravovat. -->",
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {total_width} {HEIGHT}" class="body-map-svg">',
     ]
-    out += figure("front", FRONT, 0, [muscle("abs", "abs", abs_path())])
+    out += figure("front", FRONT, 0, [muscle("abs", "abs", abs_path(), label_attrs("front", "abs", []))])
     out += figure("back", BACK, WIDTH + GAP)
     out.append("</svg>")
     target = Path(__file__).resolve().parent.parent / "assets" / "body-map.svg"
