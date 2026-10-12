@@ -23,6 +23,33 @@
     "remove": "Odebrat z oblíbených: {name}",
     "empty": "Zatím nemáš žádné oblíbené cviky. Přidáš je klepnutím na hvězdičku u cviku."
   },
+  "plan": {
+    "title": "Trénink",
+    "headerLabel": "Trénink (počet cviků: {count})",
+    "add": "Přidat do tréninku: {name}",
+    "remove": "Odebrat z tréninku: {name}",
+    "empty": "Trénink je zatím prázdný. Cviky přidáš v seznamu nebo v detailu cviku tlačítkem ⊕.",
+    "hint": "Pořadí změníš šipkami. Trénink je uložený jen v tomto prohlížeči.",
+    "moveUp": "Posunout výš: {name}",
+    "moveDown": "Posunout níž: {name}",
+    "moved": "{name} – pozice {position}.",
+    "removed": "Odebráno z tréninku: {name}.",
+    "clear": "Vymazat trénink",
+    "clearConfirm": "Opravdu vymazat celý trénink?",
+    "cleared": "Trénink byl vymazán.",
+    "share": "Sdílet",
+    "shareTitle": "Trénink z Hypertrophica",
+    "copyLink": "Kopírovat odkaz",
+    "copied": "Odkaz zkopírován. Pošli ho komukoli – po otevření uvidí tento trénink.",
+    "copyManually": "Zkopíruj odkaz na trénink:",
+    "sharedTitle": "Sdílený trénink",
+    "sharedIntro": "Tento trénink ti někdo poslal odkazem. Můžeš si ho uložit jako svůj.",
+    "sharedEmpty": "Odkaz neobsahuje žádné známé cviky.",
+    "import": "Uložit jako můj trénink",
+    "close": "Zavřít",
+    "replaceConfirm": "Nahradit tvůj současný trénink (počet cviků: {count}) tímto sdíleným?",
+    "imported": "Trénink byl uložen."
+  },
   "role": {
     "any": "Obojí",
     "primary": "Primární",
@@ -75,6 +102,7 @@
     "description": "Provedení",
     "notes": "Poznámky",
     "notFound": "Cvik nebyl nalezen.",
-    "none": "–"
+    "none": "–",
+    "backToPlan": "Zpět na trénink"
   }
 }

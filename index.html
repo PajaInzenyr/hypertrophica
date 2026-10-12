@@ -30,8 +30,18 @@
         <span class="app-name">Hypertrophica</span>
         <span class="app-subtitle" data-i18n="app.subtitle"></span>
       </a>
+      <!-- Odkaz na trénink s počtem cviků; popisek a počet doplní app.js -->
+      <a id="plan-link" class="header-button" href="#/trenink" hidden>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path d="M9 6h11M9 12h11M9 18h11"/>
+          <circle cx="4.5" cy="6" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="12" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="18" r="1.2" fill="currentColor"/>
+        </svg>
+        <span id="plan-count" class="plan-count" aria-hidden="true"></span>
+      </a>
       <!-- Přepínač motivu; ikonu a popisek doplní js/theme.js -->
-      <button id="theme-toggle" class="theme-toggle" type="button" hidden></button>
+      <button id="theme-toggle" class="header-button" type="button" hidden></button>
     </div>
   </header>
 
@@ -94,6 +104,21 @@
 
     <!-- Pohled 2: detail jednoho cviku (otevře se přes adresu #/cvik/<id>) -->
     <article id="detail-view" class="detail" hidden></article>
+
+    <!-- Pohled 3: trénink = seřazený seznam cviků (adresa #/trenink).
+         Obsah seznamu a tlačítka doplní app.js. -->
+    <section id="plan-view" class="plan" aria-labelledby="plan-title" hidden>
+      <a class="back-link" href="#/" id="plan-back"></a>
+      <h1 id="plan-title" tabindex="-1"></h1>
+      <p id="plan-intro" class="plan-intro"></p>
+      <!-- role="list": Safari jinak u seznamu bez odrážek nehlásí, že jde o seznam -->
+      <ol id="plan-list" class="plan-list" role="list"></ol>
+      <div id="plan-actions" class="plan-actions"></div>
+      <!-- Viditelné potvrzení akcí (např. „Odkaz zkopírován“) -->
+      <p id="plan-feedback" class="plan-feedback" role="status"></p>
+      <!-- Hlášení pro čtečky obrazovky (např. nová pozice cviku po posunu) -->
+      <p id="plan-announcer" class="visually-hidden" aria-live="polite"></p>
+    </section>
   </main>
 </body>
 </html>
