@@ -7,8 +7,12 @@
 // když není dostupné, trénink funguje aspoň do zavření stránky.
 
 const STORAGE_KEY = 'hw.plan';
+// Zámek tréninku: když je zamčeno, aplikace nedovolí cviky přesouvat ani odebírat
+// (ochrana proti nechtěnému klepnutí během cvičení). Uloženo jako "1" / nic.
+const LOCK_KEY = 'hw.planLocked';
 
 let plan = read();
+let locked = readLocked();
 
 function read() {
   try {
@@ -24,6 +28,14 @@ function write() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(plan));
   } catch {
     // Uložit nejde – trénink zůstane jen v paměti.
+  }
+}
+
+function readLocked() {
+  try {
+    return localStorage.getItem(LOCK_KEY) === '1';
+  } catch {
+    return false;
   }
 }
 
@@ -82,11 +94,26 @@ export function retainOnly(knownIds) {
   if (kept.length !== plan.length) setPlan(kept);
 }
 
-// Zavolá `callback`, když se trénink změní v jiné záložce téhož prohlížeče.
+export function isLocked() {
+  return locked;
+}
+
+export function setLocked(value) {
+  locked = value;
+  try {
+    if (locked) localStorage.setItem(LOCK_KEY, '1');
+    else localStorage.removeItem(LOCK_KEY);
+  } catch {
+    // Uložit nejde – zámek platí jen do zavření stránky.
+  }
+}
+
+// Zavolá `callback`, když se trénink (nebo jeho zámek) změní v jiné záložce téhož prohlížeče.
 export function onExternalChange(callback) {
   window.addEventListener('storage', (event) => {
-    if (event.key !== STORAGE_KEY) return;
+    if (event.key !== STORAGE_KEY && event.key !== LOCK_KEY) return;
     plan = read();
+    locked = readLocked();
     callback();
   });
 }

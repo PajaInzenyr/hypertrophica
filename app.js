@@ -45,6 +45,7 @@ const ui = {
   planView: $('plan-view'),
   planBack: $('plan-back'),
   planTitle: $('plan-title'),
+  planLock: $('plan-lock'),
   planIntro: $('plan-intro'),
   planList: $('plan-list'),
   planMap: $('plan-map'),
@@ -174,6 +175,7 @@ function bindEvents() {
     const button = event.target.closest('.icon-button');
     if (button) onPlanItemAction(button);
   });
+  ui.planLock.addEventListener('click', onToggleLock);
   // Změna tréninku v jiné záložce.
   plan.onExternalChange(afterPlanChange);
   // Změna oblíbených v jiné záložce: překresli, co je vidět.
@@ -299,13 +301,18 @@ function updatePlanButton(button) {
   const id = button.dataset.id;
   const name = localized(state.byId.get(id)?.name);
   const on = plan.isInPlan(id);
+  // Zamčený trénink: cvik, který v něm je, nejde odebrat ani tady (✓ zůstane vidět, ale nereaguje).
+  const lockedOut = on && plan.isLocked();
   button.innerHTML = on ? PLAN_ICON_ADDED : PLAN_ICON_ADD; // pevný text z kódu, ne z dat
+  button.disabled = lockedOut;
   button.setAttribute('aria-pressed', String(on));
-  button.setAttribute('aria-label', t(on ? 'plan.remove' : 'plan.add', { name }));
+  button.setAttribute('aria-label',
+    t(lockedOut ? 'plan.lockedRemove' : on ? 'plan.remove' : 'plan.add', { name }));
   button.title = button.getAttribute('aria-label');
 }
 
 function onPlanToggle(button) {
+  if (button.disabled) return;
   plan.togglePlan(button.dataset.id);
   afterPlanChange();
 }
@@ -323,6 +330,29 @@ function updatePlanLink() {
   ui.planCount.textContent = count > 0 ? String(count) : '';
   ui.planLink.setAttribute('aria-label', t('plan.headerLabel', { count }));
   ui.planLink.title = ui.planLink.getAttribute('aria-label');
+}
+
+// ===== Zámek tréninku =====
+// Během cvičení se snadno omylem klepne na šipku nebo křížek. Zamčený trénink
+// proto šipky, křížky ani „Vymazat trénink“ vůbec nezobrazuje.
+const LOCK_ICON_CLOSED = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">'
+  + '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+// Otevřený zámek: oblouk třmenu je vychýlený doprava nahoru.
+const LOCK_ICON_OPEN = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">'
+  + '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg>';
+
+function updateLockButton() {
+  const locked = plan.isLocked();
+  ui.planLock.innerHTML = locked ? LOCK_ICON_CLOSED : LOCK_ICON_OPEN; // pevný text z kódu
+  ui.planLock.setAttribute('aria-pressed', String(locked));
+  ui.planLock.setAttribute('aria-label', t(locked ? 'plan.unlock' : 'plan.lock'));
+  ui.planLock.title = ui.planLock.getAttribute('aria-label');
+}
+
+function onToggleLock() {
+  plan.setLocked(!plan.isLocked());
+  afterPlanChange(); // překreslí trénink i tlačítka ⊕/✓ v seznamu
+  ui.planAnnouncer.textContent = t(plan.isLocked() ? 'plan.lockedOn' : 'plan.lockedOff');
 }
 
 // ===== Pohled Trénink =====
@@ -344,9 +374,13 @@ function renderPlan() {
     return;
   }
   const ids = plan.getPlan();
+  const locked = plan.isLocked();
   ui.planTitle.textContent = t('plan.title');
-  ui.planIntro.textContent = t(ids.length ? 'plan.hint' : 'plan.empty');
-  ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length)));
+  // Zámek má smysl jen u neprázdného tréninku.
+  ui.planLock.hidden = ids.length === 0;
+  updateLockButton();
+  ui.planIntro.textContent = t(!ids.length ? 'plan.empty' : locked ? 'plan.lockedHint' : 'plan.hint');
+  ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, !locked)));
   renderPlanMap(ids);
   if (ids.length === 0) {
     ui.planActions.replaceChildren();
@@ -356,13 +390,14 @@ function renderPlan() {
     // Sdílet přes systémovou nabídku (WhatsApp, Messenger…) umí hlavně mobilní prohlížeče.
     ...(navigator.share ? [actionButton('button-primary', t('plan.share'), onSharePlan)] : []),
     actionButton('button-secondary', t('plan.copyLink'), onCopyPlanLink),
-    actionButton('button-secondary', t('plan.clear'), onClearPlan)
+    ...(locked ? [] : [actionButton('button-secondary', t('plan.clear'), onClearPlan)])
   );
 }
 
 // Náhled tréninku, který přišel odkazem: jen pořadí, bez úprav; lze ho uložit jako vlastní.
 function renderSharedPlan(ids) {
   ui.planTitle.textContent = t('plan.sharedTitle');
+  ui.planLock.hidden = true; // sdílený náhled se stejně nedá upravovat
   ui.planIntro.textContent = t(ids.length ? 'plan.sharedIntro' : 'plan.sharedEmpty');
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, false)));
   renderPlanMap(ids);
@@ -457,6 +492,7 @@ function planItem(ex, index, total, editable = true) {
 }
 
 function onPlanItemAction(button) {
+  if (plan.isLocked()) return; // pojistka; v zamčeném tréninku se tlačítka nezobrazují
   const { id, action } = button.dataset;
   const name = localized(state.byId.get(id)?.name);
 
