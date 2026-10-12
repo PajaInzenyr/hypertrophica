@@ -7,17 +7,19 @@ Hypertrophica – Exercise Wiki. Osobní wiki cviků pro hypertrofický trénink
 - Svalové skupiny: [`data/muscles.json`](data/muscles.json)
 - Texty rozhraní: [`i18n/cs.json`](i18n/cs.json)
 
-## Trénink (pořadí cviků)
+## Tréninky 1–4 a Týden
 
-Jednoduchý plán tréninku: seřazený seznam cviků, bez sérií, opakování a vah.
+Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je seřazený seznam cviků, bez sérií, opakování a vah. Záložka *Týden* ukazuje, které partie tréninky dohromady zapojily a které zůstaly vynechané.
 
-- **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu (✓ = cvik už v tréninku je). Nový cvik se přidá na konec.
-- **Zobrazení:** ikona seznamu v hlavičce (odznak ukazuje počet cviků), adresa `#/trenink`.
-- **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže vše.
-- **Zámek:** ikona zámku vedle nadpisu *Trénink*. Zamčený trénink skryje šipky, křížky i *Vymazat trénink* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení. Stav zámku se ukládá v `localStorage` pod klíčem `hw.planLocked` (přežije zavření stránky).
-- **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Na každé zapojené partii je malé číslo = počet cviků v tréninku, které ji zapojují (primárně i sekundárně); nezapojené partie číslo nemají. Schéma je i u sdíleného tréninku.
-- **Uložení:** v `localStorage` pod klíčem `hw.plan` (pole ID cviků) – jen v daném prohlížeči a zařízení. Je uložený jen jeden trénink.
-- **Sdílení:** *Kopírovat odkaz* (na mobilu i *Sdílet*) vytvoří adresu `…/hypertrophica/#/trenink?cviky=id1,id2,…`. Kdo ji otevře, uvidí náhled tréninku a může ho tlačítkem *Uložit jako můj trénink* převzít (nahradí jeho současný trénink). Odkaz obsahuje jen ID cviků, nic se neukládá na server.
+- **Přepínač:** v pohledu tréninku řada tlačítek *1 2 3 4 Týden*. Malé číslo u tlačítka = počet cviků v tréninku. Klepnutí na 1–4 udělá trénink **aktivním**.
+- **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu přidává do **aktivního** tréninku (✓ = cvik už v něm je). Nový cvik se přidá na konec. Stejný cvik může být ve více trénincích.
+- **Zobrazení:** ikona seznamu v hlavičce (odznak = počet cviků v aktivním tréninku), adresa `#/trenink`; souhrn týdne na adrese `#/tyden`.
+- **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže aktivní trénink.
+- **Zámek:** ikona zámku vedle nadpisu. Platí pro všechny tréninky najednou. Zamčené tréninky skryjí šipky, křížky, *Vymazat trénink* i *Nový týden* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení. Stav zámku se ukládá v `localStorage` pod klíčem `hw.planLocked`.
+- **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Na každé zapojené partii je malé číslo = počet cviků v tréninku, které ji zapojují (primárně i sekundárně). Schéma je i u sdíleného tréninku.
+- **Týden:** sečte cviky ze všech 4 tréninků (cvik ve dvou trénincích se počítá dvakrát). Partie je **zapojená**, když ji zapojuje aspoň 1 cvik primárně **nebo** aspoň 2 cviky sekundárně (pravidlo je v `app.js`, konstanty `WEEK_MIN_PRIMARY` a `WEEK_MIN_SECONDARY`). Partie s jediným sekundárním cvikem je **nedostatečně zapojená**, partie bez cviku **vynechaná**. Na schématu: zapojené plnou barvou, nedostatečně světlejší, vynechané bez barvy; číslo = počet cviků za týden. Pod schématem jsou vynechané a nedostatečně zapojené partie jako tlačítka – klepnutí otevře seznam cviků, které partii zapojují primárně. *Nový týden* vymaže všechny 4 tréninky.
+- **Uložení:** v `localStorage` pod klíčem `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`, `active` = index aktivního tréninku 0–3) – jen v daném prohlížeči a zařízení. Trénink uložený starší verzí aplikace (klíč `hw.plan`) se při prvním spuštění automaticky přesune do *Tréninku 1*.
+- **Sdílení:** *Kopírovat odkaz* (na mobilu i *Sdílet*) vytvoří adresu `…/hypertrophica/#/trenink?cviky=id1,id2,…` s aktivním tréninkem. Kdo ji otevře, uvidí náhled tréninku a může ho tlačítkem *Uložit jako můj trénink N* převzít (nahradí jeho aktivní trénink). Odkaz obsahuje jen ID cviků, nic se neukládá na server.
 
 Protože odkazy a uložené tréninky používají `id` cviků, je o to důležitější `id` existujícího cviku neměnit. Cviky, které už v datech nejsou, se z tréninku i ze sdíleného odkazu tiše vynechají.
 

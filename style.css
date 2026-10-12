@@ -782,6 +782,76 @@ select:disabled {
   outline: none;
 }
 
+/* Přepínač tréninků 1–4 a Týden: řada stejně širokých tlačítek (na mobilu přes celou šířku) */
+.plan-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(var(--tap), 1fr)) minmax(auto, 1.6fr);
+  gap: 6px;
+  margin: 8px 0 16px;
+}
+
+.plan-tabs[hidden] {
+  display: none;
+}
+
+.plan-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: var(--tap);
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.plan-tab:hover {
+  background: var(--chip-bg);
+}
+
+/* Aktivní trénink, když je otevřený Týden (do něj přidává ⊕) */
+.plan-tab.is-active-slot {
+  border: 2px solid var(--accent);
+}
+
+/* Otevřená záložka */
+.plan-tab[aria-current="page"],
+.plan-tab[aria-current="page"]:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* Počet cviků v tréninku: malý odznak vedle čísla tréninku (prázdný trénink odznak nemá) */
+.plan-tab-count {
+  min-width: 18px;
+  padding: 1px 5px;
+  background: var(--chip-bg);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.plan-tab-count:empty {
+  display: none;
+}
+
+.plan-tab[aria-current="page"] .plan-tab-count {
+  background: var(--accent-text);
+  color: var(--accent);
+}
+
 /* Nadpis „Trénink“ vlevo, zámek vpravo */
 .plan-heading {
   display: flex;
@@ -880,4 +950,42 @@ a.button-secondary {
 .detail-actions {
   flex: none;
   display: flex;
+}
+
+/* ===== Týden: vynechané partie ===== */
+.week-summary h2 {
+  margin: 24px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.week-hint {
+  margin: 4px 0 8px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.week-chips {
+  gap: 8px;
+}
+
+/* Chip jako tlačítko: dost velký na dotyk */
+.chip-button {
+  min-height: var(--tap);
+  padding: 4px 14px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.chip-button:hover {
+  border-color: var(--accent);
+}
+
+.week-done {
+  margin: 24px 0 0;
+  font-weight: 600;
 }

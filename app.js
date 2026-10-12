@@ -1,5 +1,5 @@
 // Vstupní bod aplikace: načte data, drží stav (vyhledávání + filtry)
-// a vykresluje seznam cviků, detail cviku a trénink.
+// a vykresluje seznam cviků, detail cviku, tréninky 1–4 a týdenní souhrn.
 
 import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
@@ -18,8 +18,9 @@ const state = {
   scrollY: { list: 0, plan: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
   returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, nebo trénink)
-  planHash: '#/trenink', // adresa naposledy zobrazeného tréninku (vlastní, nebo sdílený)
+  planHash: '#/trenink', // adresa naposledy zobrazeného tréninku (vlastní, sdílený, nebo Týden)
   sharedPlan: null, // ID cviků ze sdíleného odkazu; null = zobrazuje se vlastní trénink
+  showWeek: false, // true = v pohledu Trénink je otevřená záložka Týden (souhrn tréninků 1–4)
   bodyMap: null, // hlavní klikací schéma svalů
   planMap: null, // schéma svalů zapojených v tréninku (jen pro čtení)
 };
@@ -44,13 +45,18 @@ const ui = {
   planCount: $('plan-count'),
   planView: $('plan-view'),
   planBack: $('plan-back'),
+  planTabs: $('plan-tabs'),
   planTitle: $('plan-title'),
   planLock: $('plan-lock'),
   planIntro: $('plan-intro'),
   planList: $('plan-list'),
   planMap: $('plan-map'),
   planMapFigure: $('plan-map-figure'),
+  planMapHeading: $('plan-map-heading'),
   planMapSummary: $('plan-map-summary'),
+  planLegendPrimary: $('plan-legend-primary'),
+  planLegendSecondary: $('plan-legend-secondary'),
+  weekSummary: $('week-summary'),
   planActions: $('plan-actions'),
   planFeedback: $('plan-feedback'),
   planAnnouncer: $('plan-announcer'),
@@ -116,6 +122,7 @@ async function init() {
   state.planMap = createBodyMap(ui.planMapFigure); // bez onSelect = neklikací kopie
   syncFilterControls();
   ui.planBack.textContent = `← ${t('detail.back')}`;
+  createPlanTabs();
   ui.planLink.hidden = false;
   updatePlanLink();
   bindEvents();
@@ -176,6 +183,12 @@ function bindEvents() {
     if (button) onPlanItemAction(button);
   });
   ui.planLock.addEventListener('click', onToggleLock);
+  ui.planTabs.addEventListener('click', onPlanTabClick);
+  // Klik na vynechanou partii v souhrnu týdne → seznam cviků na tuto partii.
+  ui.weekSummary.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-muscle]');
+    if (chip) showMuscleExercises(chip.dataset.muscle);
+  });
   // Změna tréninku v jiné záložce.
   plan.onExternalChange(afterPlanChange);
   // Změna oblíbených v jiné záložce: překresli, co je vidět.
@@ -317,6 +330,9 @@ function onPlanToggle(button) {
   afterPlanChange();
 }
 
+// Číslo aktivního tréninku tak, jak ho vidí uživatel (1–4).
+const slotNumber = () => plan.getActive() + 1;
+
 // Po jakékoli změně tréninku překresli vše, co ho zobrazuje.
 function afterPlanChange() {
   document.querySelectorAll('.plan-button').forEach(updatePlanButton);
@@ -325,10 +341,11 @@ function afterPlanChange() {
 }
 
 // Počet cviků v odznaku u ikony tréninku v hlavičce.
+// Ukazuje aktivní trénink (ten, do kterého přidává tlačítko ⊕).
 function updatePlanLink() {
   const count = plan.getPlan().length;
   ui.planCount.textContent = count > 0 ? String(count) : '';
-  ui.planLink.setAttribute('aria-label', t('plan.headerLabel', { count }));
+  ui.planLink.setAttribute('aria-label', t('plan.headerLabel', { count, number: slotNumber() }));
   ui.planLink.title = ui.planLink.getAttribute('aria-label');
 }
 
@@ -369,17 +386,25 @@ function showPlan(previous) {
 }
 
 function renderPlan() {
+  renderPlanTabs();
   if (state.sharedPlan) {
     renderSharedPlan(state.sharedPlan);
     return;
   }
+  if (state.showWeek) {
+    renderWeek();
+    return;
+  }
   const ids = plan.getPlan();
   const locked = plan.isLocked();
-  ui.planTitle.textContent = t('plan.title');
+  const number = slotNumber();
+  ui.planTitle.textContent = t('plan.title', { number });
+  ui.planList.hidden = false;
+  ui.weekSummary.hidden = true;
   // Zámek má smysl jen u neprázdného tréninku.
   ui.planLock.hidden = ids.length === 0;
   updateLockButton();
-  ui.planIntro.textContent = t(!ids.length ? 'plan.empty' : locked ? 'plan.lockedHint' : 'plan.hint');
+  ui.planIntro.textContent = t(!ids.length ? 'plan.empty' : locked ? 'plan.lockedHint' : 'plan.hint', { number });
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, !locked)));
   renderPlanMap(ids);
   if (ids.length === 0) {
@@ -398,13 +423,43 @@ function renderPlan() {
 function renderSharedPlan(ids) {
   ui.planTitle.textContent = t('plan.sharedTitle');
   ui.planLock.hidden = true; // sdílený náhled se stejně nedá upravovat
+  ui.planList.hidden = false;
+  ui.weekSummary.hidden = true;
   ui.planIntro.textContent = t(ids.length ? 'plan.sharedIntro' : 'plan.sharedEmpty');
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, false)));
   renderPlanMap(ids);
   ui.planActions.replaceChildren(
-    ...(ids.length ? [actionButton('button-primary', t('plan.import'), onImportPlan)] : []),
+    ...(ids.length ? [actionButton('button-primary', t('plan.import', { number: slotNumber() }), onImportPlan)] : []),
     el('a', { className: 'button-secondary', href: '#/', textContent: t('plan.close') })
   );
+}
+
+// Počet cviků, které sval zapojují: { primary: n, secondary: n } pro každé ID svalu.
+// Cvik zařazený ve více trénincích se počítá v každém z nich.
+function engagementCounts(exercises) {
+  const counts = new Map();
+  const add = (id, role) => {
+    const entry = counts.get(id) ?? { primary: 0, secondary: 0 };
+    entry[role] += 1;
+    counts.set(id, entry);
+  };
+  exercises.forEach((ex) => {
+    ex.primary.forEach((id) => add(id, 'primary'));
+    ex.secondary.forEach((id) => add(id, 'secondary'));
+  });
+  return counts;
+}
+
+// Celkový počet cviků na sval (primárně i sekundárně) → číslo na schématu.
+const totals = (counts) => new Map([...counts].map(([id, c]) => [id, c.primary + c.secondary]));
+
+// Text „Biceps (2), Prsa (3)“ pro čtečky obrazovky (SVG je pro ně skryté).
+function muscleListText(ids, total) {
+  return ids
+    .map((id) => ({ label: muscleName(id), count: total.get(id) ?? 0 }))
+    .sort(byCzechName)
+    .map(({ label, count }) => `${label} (${count})`)
+    .join(', ');
 }
 
 // Schéma pod seznamem: které partie trénink procvičí.
@@ -413,27 +468,160 @@ function renderSharedPlan(ids) {
 function renderPlanMap(ids) {
   ui.planMap.hidden = ids.length === 0;
   if (ids.length === 0) return;
-  const exercises = ids.map((id) => state.byId.get(id));
-  const primary = new Set(exercises.flatMap((ex) => ex.primary));
-  const secondary = new Set(exercises.flatMap((ex) => ex.secondary).filter((id) => !primary.has(id)));
-  state.planMap.setEngagement([...primary], [...secondary]);
-
-  // Počet cviků, které sval zapojují (primárně i sekundárně) → číslo na schématu.
-  const counts = new Map();
-  exercises.flatMap((ex) => [...ex.primary, ...ex.secondary])
-    .forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
-  state.planMap.setCounts(counts);
-
-  // SVG je pro čtečky skryté – stejnou informaci jim dej textem, např. „Biceps (2)“.
-  const names = (set) => [...set]
-    .map((id) => ({ label: muscleName(id), count: counts.get(id) }))
-    .sort(byCzechName)
-    .map(({ label, count }) => `${label} (${count})`)
-    .join(', ');
+  const counts = engagementCounts(ids.map((id) => state.byId.get(id)));
+  const primary = [...counts.keys()].filter((id) => counts.get(id).primary > 0);
+  const secondary = [...counts.keys()].filter((id) => counts.get(id).primary === 0);
+  const total = totals(counts);
+  state.planMap.setEngagement(primary, secondary);
+  state.planMap.setCounts(total);
+  ui.planMapHeading.textContent = t('plan.mapHeading');
+  ui.planLegendPrimary.textContent = t('bodymap.legendPrimary');
+  ui.planLegendSecondary.textContent = t('bodymap.legendSecondary');
   ui.planMapSummary.textContent = [
-    t('plan.mapPrimary', { list: names(primary) }),
-    secondary.size ? t('plan.mapSecondary', { list: names(secondary) }) : '',
+    t('plan.mapPrimary', { list: muscleListText(primary, total) }),
+    secondary.length ? t('plan.mapSecondary', { list: muscleListText(secondary, total) }) : '',
   ].join(' ').trim();
+}
+
+// ===== Přepínač tréninků 1–4 a Týden =====
+// Tlačítka se vytvoří jednou a pak se jim jen mění stav – fokus tak po klepnutí zůstane na místě.
+function createPlanTabs() {
+  const slots = Array.from({ length: plan.SLOT_COUNT }, (_, index) => {
+    const button = el('button', { type: 'button', className: 'plan-tab' },
+      el('span', { className: 'plan-tab-number', textContent: String(index + 1) }),
+      el('span', { className: 'plan-tab-count' })
+    );
+    button.dataset.slot = String(index);
+    return button;
+  });
+  const weekTab = el('a', { className: 'plan-tab plan-tab-week', href: '#/tyden', textContent: t('week.tabWeek') });
+  ui.planTabs.replaceChildren(...slots, weekTab);
+}
+
+// Zvýrazní otevřenou záložku a doplní počty cviků v jednotlivých trénincích.
+function renderPlanTabs() {
+  ui.planTabs.hidden = Boolean(state.sharedPlan);
+  const slots = plan.getSlots();
+  ui.planTabs.querySelectorAll('[data-slot]').forEach((button) => {
+    const index = Number(button.dataset.slot);
+    const count = slots[index].length;
+    const current = !state.showWeek && index === plan.getActive();
+    button.querySelector('.plan-tab-count').textContent = count > 0 ? String(count) : '';
+    button.setAttribute('aria-label', t('week.tab', { number: index + 1, count }));
+    if (current) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+    // V Týdnu orámuj aktivní trénink – do něj přidává tlačítko ⊕.
+    button.classList.toggle('is-active-slot', state.showWeek && index === plan.getActive());
+  });
+  const weekTab = ui.planTabs.querySelector('.plan-tab-week');
+  if (state.showWeek) weekTab.setAttribute('aria-current', 'page');
+  else weekTab.removeAttribute('aria-current');
+}
+
+// Klepnutí na 1–4: tento trénink se stane aktivním (do něj přidává ⊕) a zobrazí se.
+function onPlanTabClick(event) {
+  const button = event.target.closest('[data-slot]');
+  if (!button) return;
+  plan.setActive(Number(button.dataset.slot));
+  ui.planFeedback.textContent = '';
+  if (location.hash !== '#/trenink') {
+    location.hash = '#/trenink'; // z Týdne přepne adresu; překreslí route()
+  }
+  afterPlanChange(); // tlačítka ⊕/✓ a ikona v hlavičce teď patří jinému tréninku
+}
+
+// ===== Týden: souhrn tréninků 1–4 =====
+// Partie je „zapojená“, když ji za týden zapojuje aspoň 1 cvik primárně
+// nebo aspoň 2 cviky sekundárně. Jen 1 sekundární cvik = „nedostatečně“.
+const WEEK_MIN_PRIMARY = 1;
+const WEEK_MIN_SECONDARY = 2;
+
+function muscleStatus(count) {
+  if (!count) return 'missed';
+  if (count.primary >= WEEK_MIN_PRIMARY || count.secondary >= WEEK_MIN_SECONDARY) return 'trained';
+  return 'partial';
+}
+
+function renderWeek() {
+  const exercises = plan.getSlots().flat().map((id) => state.byId.get(id));
+  const locked = plan.isLocked();
+  ui.planTitle.textContent = t('week.title');
+  ui.planLock.hidden = exercises.length === 0;
+  updateLockButton();
+  ui.planIntro.textContent = t(exercises.length ? 'week.intro' : 'week.empty');
+  ui.planList.hidden = true;
+  ui.planList.replaceChildren();
+
+  ui.planMap.hidden = exercises.length === 0;
+  ui.weekSummary.hidden = exercises.length === 0;
+  if (exercises.length === 0) {
+    ui.weekSummary.replaceChildren();
+    ui.planActions.replaceChildren();
+    return;
+  }
+
+  const counts = engagementCounts(exercises);
+  const groups = { trained: [], partial: [], missed: [] };
+  [...state.muscles.keys()].forEach((id) => groups[muscleStatus(counts.get(id))].push(id));
+  const total = totals(counts);
+
+  // Schéma: zapojené plnou barvou, nedostatečně světlejší, vynechané bez barvy.
+  state.planMap.setEngagement(groups.trained, groups.partial);
+  state.planMap.setCounts(total);
+  ui.planMapHeading.textContent = t('week.mapHeading');
+  ui.planLegendPrimary.textContent = t('week.legendTrained');
+  ui.planLegendSecondary.textContent = t('week.legendPartial');
+  ui.planMapSummary.textContent = [
+    groups.trained.length ? t('week.mapTrained', { list: muscleListText(groups.trained, total) }) : '',
+    groups.partial.length ? t('week.mapPartial', { list: muscleListText(groups.partial, total) }) : '',
+    groups.missed.length ? t('week.mapMissed', { list: muscleListText(groups.missed, total) }) : '',
+  ].join(' ').trim();
+
+  ui.weekSummary.replaceChildren(
+    ...(groups.missed.length || groups.partial.length
+      ? [
+        ...muscleGroup(t('week.missedHeading'), t('week.missedHint'), groups.missed),
+        ...muscleGroup(t('week.partialHeading'), t('week.partialHint'), groups.partial),
+      ]
+      : [el('p', { className: 'week-done', textContent: t('week.allTrained') })])
+  );
+
+  ui.planActions.replaceChildren(
+    ...(locked ? [] : [actionButton('button-secondary', t('week.newWeek'), onNewWeek)])
+  );
+}
+
+// Nadpis + vysvětlivka + klikací chipy svalů. Prázdná skupina se nezobrazí.
+function muscleGroup(heading, hint, ids) {
+  if (ids.length === 0) return [];
+  const sorted = ids.map((id) => ({ id, label: muscleName(id) })).sort(byCzechName);
+  return [
+    el('h2', { textContent: heading }),
+    el('p', { className: 'week-hint', textContent: hint }),
+    el('ul', { className: 'chips week-chips' },
+      ...sorted.map(({ id, label }) => {
+        const button = el('button', { type: 'button', className: 'chip chip-button', textContent: label });
+        button.dataset.muscle = id;
+        button.setAttribute('aria-label', t('week.showExercises', { name: label }));
+        return el('li', {}, button);
+      })
+    ),
+  ];
+}
+
+// Seznam cviků, které sval zapojují primárně (ostatní filtry se zruší, ať nic nechybí).
+function showMuscleExercises(muscleId) {
+  setFilters({ ...EMPTY_FILTERS, muscle: muscleId, role: 'primary' });
+  state.scrollY.list = 0; // seznam od začátku
+  location.hash = '#/';
+}
+
+function onNewWeek() {
+  if (!window.confirm(t('week.newWeekConfirm'))) return;
+  plan.clearWeek();
+  afterPlanChange();
+  ui.planFeedback.textContent = t('week.cleared');
+  ui.planTitle.focus();
 }
 
 function actionButton(className, text, onClick) {
@@ -560,17 +748,17 @@ function onImportPlan() {
   const current = plan.getPlan();
   const differs = current.join(',') !== ids.join(',');
   if (current.length > 0 && differs
-    && !window.confirm(t('plan.replaceConfirm', { count: current.length }))) return;
+    && !window.confirm(t('plan.replaceConfirm', { count: current.length, number: slotNumber() }))) return;
   plan.setPlan(ids);
   // Adresu přepiš na vlastní trénink (bez přidání do historie, tlačítko Zpět nevede na náhled).
   history.replaceState(null, '', '#/trenink');
   route();
   afterPlanChange();
-  ui.planFeedback.textContent = t('plan.imported');
+  ui.planFeedback.textContent = t('plan.imported', { number: slotNumber() });
 }
 
 function onClearPlan() {
-  if (!window.confirm(t('plan.clearConfirm'))) return;
+  if (!window.confirm(t('plan.clearConfirm', { number: slotNumber() }))) return;
   plan.clearPlan();
   afterPlanChange();
   ui.planFeedback.textContent = t('plan.cleared');
@@ -579,7 +767,8 @@ function onClearPlan() {
 
 // ===== Přepínání pohledů podle adresy =====
 // #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink,
-// #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit)
+// #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit),
+// #/tyden = souhrn tréninků 1–4 (stejný pohled jako trénink, jiná záložka)
 function route() {
   const previous = state.view;
   // Zapamatuj si, kam se v seznamu / tréninku odscrollovalo, ať se tam dá vrátit.
@@ -598,6 +787,12 @@ function route() {
     state.planHash = location.hash;
     const shared = new URLSearchParams(planMatch[1] ?? '').get('cviky');
     state.sharedPlan = shared === null ? null : parseSharedIds(shared);
+    state.showWeek = false;
+    showPlan(previous);
+  } else if (location.hash === '#/tyden') {
+    state.planHash = location.hash;
+    state.sharedPlan = null;
+    state.showWeek = true;
     showPlan(previous);
   } else {
     showList(previous);

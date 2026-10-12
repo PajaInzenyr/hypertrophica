@@ -109,6 +109,9 @@
          Obsah seznamu a tlačítka doplní app.js. -->
     <section id="plan-view" class="plan" aria-labelledby="plan-title" hidden>
       <a class="back-link" href="#/" id="plan-back"></a>
+      <!-- Přepínač tréninků v týdnu: 1–4 = jednotlivé tréninky, Týden = souhrn partií.
+           Tlačítka doplní app.js; u sdíleného tréninku je přepínač skrytý. -->
+      <nav id="plan-tabs" class="plan-tabs" data-i18n-aria-label="week.tabsLabel"></nav>
       <div class="plan-heading">
         <h1 id="plan-title" tabindex="-1"></h1>
         <!-- Zámek proti nechtěnému přesunutí/odebrání cviků během tréninku.
@@ -121,18 +124,21 @@
       <!-- Schéma svalů zapojených v tréninku (jen pro čtení); SVG vloží app.js.
            Pro čtečky obrazovky je stejná informace i textem v #plan-map-summary. -->
       <figure id="plan-map" class="body-map plan-map" hidden>
-        <h2 data-i18n="plan.mapHeading"></h2>
+        <h2 id="plan-map-heading"></h2>
         <div class="body-map-labels" aria-hidden="true">
           <span data-i18n="bodymap.front"></span>
           <span data-i18n="bodymap.back"></span>
         </div>
         <div id="plan-map-figure" class="body-map-figure"></div>
+        <!-- Texty legendy nastaví app.js (u tréninku primární/sekundární, u týdne zapojeno/nedostatečně) -->
         <ul class="legend" aria-hidden="true">
-          <li data-i18n="bodymap.legendPrimary"></li>
-          <li class="legend-secondary" data-i18n="bodymap.legendSecondary"></li>
+          <li id="plan-legend-primary"></li>
+          <li id="plan-legend-secondary" class="legend-secondary"></li>
         </ul>
         <p id="plan-map-summary" class="visually-hidden"></p>
       </figure>
+      <!-- Jen v pohledu Týden: vynechané a nedostatečně zapojené partie (doplní app.js) -->
+      <div id="week-summary" class="week-summary" hidden></div>
       <div id="plan-actions" class="plan-actions"></div>
       <!-- Viditelné potvrzení akcí (např. „Odkaz zkopírován“) -->
       <p id="plan-feedback" class="plan-feedback" role="status"></p>
