@@ -41,7 +41,11 @@
     "bench": "Lavice",
     "squat_rack": "Klec / stojany",
     "pullup_bar": "Hrazda",
-    "back_extension_bench": "Lavice na hyperextenze"
+    "back_extension_bench": "Lavice na hyperextenze",
+    "bodyweight": "Vlastní váha",
+    "dip_bars": "Bradla",
+    "rings": "Kruhy",
+    "unspecified": "Nedefinováno"
   },
   "bodymap": {
     "front": "Zepředu",
