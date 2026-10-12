@@ -299,12 +299,20 @@ a {
     --header-h: 50px;       /* výška hlavičky (změřeno v prohlížeči) */
     --page-pad-y: 24px;     /* mezera nad a pod obsahem */
     --map-col: clamp(360px, 30vw, 520px); /* šířka sloupce se schématem */
+    --side-col: clamp(300px, 22vw, 400px); /* šířka pravého sloupce (panel oblíbených), od 1200 px */
     --map-chrome: 150px;    /* místo pro nadpis, popisky a legendu kolem obrázku */
   }
 
   main,
   .app-header-inner {
     max-width: var(--max-width-wide);
+  }
+
+  /* Místo pro posuvník (scrollbar) je vyhrazené vždy, i na krátké stránce bez posuvníku.
+     Jinak by se na Windows při přechodu mezi dlouhým seznamem a krátkým detailem
+     celá stránka i s nadpisem Hypertrophica posunula o polovinu šířky posuvníku. */
+  html {
+    scrollbar-gutter: stable;
   }
 
   main {
@@ -378,12 +386,6 @@ a {
     text-align: center;
   }
 
-  /* Obsah vpravo: text v detailu a tréninku nemá příliš dlouhé řádky */
-  .detail > :not(.body-map),
-  .plan > :not(.plan-map) {
-    max-width: 860px;
-  }
-
   /* Trénink: obsah vpravo svisle na střed okna.
      Mřížka má nahoře a dole pružný řádek (1fr), mezi nimi řádky pro jednotlivé prvky.
      Zbylé místo se rozdělí rovným dílem nahoru a dolů → obsah je uprostřed.
@@ -415,8 +417,12 @@ a {
 }
 
 @media (min-width: 1200px) {
-  .list-layout {
-    grid-template-columns: var(--map-col) minmax(0, 1fr) clamp(300px, 22vw, 400px);
+  /* Všechny pohledy mají stejné tři sloupce, aby měl obsah uprostřed všude stejnou šířku.
+     V detailu a tréninku zůstává pravý sloupec prázdný. */
+  .list-layout,
+  .detail,
+  .plan {
+    grid-template-columns: var(--map-col) minmax(0, 1fr) var(--side-col);
   }
 
   .list-layout > .favorites-panel {
