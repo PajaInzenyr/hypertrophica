@@ -23,6 +23,7 @@ Osobní wiki cviků pro hypertrofický trénink. Statická webová aplikace (PWA
 - Mobile-first responzivní layout. Ovládací prvky min. 44×44 px (dotyk).
 - Podpora světlého i tmavého režimu přes `prefers-color-scheme` a CSS proměnné.
 - Žádné externí CDN, fonty ani trackery – všechno lokálně kvůli offline režimu.
+- Typografie: nadpisy a názvy cviků *Barlow Condensed* SemiBold 600 (proměnná `--font-display`), běžný text systémový font (`--font`). Soubory fontu jsou v `assets/fonts/` (licence OFL 1.1 v `assets/fonts/OFL.txt`).
 - Přístupnost: sémantické HTML, `aria-label` u ikonových tlačítek, ovladatelnost klávesnicí.
 
 ## Funkce (rozsah v1)
