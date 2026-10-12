@@ -75,7 +75,7 @@
     "type": "compound",
     "primary": ["lats"],
     "secondary": ["biceps", "upper_back", "forearms"],
-    "equipment": ["pullup_bar"],
+    "equipment": ["bodyweight", "pullup_bar"],
     "description": { "cs": "Visi na hrazdě nadhmatem, úchop o něco širší než ramena. Začni stažením lopatek dolů, pak táhni lokty k bokům, dokud není brada nad hrazdou. Spouštěj se kontrolovaně až do plného visu.", "en": "" },
     "notes": { "cs": "Pokud nezvládneš 5 čistých opakování, použij odporovou gumu nebo stroj s dopomocí.", "en": "" }
   },
@@ -285,7 +285,7 @@
     "type": "isolation",
     "primary": ["abs"],
     "secondary": ["obliques", "forearms"],
-    "equipment": ["pullup_bar"],
+    "equipment": ["bodyweight", "pullup_bar"],
     "description": { "cs": "Visi na hrazdě. Zvedej nohy (pokrčené nebo natažené) nahoru a na konci podsaď pánev, aby pracovalo břicho, ne jen ohybače kyčle. Pomalu spouštěj bez houpání.", "en": "" },
     "notes": { "cs": "", "en": "" }
   },
