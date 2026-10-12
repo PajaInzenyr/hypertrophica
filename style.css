@@ -54,8 +54,13 @@
   --font-display: "Barlow Condensed", "Arial Narrow", var(--font); /* nadpisy */
 }
 
+/* Tmavé barvy. Použijí se ve dvou případech:
+   1. systém je v tmavém režimu a uživatel přepínačem nezvolil světlý motiv,
+   2. uživatel přepínačem zvolil tmavý motiv (atribut data-theme="dark" na <html>).
+   CSS neumí jednu sadu hodnot sdílet mezi @media a selektorem, proto jsou hodnoty
+   uvedené dvakrát – při změně barvy uprav OBĚ sady stejně. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #141413;
     --surface: #1f1e1c;
     --text: #ecebe8;
@@ -74,6 +79,35 @@
     --map-hover: #a85a53;
     --map-secondary: #8f4740;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #141413;
+  --surface: #1f1e1c;
+  --text: #ecebe8;
+  --text-muted: #a8a49c;
+  --border: #3a3834;
+  --accent: #f2867e;
+  --accent-text: #1c1b19;
+  --chip-bg: #2c2a27;
+  --chip-primary-bg: #4a2320;
+  --chip-primary-text: #ffd5d1;
+  --focus: #8ab4f8;
+  --star: #f2c14e;
+
+  --map-body: #2c2a27;
+  --map-muscle: #4a4640;
+  --map-hover: #a85a53;
+  --map-secondary: #8f4740;
+}
+
+/* Formulářové prvky a posuvníky prohlížeče v barvě zvoleného motivu. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 /* ===== Základ ===== */
@@ -134,15 +168,55 @@ a {
   border-bottom: 1px solid var(--border);
 }
 
+/* Řádek hlavičky: název vlevo, přepínač motivu vpravo. */
+.app-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding-right: 8px;
+}
+
 .app-title {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: baseline;
   gap: 8px;
-  max-width: var(--max-width);
   min-height: var(--tap);
-  margin: 0 auto;
   padding: 10px 16px;
   text-decoration: none;
+}
+
+.theme-toggle {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  background: var(--chip-bg);
+}
+
+.theme-toggle svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .app-name {
@@ -184,7 +258,7 @@ a {
 
 @media (min-width: 900px) {
   main:has(.list-layout:not([hidden])),
-  body:has(.list-layout:not([hidden])) .app-title {
+  body:has(.list-layout:not([hidden])) .app-header-inner {
     max-width: var(--max-width-wide);
   }
 
