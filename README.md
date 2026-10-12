@@ -14,6 +14,7 @@ Jednoduchý plán tréninku: seřazený seznam cviků, bez sérií, opakování 
 - **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu (✓ = cvik už v tréninku je). Nový cvik se přidá na konec.
 - **Zobrazení:** ikona seznamu v hlavičce (odznak ukazuje počet cviků), adresa `#/trenink`.
 - **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže vše.
+- **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Na každé zapojené partii je malé číslo = počet cviků v tréninku, které ji zapojují (primárně i sekundárně); nezapojené partie číslo nemají. Schéma je i u sdíleného tréninku.
 - **Uložení:** v `localStorage` pod klíčem `hw.plan` (pole ID cviků) – jen v daném prohlížeči a zařízení. Je uložený jen jeden trénink.
 - **Sdílení:** *Kopírovat odkaz* (na mobilu i *Sdílet*) vytvoří adresu `…/hypertrophica/#/trenink?cviky=id1,id2,…`. Kdo ji otevře, uvidí náhled tréninku a může ho tlačítkem *Uložit jako můj trénink* převzít (nahradí jeho současný trénink). Odkaz obsahuje jen ID cviků, nic se neukládá na server.
 

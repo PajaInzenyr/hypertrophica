@@ -88,5 +88,29 @@ export function createBodyMap(container, { getLabel, onSelect } = {}) {
         s.classList.toggle('is-secondary', secondary.includes(s.dataset.muscle));
       });
     },
+    // Trénink: malý odznak s číslem (počet cviků) na každém zapojeném svalu.
+    //   counts = Map(id svalu → počet); sval s počtem 0 nebo bez záznamu odznak nemá.
+    // Místo odznaku určují atributy data-label-x/y v SVG (viz tools/generate-body-map.py).
+    setCounts(counts) {
+      svg.querySelectorAll('.muscle-count').forEach((badge) => badge.remove());
+      shapes.filter((s) => s.dataset.labelX).forEach((s) => {
+        const count = counts.get(s.dataset.muscle);
+        if (!count) return;
+        const badge = svgElement('g', { class: 'muscle-count' });
+        badge.append(
+          svgElement('circle', { cx: s.dataset.labelX, cy: s.dataset.labelY, r: 8 }),
+          svgElement('text', { x: s.dataset.labelX, y: s.dataset.labelY })
+        );
+        badge.lastChild.textContent = String(count);
+        s.parentNode.append(badge); // do stejné skupiny (pohledu) jako sval, ať sedí souřadnice
+      });
+    },
   };
+}
+
+// Vytvoří prvek SVG s atributy (SVG prvky potřebují createElementNS, ne createElement).
+function svgElement(tag, attrs) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([name, value]) => node.setAttribute(name, value));
+  return node;
 }

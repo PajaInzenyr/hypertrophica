@@ -21,6 +21,7 @@ const state = {
   planHash: '#/trenink', // adresa naposledy zobrazeného tréninku (vlastní, nebo sdílený)
   sharedPlan: null, // ID cviků ze sdíleného odkazu; null = zobrazuje se vlastní trénink
   bodyMap: null, // hlavní klikací schéma svalů
+  planMap: null, // schéma svalů zapojených v tréninku (jen pro čtení)
 };
 
 // ===== Odkazy na prvky stránky =====
@@ -46,6 +47,9 @@ const ui = {
   planTitle: $('plan-title'),
   planIntro: $('plan-intro'),
   planList: $('plan-list'),
+  planMap: $('plan-map'),
+  planMapFigure: $('plan-map-figure'),
+  planMapSummary: $('plan-map-summary'),
   planActions: $('plan-actions'),
   planFeedback: $('plan-feedback'),
   planAnnouncer: $('plan-announcer'),
@@ -108,6 +112,7 @@ async function init() {
     // Klik na už vybraný sval filtr zruší, jinak ho nastaví.
     onSelect: (id) => setFilters({ muscle: state.filters.muscle === id ? '' : id }),
   });
+  state.planMap = createBodyMap(ui.planMapFigure); // bez onSelect = neklikací kopie
   syncFilterControls();
   ui.planBack.textContent = `← ${t('detail.back')}`;
   ui.planLink.hidden = false;
@@ -342,6 +347,7 @@ function renderPlan() {
   ui.planTitle.textContent = t('plan.title');
   ui.planIntro.textContent = t(ids.length ? 'plan.hint' : 'plan.empty');
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length)));
+  renderPlanMap(ids);
   if (ids.length === 0) {
     ui.planActions.replaceChildren();
     return;
@@ -359,10 +365,40 @@ function renderSharedPlan(ids) {
   ui.planTitle.textContent = t('plan.sharedTitle');
   ui.planIntro.textContent = t(ids.length ? 'plan.sharedIntro' : 'plan.sharedEmpty');
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, false)));
+  renderPlanMap(ids);
   ui.planActions.replaceChildren(
     ...(ids.length ? [actionButton('button-primary', t('plan.import'), onImportPlan)] : []),
     el('a', { className: 'button-secondary', href: '#/', textContent: t('plan.close') })
   );
+}
+
+// Schéma pod seznamem: které partie trénink procvičí.
+// Sval, který je u některého cviku primární, je zvýrazněn plnou barvou;
+// sval zapojený jen sekundárně (u žádného cviku není primární) světlejší.
+function renderPlanMap(ids) {
+  ui.planMap.hidden = ids.length === 0;
+  if (ids.length === 0) return;
+  const exercises = ids.map((id) => state.byId.get(id));
+  const primary = new Set(exercises.flatMap((ex) => ex.primary));
+  const secondary = new Set(exercises.flatMap((ex) => ex.secondary).filter((id) => !primary.has(id)));
+  state.planMap.setEngagement([...primary], [...secondary]);
+
+  // Počet cviků, které sval zapojují (primárně i sekundárně) → číslo na schématu.
+  const counts = new Map();
+  exercises.flatMap((ex) => [...ex.primary, ...ex.secondary])
+    .forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
+  state.planMap.setCounts(counts);
+
+  // SVG je pro čtečky skryté – stejnou informaci jim dej textem, např. „Biceps (2)“.
+  const names = (set) => [...set]
+    .map((id) => ({ label: muscleName(id), count: counts.get(id) }))
+    .sort(byCzechName)
+    .map(({ label, count }) => `${label} (${count})`)
+    .join(', ');
+  ui.planMapSummary.textContent = [
+    t('plan.mapPrimary', { list: names(primary) }),
+    secondary.size ? t('plan.mapSecondary', { list: names(secondary) }) : '',
+  ].join(' ').trim();
 }
 
 function actionButton(className, text, onClick) {

@@ -729,6 +729,41 @@ select:disabled {
 }
 
 /* ===== Trénink ===== */
+/* Schéma partií pod seznamem cviků v tréninku (stejná velikost jako v detailu).
+   position: static ruší „přilepení“ schématu, které platí pro hlavní seznam na PC. */
+.plan-map {
+  position: static;
+  margin-top: 24px;
+}
+
+.plan-map h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Odznak s počtem cviků na zapojeném svalu (jen ve schématu tréninku) */
+.body-map svg .muscle-count {
+  pointer-events: none;
+}
+
+.body-map svg .muscle-count circle {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 1;
+}
+
+.body-map svg .muscle-count text {
+  fill: var(--text);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
 .plan h1 {
   margin: 0;
   font-family: var(--font-display);
