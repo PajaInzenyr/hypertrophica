@@ -383,8 +383,18 @@ function renderPlanMap(ids) {
   const secondary = new Set(exercises.flatMap((ex) => ex.secondary).filter((id) => !primary.has(id)));
   state.planMap.setEngagement([...primary], [...secondary]);
 
-  // SVG je pro čtečky skryté – stejnou informaci jim dej textem.
-  const names = (set) => [...set].map(muscleName).sort((a, b) => a.localeCompare(b, 'cs')).join(', ');
+  // Počet cviků, které sval zapojují (primárně i sekundárně) → číslo na schématu.
+  const counts = new Map();
+  exercises.flatMap((ex) => [...ex.primary, ...ex.secondary])
+    .forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1));
+  state.planMap.setCounts(counts);
+
+  // SVG je pro čtečky skryté – stejnou informaci jim dej textem, např. „Biceps (2)“.
+  const names = (set) => [...set]
+    .map((id) => ({ label: muscleName(id), count: counts.get(id) }))
+    .sort(byCzechName)
+    .map(({ label, count }) => `${label} (${count})`)
+    .join(', ');
   ui.planMapSummary.textContent = [
     t('plan.mapPrimary', { list: names(primary) }),
     secondary.size ? t('plan.mapSecondary', { list: names(secondary) }) : '',
