@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>Hypertrophica</title>
+  <!-- Zvolený motiv (světlý/tmavý) se nastaví ještě před vykreslením stránky,
+       aby při načtení neproblikla špatná barva. Volbu ukládá js/theme.js. -->
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('hw.theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme;
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="./style.css">
   <!-- PWA: manifest (název, ikony pro instalaci na plochu) a barva lišty prohlížeče = barva hlavičky (--surface) -->
   <link rel="manifest" href="./manifest.json">
@@ -17,10 +25,14 @@
 </head>
 <body>
   <header class="app-header">
-    <a class="app-title" href="#/">
-      <span class="app-name">Hypertrophica</span>
-      <span class="app-subtitle" data-i18n="app.subtitle"></span>
-    </a>
+    <div class="app-header-inner">
+      <a class="app-title" href="#/">
+        <span class="app-name">Hypertrophica</span>
+        <span class="app-subtitle" data-i18n="app.subtitle"></span>
+      </a>
+      <!-- Přepínač motivu; ikonu a popisek doplní js/theme.js -->
+      <button id="theme-toggle" class="theme-toggle" type="button" hidden></button>
+    </div>
   </header>
 
   <main>

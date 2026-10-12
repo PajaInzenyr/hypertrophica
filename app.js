@@ -5,6 +5,7 @@ import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, onExternalChange } from './js/favorites.js';
+import { initThemeToggle } from './js/theme.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -61,6 +62,7 @@ async function init() {
   try {
     await loadStrings('cs');
     applyStaticStrings();
+    initThemeToggle(document.getElementById('theme-toggle'));
     ui.status.textContent = t('app.loading');
 
     const [muscles, exercises] = await Promise.all([

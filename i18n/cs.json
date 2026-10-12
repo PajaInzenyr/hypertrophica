@@ -47,6 +47,12 @@
     "rings": "Kruhy",
     "unspecified": "Nedefinováno"
   },
+  "theme": {
+    "auto": "automaticky podle systému",
+    "light": "světlý",
+    "dark": "tmavý",
+    "toggle": "Motiv: {current}. Přepnout na: {next}"
+  },
   "bodymap": {
     "front": "Zepředu",
     "back": "Zezadu",
