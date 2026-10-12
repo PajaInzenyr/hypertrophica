@@ -1,21 +1,116 @@
 [
-  { "id": "chest",       "name": { "cs": "Prsa",                 "en": "Chest" },            "views": ["front"] },
-  { "id": "front_delts", "name": { "cs": "Přední delty",         "en": "Front delts" },      "views": ["front"] },
-  { "id": "side_delts",  "name": { "cs": "Boční delty",          "en": "Side delts" },       "views": ["front"] },
-  { "id": "biceps",      "name": { "cs": "Biceps",               "en": "Biceps" },           "views": ["front"] },
-  { "id": "forearms",    "name": { "cs": "Předloktí",            "en": "Forearms" },         "views": ["front"] },
-  { "id": "abs",         "name": { "cs": "Břišní svaly",         "en": "Abs" },              "views": ["front"] },
-  { "id": "obliques",    "name": { "cs": "Šikmé břišní svaly",   "en": "Obliques" },         "views": ["front"] },
-  { "id": "quads",       "name": { "cs": "Kvadricepsy",          "en": "Quads" },            "views": ["front"] },
-  { "id": "adductors",   "name": { "cs": "Přitahovače stehen",   "en": "Adductors" },        "views": ["front"] },
-  { "id": "calves",      "name": { "cs": "Lýtka",                "en": "Calves" },           "views": ["front", "back"] },
-  { "id": "rear_delts",  "name": { "cs": "Zadní delty",          "en": "Rear delts" },       "views": ["back"] },
-  { "id": "traps",       "name": { "cs": "Trapézy",              "en": "Traps" },            "views": ["back"] },
-  { "id": "lats",        "name": { "cs": "Široké zádové svaly",  "en": "Lats" },             "views": ["back"] },
-  { "id": "upper_back",  "name": { "cs": "Horní záda",           "en": "Upper back" },       "views": ["back"] },
-  { "id": "lower_back",  "name": { "cs": "Spodní záda",          "en": "Lower back" },       "views": ["back"] },
-  { "id": "triceps",     "name": { "cs": "Triceps",              "en": "Triceps" },          "views": ["back"] },
-  { "id": "glutes",      "name": { "cs": "Hýžďové svaly",        "en": "Glutes" },           "views": ["back"] },
-  { "id": "hamstrings",  "name": { "cs": "Hamstringy",           "en": "Hamstrings" },       "views": ["back"] },
-  { "id": "abductors",   "name": { "cs": "Odtahovače stehen",    "en": "Abductors" },        "views": ["back"] }
+  {
+    "id": "chest",
+    "name": {"cs": "Prsa", "en": "Chest"},
+    "latin": ["musculus pectoralis major"],
+    "views": ["front"]
+  },
+  {
+    "id": "front_delts",
+    "name": {"cs": "Přední delty", "en": "Front delts"},
+    "latin": ["musculus deltoideus – pars clavicularis"],
+    "views": ["front"]
+  },
+  {
+    "id": "side_delts",
+    "name": {"cs": "Boční delty", "en": "Side delts"},
+    "latin": ["musculus deltoideus – pars acromialis"],
+    "views": ["front"]
+  },
+  {
+    "id": "biceps",
+    "name": {"cs": "Biceps", "en": "Biceps"},
+    "latin": ["musculus biceps brachii", "musculus brachialis"],
+    "views": ["front"]
+  },
+  {
+    "id": "forearms",
+    "name": {"cs": "Předloktí", "en": "Forearms"},
+    "latin": ["musculus brachioradialis", "musculi flexores antebrachii", "musculi extensores antebrachii"],
+    "views": ["front"]
+  },
+  {
+    "id": "abs",
+    "name": {"cs": "Břišní svaly", "en": "Abs"},
+    "latin": ["musculus rectus abdominis"],
+    "views": ["front"]
+  },
+  {
+    "id": "obliques",
+    "name": {"cs": "Šikmé břišní svaly", "en": "Obliques"},
+    "latin": ["musculus obliquus externus abdominis", "musculus obliquus internus abdominis"],
+    "views": ["front"]
+  },
+  {
+    "id": "quads",
+    "name": {"cs": "Kvadricepsy", "en": "Quads"},
+    "latin": ["musculus quadriceps femoris"],
+    "views": ["front"]
+  },
+  {
+    "id": "adductors",
+    "name": {"cs": "Přitahovače stehen", "en": "Adductors"},
+    "latin": ["musculus adductor magnus", "musculus adductor longus", "musculus adductor brevis", "musculus pectineus", "musculus gracilis"],
+    "views": ["front"]
+  },
+  {
+    "id": "calves",
+    "name": {"cs": "Lýtka", "en": "Calves"},
+    "latin": ["musculus gastrocnemius", "musculus soleus"],
+    "views": ["front", "back"]
+  },
+  {
+    "id": "rear_delts",
+    "name": {"cs": "Zadní delty", "en": "Rear delts"},
+    "latin": ["musculus deltoideus – pars spinalis"],
+    "views": ["back"]
+  },
+  {
+    "id": "traps",
+    "name": {"cs": "Trapézy", "en": "Traps"},
+    "latin": ["musculus trapezius – pars descendens", "musculus trapezius – pars ascendens"],
+    "views": ["back"]
+  },
+  {
+    "id": "lats",
+    "name": {"cs": "Široké zádové svaly", "en": "Lats"},
+    "latin": ["musculus latissimus dorsi", "musculus teres major"],
+    "views": ["back"]
+  },
+  {
+    "id": "upper_back",
+    "name": {"cs": "Horní záda", "en": "Upper back"},
+    "latin": ["musculus rhomboideus major", "musculus rhomboideus minor", "musculus trapezius – pars transversa"],
+    "views": ["back"]
+  },
+  {
+    "id": "lower_back",
+    "name": {"cs": "Spodní záda", "en": "Lower back"},
+    "latin": ["musculus erector spinae"],
+    "views": ["back"]
+  },
+  {
+    "id": "triceps",
+    "name": {"cs": "Triceps", "en": "Triceps"},
+    "latin": ["musculus triceps brachii"],
+    "views": ["back"]
+  },
+  {
+    "id": "glutes",
+    "name": {"cs": "Hýžďové svaly", "en": "Glutes"},
+    "latin": ["musculus gluteus maximus"],
+    "views": ["back"]
+  },
+  {
+    "id": "hamstrings",
+    "name": {"cs": "Hamstringy", "en": "Hamstrings"},
+    "latin": ["musculus biceps femoris", "musculus semitendinosus", "musculus semimembranosus"],
+    "views": ["back"]
+  },
+  {
+    "id": "abductors",
+    "name": {"cs": "Odtahovače stehen", "en": "Abductors"},
+    "latin": ["musculus gluteus medius", "musculus gluteus minimus", "musculus tensor fasciae latae"],
+    "views": ["back"]
+  }
 ]

@@ -45,7 +45,7 @@ app.js              # vstupní bod, stav aplikace, render
 js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
-  muscles.json      # seznam svalových skupin (ID, názvy, pohled front/back)
+  muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
 i18n/
   cs.json           # texty UI
 assets/
@@ -77,6 +77,20 @@ README.md
 - `type`: pouze `"compound"` nebo `"isolation"`.
 - `primary`/`secondary`: pouze ID existující v `muscles.json`.
 - Klíče a ID anglicky, texty vícejazyčné. Aktuálně se vyplňuje jen `cs`; při chybějícím překladu zobraz `cs`.
+
+`data/muscles.json` – pole objektů:
+
+```json
+{
+  "id": "hamstrings",
+  "name": { "cs": "Hamstringy", "en": "Hamstrings" },
+  "latin": ["musculus biceps femoris", "musculus semitendinosus", "musculus semimembranosus"],
+  "views": ["back"]
+}
+```
+
+- `latin`: odborné názvy podle Terminologia Anatomica; pole, protože skupina může zahrnovat více svalů. Části svalu se zapisují jako `musculus deltoideus – pars clavicularis`.
+- `views`: `"front"`, `"back"` nebo obojí (např. lýtka) – na kterém pohledu SVG schématu se sval zobrazí.
 
 Při úpravě dat **validuj**: unikátní `id`, platné hodnoty `type`, existující ID svalů. Pro validaci vytvoř jednoduchý skript `tools/validate.html` (otevře se v prohlížeči a vypíše chyby), aby nebylo nutné instalovat Node.
 
