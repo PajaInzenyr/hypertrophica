@@ -110,6 +110,46 @@
     "notes": { "cs": "", "en": "" }
   },
   {
+    "id": "shoulder-press-dumbbell",
+    "name": { "cs": "Tlak s jednoručkami vsedě", "en": "Seated Dumbbell Shoulder Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na lavici s opěradlem nastaveným téměř kolmo. Jednoručky drž ve výšce ramen, lokty mírně před tělem. Vytlač je nad hlavu, aniž by do sebe narazily, a kontrolovaně je spusť zpět k ramenům.", "en": "" },
+    "notes": { "cs": "Jednoručky umožňují přirozenější dráhu než osa a odhalí rozdíl v síle mezi stranami.", "en": "" }
+  },
+  {
+    "id": "cable-lateral-raise",
+    "name": { "cs": "Upažování na kladce", "en": "Cable Lateral Raise" },
+    "type": "isolation",
+    "primary": ["side_delts"],
+    "secondary": ["traps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se bokem ke spodní kladce, madlo drž v ruce vzdálenější od kladky, kabel vede před tělem. S mírně pokrčeným loktem upažuj do výšky ramen a pomalu spouštěj zpět. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Kladka drží napětí i ve spodní části pohybu, kde jednoručka téměř nezatěžuje. Malá váha a čistá technika.", "en": "" }
+  },
+  {
+    "id": "reverse-pec-deck",
+    "name": { "cs": "Zapažování na stroji", "en": "Reverse Pec Deck" },
+    "type": "isolation",
+    "primary": ["rear_delts"],
+    "secondary": ["upper_back"],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si čelem k opěradlu stroje, madla drž v natažených pažích před sebou. Táhni paže obloukem do stran a dozadu, dokud nejsou v rovině s trupem. Pomalu vrať zpět.", "en": "" },
+    "notes": { "cs": "Neutrální úchop (palce nahoru) nebo nadhmat – obojí funguje. Nestahuj lopatky naplno, jinak přebírá práci střední část zad.", "en": "" }
+  },
+  {
+    "id": "handstand-push-up",
+    "name": { "cs": "Klik ve stojce u zdi", "en": "Wall Handstand Push-Up" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["triceps", "side_delts", "traps"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se do stojky na rukou zády nebo břichem ke zdi, ruce o něco šíře než ramena. Pokrčením loktů se spouštěj, dokud se hlava nedotkne země (nebo podložky), a vytlač se zpět do natažených paží. Tělo drž zpevněné.", "en": "" },
+    "notes": { "cs": "Náročný cvik. Pokud ho ještě nezvládneš, začni klikem s nohama na lavici v pozici „V“ nebo stojkou s částečným rozsahem.", "en": "" }
+  },
+  {
     "id": "pull-up",
     "name": { "cs": "Shyby nadhmatem", "en": "Pull-Up" },
     "type": "compound",
