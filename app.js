@@ -48,6 +48,14 @@ const byCzechName = (a, b) => a.label.localeCompare(b.label, 'cs');
 
 // ===== Start =====
 init();
+registerServiceWorker();
+
+// Service worker (sw.js) ukládá soubory aplikace do cache, takže funguje i offline.
+// Starší prohlížeče ho nepodporují – aplikace pak běží normálně, jen bez offline režimu.
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.register('./sw.js').catch((error) => console.warn('Service worker:', error));
+}
 
 async function init() {
   try {
