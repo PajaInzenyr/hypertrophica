@@ -113,6 +113,21 @@
       <p id="plan-intro" class="plan-intro"></p>
       <!-- role="list": Safari jinak u seznamu bez odrážek nehlásí, že jde o seznam -->
       <ol id="plan-list" class="plan-list" role="list"></ol>
+      <!-- Schéma svalů zapojených v tréninku (jen pro čtení); SVG vloží app.js.
+           Pro čtečky obrazovky je stejná informace i textem v #plan-map-summary. -->
+      <figure id="plan-map" class="body-map plan-map" hidden>
+        <h2 data-i18n="plan.mapHeading"></h2>
+        <div class="body-map-labels" aria-hidden="true">
+          <span data-i18n="bodymap.front"></span>
+          <span data-i18n="bodymap.back"></span>
+        </div>
+        <div id="plan-map-figure" class="body-map-figure"></div>
+        <ul class="legend" aria-hidden="true">
+          <li data-i18n="bodymap.legendPrimary"></li>
+          <li class="legend-secondary" data-i18n="bodymap.legendSecondary"></li>
+        </ul>
+        <p id="plan-map-summary" class="visually-hidden"></p>
+      </figure>
       <div id="plan-actions" class="plan-actions"></div>
       <!-- Viditelné potvrzení akcí (např. „Odkaz zkopírován“) -->
       <p id="plan-feedback" class="plan-feedback" role="status"></p>

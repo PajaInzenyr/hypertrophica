@@ -48,7 +48,10 @@
     "import": "Uložit jako můj trénink",
     "close": "Zavřít",
     "replaceConfirm": "Nahradit tvůj současný trénink (počet cviků: {count}) tímto sdíleným?",
-    "imported": "Trénink byl uložen."
+    "imported": "Trénink byl uložen.",
+    "mapHeading": "Partie v tréninku",
+    "mapPrimary": "Primárně zapojené: {list}.",
+    "mapSecondary": "Sekundárně zapojené: {list}."
   },
   "role": {
     "any": "Obojí",

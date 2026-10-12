@@ -729,6 +729,26 @@ select:disabled {
 }
 
 /* ===== Trénink ===== */
+/* Schéma partií pod seznamem cviků v tréninku (stejná velikost jako v detailu).
+   position: static ruší „přilepení“ schématu, které platí pro hlavní seznam na PC. */
+.plan-map {
+  position: static;
+  margin-top: 24px;
+}
+
+.plan-map h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.plan-map .body-map-labels,
+.plan-map .body-map-figure svg {
+  max-width: 280px;
+}
+
 .plan h1 {
   margin: 0;
   font-family: var(--font-display);
