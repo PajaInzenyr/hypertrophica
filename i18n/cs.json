@@ -37,6 +37,14 @@
     "pullup_bar": "Hrazda",
     "back_extension_bench": "Lavice na hyperextenze"
   },
+  "bodymap": {
+    "front": "Zepředu",
+    "back": "Zezadu",
+    "hint": "Klepnutím na sval vyfiltruješ cviky. Dalším klepnutím filtr zrušíš.",
+    "engagement": "Zapojené svaly",
+    "legendPrimary": "primární",
+    "legendSecondary": "sekundární"
+  },
   "list": {
     "count": "Nalezeno cviků: {count}",
     "empty": "Žádný cvik neodpovídá zadání."

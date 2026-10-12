@@ -105,6 +105,8 @@ Zadní pohled: `rear_delts`, `traps`, `lats`, `upper_back` (rhomboidy, střední
 - Každý klikatelný sval je samostatný `<path>` s `id` = ID svalu a `class="muscle"`.
 - Párové svaly (levý/pravý) sdílejí `data-muscle` atribut, `id` mají unikátní (`biceps-l`, `biceps-r`).
 - Barvy přes CSS proměnné (stav: neaktivní, hover, aktivní, sekundární zapojení).
+- `assets/body-map.svg` se generuje skriptem `tools/generate-body-map.py` (tvary jsou definované jako body levé poloviny, pravá se zrcadlí). SVG ručně neupravuj – změň skript a spusť `python3 tools/generate-body-map.py`.
+- Sval zobrazený na obou pohledech má na zadním pohledu id s příponou `-back` (`calves-back-l`), aby id byla v celém SVG unikátní.
 
 ## Testování
 

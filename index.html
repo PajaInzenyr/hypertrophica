@@ -23,12 +23,22 @@
     <noscript><p class="status">Hypertrophica potřebuje zapnutý JavaScript.</p></noscript>
 
     <!-- Pohled 1: seznam cviků s vyhledáváním a filtry -->
-    <section id="list-view" hidden>
+    <section id="list-view" class="list-layout" hidden>
       <div class="search">
         <label for="search-input" class="visually-hidden" data-i18n="search.label"></label>
         <input id="search-input" type="search" autocomplete="off" spellcheck="false"
                data-i18n-placeholder="search.placeholder">
       </div>
+
+      <!-- Klikací schéma svalů; SVG vloží js/bodymap.js ze souboru assets/body-map.svg -->
+      <figure class="body-map">
+        <div class="body-map-labels" aria-hidden="true">
+          <span data-i18n="bodymap.front"></span>
+          <span data-i18n="bodymap.back"></span>
+        </div>
+        <div id="body-map" class="body-map-figure"></div>
+        <figcaption class="body-map-hint" data-i18n="bodymap.hint"></figcaption>
+      </figure>
 
       <fieldset class="filters">
         <legend class="visually-hidden" data-i18n="filters.heading"></legend>
