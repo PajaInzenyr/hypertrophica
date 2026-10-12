@@ -63,7 +63,7 @@ README.md
 ```json
 {
   "id": "bench-press-barbell",
-  "name": { "cs": "Bench press s velkou činkou", "en": "Barbell Bench Press" },
+  "name": { "cs": "Bench press s osou", "en": "Barbell Bench Press" },
   "type": "compound",
   "primary": ["chest"],
   "secondary": ["front_delts", "triceps"],

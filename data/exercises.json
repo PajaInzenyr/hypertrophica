@@ -1,7 +1,7 @@
 [
   {
     "id": "bench-press-barbell",
-    "name": { "cs": "Bench press s velkou činkou", "en": "Barbell Bench Press" },
+    "name": { "cs": "Bench press s osou", "en": "Barbell Bench Press" },
     "type": "compound",
     "primary": ["chest"],
     "secondary": ["front_delts", "triceps"],
@@ -31,7 +31,7 @@
   },
   {
     "id": "overhead-press-barbell",
-    "name": { "cs": "Tlaky s velkou činkou nad hlavu ve stoje", "en": "Barbell Overhead Press" },
+    "name": { "cs": "Tlaky s osou nad hlavu ve stoje", "en": "Barbell Overhead Press" },
     "type": "compound",
     "primary": ["front_delts"],
     "secondary": ["side_delts", "triceps"],
@@ -91,7 +91,7 @@
   },
   {
     "id": "barbell-row",
-    "name": { "cs": "Přítahy velké činky v předklonu", "en": "Barbell Row" },
+    "name": { "cs": "Přítahy osy v předklonu", "en": "Barbell Row" },
     "type": "compound",
     "primary": ["upper_back", "lats"],
     "secondary": ["rear_delts", "biceps", "lower_back"],
@@ -111,7 +111,7 @@
   },
   {
     "id": "romanian-deadlift-barbell",
-    "name": { "cs": "Rumunský mrtvý tah s velkou činkou", "en": "Barbell Romanian Deadlift" },
+    "name": { "cs": "Rumunský mrtvý tah s osou", "en": "Barbell Romanian Deadlift" },
     "type": "compound",
     "primary": ["hamstrings", "glutes"],
     "secondary": ["lower_back", "forearms", "adductors"],
@@ -131,7 +131,7 @@
   },
   {
     "id": "squat-barbell",
-    "name": { "cs": "Dřep s velkou činkou", "en": "Barbell Back Squat" },
+    "name": { "cs": "Dřep s osou", "en": "Barbell Back Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
     "secondary": ["adductors", "lower_back"],
@@ -181,7 +181,7 @@
   },
   {
     "id": "hip-thrust-barbell",
-    "name": { "cs": "Hip thrust s velkou činkou", "en": "Barbell Hip Thrust" },
+    "name": { "cs": "Hip thrust s osou", "en": "Barbell Hip Thrust" },
     "type": "compound",
     "primary": ["glutes"],
     "secondary": ["hamstrings", "abductors"],
@@ -221,7 +221,7 @@
   },
   {
     "id": "barbell-curl",
-    "name": { "cs": "Bicepsový zdvih s velkou činkou", "en": "Barbell Curl" },
+    "name": { "cs": "Bicepsový zdvih s osou", "en": "Barbell Curl" },
     "type": "isolation",
     "primary": ["biceps"],
     "secondary": ["forearms"],
