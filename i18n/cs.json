@@ -1,0 +1,55 @@
+{
+  "app": {
+    "subtitle": "Exercise Wiki",
+    "loading": "Načítám cviky…",
+    "loadError": "Data se nepodařilo načíst. Zkus stránku obnovit."
+  },
+  "search": {
+    "label": "Hledat cvik",
+    "placeholder": "Např. bench, dřep, biceps…"
+  },
+  "filters": {
+    "heading": "Filtry",
+    "muscle": "Sval",
+    "role": "Zapojení",
+    "type": "Typ",
+    "equipment": "Vybavení",
+    "any": "Vše",
+    "reset": "Zrušit filtry"
+  },
+  "role": {
+    "any": "Obojí",
+    "primary": "Primární",
+    "secondary": "Sekundární"
+  },
+  "type": {
+    "compound": "Vícekloubový",
+    "isolation": "Izolovaný"
+  },
+  "equipment": {
+    "barbell": "Velká činka",
+    "dumbbell": "Jednoručky",
+    "ez_bar": "EZ osa",
+    "cable": "Kladka",
+    "machine": "Stroj",
+    "bench": "Lavice",
+    "squat_rack": "Klec / stojany",
+    "pullup_bar": "Hrazda",
+    "back_extension_bench": "Lavice na hyperextenze"
+  },
+  "list": {
+    "count": "Nalezeno cviků: {count}",
+    "empty": "Žádný cvik neodpovídá zadání."
+  },
+  "detail": {
+    "back": "Zpět na seznam",
+    "type": "Typ",
+    "primary": "Primární svaly",
+    "secondary": "Sekundární svaly",
+    "equipment": "Vybavení",
+    "description": "Provedení",
+    "notes": "Poznámky",
+    "notFound": "Cvik nebyl nalezen.",
+    "none": "–"
+  }
+}
