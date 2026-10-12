@@ -100,6 +100,13 @@
 
       <p id="result-count" class="result-count" aria-live="polite"></p>
       <ul id="exercise-list" class="exercise-list"></ul>
+
+      <!-- Panel s oblíbenými cviky. Zobrazí se jen na širokém monitoru (vpravo od seznamu),
+           na mobilu je skrytý – tam slouží tlačítko „Oblíbené“ ve filtrech. Obsah doplní app.js. -->
+      <aside class="favorites-panel" aria-labelledby="favorites-heading">
+        <h2 id="favorites-heading" class="favorites-heading" data-i18n="favorites.heading"></h2>
+        <ul id="favorites-list" class="exercise-list favorites-list"></ul>
+      </aside>
     </section>
 
     <!-- Pohled 2: detail jednoho cviku (otevře se přes adresu #/cvik/<id>) -->

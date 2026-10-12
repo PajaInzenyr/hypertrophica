@@ -49,7 +49,7 @@
   --tap: 44px; /* minimální velikost dotykového prvku */
   --gap: 12px;
   --max-width: 720px;
-  --max-width-wide: 1040px; /* desktop se schématem vedle seznamu */
+  --max-width-wide: 1680px; /* PC: stránka využije skoro celou šířku monitoru */
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: "Barlow Condensed", "Arial Narrow", var(--font); /* nadpisy */
 }
@@ -269,7 +269,7 @@ a {
 
 /* ===== Rozložení stránky se seznamem =====
    Mobil: hledání, schéma, filtry a seznam pod sebou.
-   Desktop (≥ 900 px): schéma vlevo (zůstává viditelné při scrollování), vše ostatní vpravo. */
+   PC: viz blok „Rozložení na PC“ níže. */
 .list-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -287,27 +287,148 @@ a {
 .result-count { grid-area: count; }
 .exercise-list { grid-area: list; }
 
+/* ===== Rozložení na PC (≥ 900 px) =====
+   Na mobilu se nic z tohoto bloku nepoužije.
+   - Stránka využije skoro celou šířku monitoru (max. --max-width-wide).
+   - Schéma svalů je ve všech pohledech (seznam, detail, trénink) v levém sloupci.
+     Je „přilepené“ (position: sticky) a svisle vycentrované v okně, takže se při
+     scrollování obsahem vpravo nehýbe.
+   - Velikost schématu roste se šířkou okna, ale nikdy není vyšší než okno. */
 @media (min-width: 900px) {
-  main:has(.list-layout:not([hidden])),
-  body:has(.list-layout:not([hidden])) .app-header-inner {
+  :root {
+    --header-h: 50px;       /* výška hlavičky (změřeno v prohlížeči) */
+    --page-pad-y: 24px;     /* mezera nad a pod obsahem */
+    --map-col: clamp(360px, 30vw, 520px); /* šířka sloupce se schématem */
+    --map-chrome: 150px;    /* místo pro nadpis, popisky a legendu kolem obrázku */
+  }
+
+  main,
+  .app-header-inner {
     max-width: var(--max-width-wide);
   }
 
-  .list-layout {
-    grid-template-columns: 340px minmax(0, 1fr);
-    grid-template-rows: auto auto auto 1fr;
-    grid-template-areas:
-      "map search"
-      "map filters"
-      "map count"
-      "map list";
-    column-gap: 32px;
+  main {
+    padding: var(--page-pad-y) 32px;
   }
 
-  .body-map {
+  .app-header-inner {
+    padding-right: 24px;
+  }
+
+  .app-title {
+    padding-left: 32px;
+  }
+
+  /* Společná mřížka: schéma vlevo, obsah vpravo.
+     Řádky „auto“ zabírají jednotlivé prvky obsahu (prázdné mají výšku 0),
+     poslední řádek 1fr pohltí výšku schématu, aby mezi prvky nevznikaly mezery. */
+  .list-layout,
+  .detail,
+  .plan:has(> .plan-map:not([hidden])) {
+    display: grid;
+    grid-template-columns: var(--map-col) minmax(0, 1fr);
+    grid-template-rows: repeat(9, auto) 1fr;
+    grid-template-areas: none;
+    column-gap: 48px;
+    align-items: start;
+  }
+
+  .list-layout > *,
+  .detail > *,
+  .plan > * {
+    grid-area: auto;
+    grid-column: 2;
+  }
+
+  /* Schéma: celý levý sloupec, přilepené pod hlavičkou, obsah svisle na střed okna */
+  .list-layout > .body-map,
+  .detail > .body-map,
+  .plan > .plan-map {
+    grid-column: 1;
+    grid-row: 1 / -1;
     position: sticky;
-    top: 72px; /* pod hlavičkou */
-    align-self: start;
+    top: calc(var(--header-h) + var(--page-pad-y));
+    height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+  }
+
+  /* Velikost obrázku: celá šířka sloupce, ale jen tak velký, aby se vešel do výšky okna
+     (416 × 440 = poměr stran SVG). Popisky „Zepředu/Zezadu“ mají stejnou šířku. */
+  .list-layout > .body-map,
+  .detail > .body-map,
+  .plan > .plan-map {
+    --map-size: min(100%, calc((100vh - var(--header-h) - 2 * var(--page-pad-y) - var(--map-chrome)) * 416 / 440));
+  }
+
+  .list-layout > .body-map .body-map-figure svg,
+  .detail > .body-map .body-map-figure svg,
+  .plan > .plan-map .body-map-figure svg,
+  .body-map .body-map-labels {
+    width: var(--map-size);
+    max-width: none;
+  }
+
+  /* Nadpis nad schématem (detail, trénink) vycentrovaný stejně jako obrázek */
+  .detail > .body-map h2,
+  .plan > .plan-map h2 {
+    text-align: center;
+  }
+
+  /* Obsah vpravo: text v detailu a tréninku nemá příliš dlouhé řádky */
+  .detail > :not(.body-map),
+  .plan > :not(.plan-map) {
+    max-width: 860px;
+  }
+
+  /* Prázdný trénink (bez schématu): obsah zarovnaný se sloupcem vpravo jako v ostatních pohledech */
+  .plan:not(:has(> .plan-map:not([hidden]))) {
+    padding-left: calc(var(--map-col) + 48px);
+  }
+
+}
+
+/* ===== Panel oblíbených =====
+   Mobil a menší monitory: skrytý (oblíbené ukáže tlačítko „Oblíbené“ ve filtrech).
+   Od 1200 px: třetí sloupec vpravo od seznamu, přilepený jako schéma.
+   Když je oblíbených víc, než se vejde do výšky okna, panel se posouvá sám. */
+.favorites-panel {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .list-layout {
+    grid-template-columns: var(--map-col) minmax(0, 1fr) clamp(300px, 22vw, 400px);
+  }
+
+  .list-layout > .favorites-panel {
+    display: block;
+    grid-column: 3;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--header-h) + var(--page-pad-y));
+    max-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    max-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    overflow-y: auto;
+    margin-left: -16px; /* mezera mezi seznamem a panelem 32 px místo 48 px */
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+  }
+
+  .favorites-heading {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .favorites-list .status {
+    margin: 0;
+    font-size: 0.875rem;
   }
 }
 
