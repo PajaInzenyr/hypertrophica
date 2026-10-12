@@ -92,13 +92,28 @@ Zadní pohled: `rear_delts`, `traps`, `lats`, `upper_back` (rhomboidy, střední
 - Párové svaly (levý/pravý) sdílejí `data-muscle` atribut, `id` mají unikátní (`biceps-l`, `biceps-r`).
 - Barvy přes CSS proměnné (stav: neaktivní, hover, aktivní, sekundární zapojení).
 
-## Lokální testování
+## Testování
 
-Service worker a `fetch` nefungují přes `file://`. Pro lokální test spusť jednoduchý server v kořeni projektu, např. `python -m http.server 8000`, a otevři `http://localhost:8000`.
+Primární způsob testování je **na nasazené verzi na GitHub Pages** (`https://<user>.github.io/hypertrophica/`), na PC i na mobilu. Autor pracuje výhradně přes Claude Code v cloudu a nemá lokální kopii repozitáře.
+
+- GitHub Pages nasazuje pouze větev `main`, takže změnu z PR lze na Pages otestovat až po jeho sloučení (merge). Nasazení trvá obvykle 1–2 minuty.
+- Před otevřením PR ověř změnu sám v cloudovém prostředí: spusť v kořeni projektu `python3 -m http.server 8000` a stránku zkontroluj v headless Chromiu (Playwright) – načtení bez chyb v konzoli, základní funkce, mobilní šířka (~375 px). Co a jak bylo ověřeno, uveď v popisu PR.
+- Pokud se změna po nasazení na mobilu neprojeví, je to téměř vždy cache service workeru: zkontroluj, že byl zvýšen `CACHE_VERSION`, a stránku na mobilu znovu načti (případně zavři a znovu otevři nainstalovanou PWA).
+
+### Lokální server (volitelné)
+
+Jen pokud autor někdy bude mít lokální kopii: service worker a `fetch` nefungují přes `file://`, proto spusť v kořeni projektu `python -m http.server 8000` a otevři `http://localhost:8000`.
 
 ## Workflow
 
 1. Před větší změnou navrhni postup a počkej na odsouhlasení.
-2. Změny dělej po malých logických krocích, každý krok = jeden commit.
-3. Po změně ověř funkčnost (lokální server), teprve pak commit a push.
-4. `README.md` udržuj aktuální: jak přidat cvik, jak spustit lokálně, jak se nasazuje.
+2. **Každý úkol = samostatná větev a samostatný Pull Request do `main`.** Větev zakládej z aktuálního `main`. **Nikdy necommituj ani nepushuj přímo do `main`.**
+3. Uvnitř větve dělej změny po malých logických krocích, každý krok = jeden commit.
+4. Před pushem ověř funkčnost (viz *Testování*) a v odpovědi shrň, co se commituje.
+5. Popis PR obsahuje:
+   - **Co a proč** – stručně, srozumitelně pro autora (viz *Kontext autora*).
+   - **Ověřeno před PR** – co bylo otestováno v cloudu.
+   - **Po nasazení otestuj** – konkrétní checklist kroků, které má autor po merge provést na GitHub Pages, zvlášť pro **PC** a pro **mobil** (např. „Klepni na sval *biceps* → seznam ukáže jen cviky na biceps“).
+   - Zda byl zvýšen `CACHE_VERSION` (pokud se měnil obsah nebo kód).
+6. PR slučuje (merge) výhradně autor. Po merge ověří checklist; případné opravy = nová větev a nový PR.
+7. `README.md` udržuj aktuální: jak přidat cvik, jak se nasazuje, jak testovat.
