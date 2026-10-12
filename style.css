@@ -14,10 +14,18 @@
   --chip-primary-text: #7a1712;
   --focus: #1a5fb4;
 
+  /* Schéma svalů */
+  --map-body: #e4e0d8;
+  --map-muscle: #c9c2b6;
+  --map-hover: #e2a39d;
+  --map-active: var(--accent);
+  --map-secondary: #eebab4;
+
   --radius: 10px;
   --tap: 44px; /* minimální velikost dotykového prvku */
   --gap: 12px;
   --max-width: 720px;
+  --max-width-wide: 1040px; /* desktop se schématem vedle seznamu */
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -34,6 +42,11 @@
     --chip-primary-bg: #4a2320;
     --chip-primary-text: #ffd5d1;
     --focus: #8ab4f8;
+
+    --map-body: #2c2a27;
+    --map-muscle: #4a4640;
+    --map-hover: #a85a53;
+    --map-secondary: #8f4740;
   }
 }
 
@@ -119,6 +132,118 @@ a {
 
 .status {
   color: var(--text-muted);
+}
+
+/* ===== Rozložení stránky se seznamem =====
+   Mobil: hledání, schéma, filtry a seznam pod sebou.
+   Desktop (≥ 900 px): schéma vlevo (zůstává viditelné při scrollování), vše ostatní vpravo. */
+.list-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "search"
+    "map"
+    "filters"
+    "count"
+    "list";
+}
+
+.search { grid-area: search; }
+.body-map { grid-area: map; }
+.filters { grid-area: filters; }
+.result-count { grid-area: count; }
+.exercise-list { grid-area: list; }
+
+@media (min-width: 900px) {
+  main:has(.list-layout:not([hidden])),
+  body:has(.list-layout:not([hidden])) .app-title {
+    max-width: var(--max-width-wide);
+  }
+
+  .list-layout {
+    grid-template-columns: 340px minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas:
+      "map search"
+      "map filters"
+      "map count"
+      "map list";
+    column-gap: 32px;
+  }
+
+  .body-map {
+    position: sticky;
+    top: 72px; /* pod hlavičkou */
+    align-self: start;
+  }
+}
+
+/* ===== Schéma svalů ===== */
+.body-map {
+  margin: var(--gap) 0 0;
+}
+
+.body-map-figure svg {
+  -webkit-tap-highlight-color: transparent; /* bez modrého obdélníku po klepnutí na mobilu */
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.body-map-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 340px;
+  margin: 0 auto 4px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.body-map-hint {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.body-map svg .body {
+  fill: var(--map-body);
+}
+
+.body-map svg .muscle {
+  fill: var(--map-muscle);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+  transition: fill 0.15s;
+}
+
+/* Hlavní schéma je klikací (role="group"), schéma v detailu jen ukazuje. */
+.body-map svg[role="group"] .muscle {
+  cursor: pointer;
+}
+
+.body-map svg .muscle:focus {
+  outline: none;
+}
+
+.body-map svg .muscle:focus-visible {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+
+.body-map svg .muscle.is-hover {
+  fill: var(--map-hover);
+}
+
+.body-map svg .muscle.is-secondary {
+  fill: var(--map-secondary);
+}
+
+.body-map svg .muscle.is-active {
+  fill: var(--map-active);
 }
 
 /* ===== Vyhledávání a filtry ===== */
@@ -310,4 +435,35 @@ select:disabled {
 
 .detail p {
   margin: 0;
+}
+
+/* Schéma v detailu cviku: menší, s legendou */
+.detail .body-map-figure svg {
+  max-width: 280px;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.legend li::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-radius: 3px;
+  vertical-align: -1px;
+  background: var(--map-active);
+}
+
+.legend .legend-secondary::before {
+  background: var(--map-secondary);
 }

@@ -3,6 +3,7 @@
 
 import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
+import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -11,6 +12,7 @@ const state = {
   filters: { ...EMPTY_FILTERS },
   listScrollY: 0, // pozice v seznamu, kam se vrátit z detailu
   lastOpenedId: null,
+  bodyMap: null, // hlavní klikací schéma svalů
 };
 
 // ===== Odkazy na prvky stránky =====
@@ -27,6 +29,7 @@ const ui = {
   reset: $('filter-reset'),
   count: $('result-count'),
   list: $('exercise-list'),
+  bodyMap: $('body-map'),
 };
 
 // Pomocná funkce pro vytvoření HTML prvku:
@@ -53,6 +56,7 @@ async function init() {
     const [muscles, exercises] = await Promise.all([
       fetchJson('./data/muscles.json'),
       fetchJson('./data/exercises.json'),
+      loadBodyMapSource(),
     ]);
     muscles.forEach((m) => state.muscles.set(m.id, m));
     state.exercises = exercises.sort((a, b) =>
@@ -69,6 +73,11 @@ async function init() {
 
   ui.status.hidden = true;
   fillFilterOptions();
+  state.bodyMap = createBodyMap(ui.bodyMap, {
+    getLabel: muscleName,
+    // Klik na už vybraný sval filtr zruší, jinak ho nastaví.
+    onSelect: (id) => setFilters({ muscle: state.filters.muscle === id ? '' : id }),
+  });
   syncFilterControls();
   bindEvents();
   renderList();
@@ -135,6 +144,7 @@ function syncFilterControls() {
   ui.equipment.value = f.equipment;
   ui.role.disabled = !f.muscle; // zapojení má smysl jen u vybraného svalu
   ui.reset.disabled = !hasActiveFilters(f);
+  state.bodyMap.setActive(f.muscle);
 }
 
 // ===== Seznam =====
@@ -226,6 +236,7 @@ function detailContent(ex) {
     ...fact(t('detail.secondary'), chipList(ex.secondary.map(muscleName))),
     ...fact(t('detail.equipment'), chipList(ex.equipment.map((e) => t(`equipment.${e}`))))
   ));
+  nodes.push(engagementMap(ex));
 
   const description = localized(ex.description);
   if (description) {
@@ -236,4 +247,18 @@ function detailContent(ex) {
     nodes.push(el('h2', { textContent: t('detail.notes') }), el('p', { textContent: notes }));
   }
   return nodes;
+}
+
+// Malé schéma v detailu: primární svaly plnou barvou, sekundární světlejší.
+function engagementMap(ex) {
+  const container = el('div', { className: 'body-map-figure' });
+  createBodyMap(container).setEngagement(ex.primary, ex.secondary);
+  return el('figure', { className: 'body-map' },
+    el('h2', { textContent: t('bodymap.engagement') }),
+    container,
+    el('ul', { className: 'legend' },
+      el('li', { textContent: t('bodymap.legendPrimary') }),
+      el('li', { className: 'legend-secondary', textContent: t('bodymap.legendSecondary') })
+    )
+  );
 }
