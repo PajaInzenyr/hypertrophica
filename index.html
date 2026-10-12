@@ -63,7 +63,11 @@
           <select id="filter-equipment"></select>
         </label>
 
-        <button id="filter-reset" type="button" class="button-secondary" data-i18n="filters.reset"></button>
+        <div class="filter-actions">
+          <!-- aria-pressed = přepínací tlačítko (zapnuto/vypnuto); text doplní app.js -->
+          <button id="filter-favorites" type="button" class="button-secondary button-toggle" aria-pressed="false"></button>
+          <button id="filter-reset" type="button" class="button-secondary" data-i18n="filters.reset"></button>
+        </div>
       </fieldset>
 
       <p id="result-count" class="result-count" aria-live="polite"></p>

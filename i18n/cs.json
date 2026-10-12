@@ -15,7 +15,13 @@
     "type": "Typ",
     "equipment": "Vybavení",
     "any": "Vše",
-    "reset": "Zrušit filtry"
+    "reset": "Zrušit filtry",
+    "favoritesOnly": "Oblíbené ({count})"
+  },
+  "favorites": {
+    "add": "Přidat do oblíbených: {name}",
+    "remove": "Odebrat z oblíbených: {name}",
+    "empty": "Zatím nemáš žádné oblíbené cviky. Přidáš je klepnutím na hvězdičku u cviku."
   },
   "role": {
     "any": "Obojí",

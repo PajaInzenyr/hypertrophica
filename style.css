@@ -13,6 +13,7 @@
   --chip-primary-bg: #f6dcd9;
   --chip-primary-text: #7a1712;
   --focus: #1a5fb4;
+  --star: #c48a00;
 
   /* Schéma svalů */
   --map-body: #e4e0d8;
@@ -42,6 +43,7 @@
     --chip-primary-bg: #4a2320;
     --chip-primary-text: #ffd5d1;
     --focus: #8ab4f8;
+    --star: #f2c14e;
 
     --map-body: #2c2a27;
     --map-muscle: #4a4640;
@@ -294,8 +296,14 @@ select:disabled {
   opacity: 0.5;
 }
 
-.button-secondary {
+.filter-actions {
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+.button-secondary {
   min-height: var(--tap);
   padding: 8px 16px;
   background: transparent;
@@ -309,14 +317,23 @@ select:disabled {
   cursor: default;
 }
 
+/* Přepínač „Jen oblíbené“ ve stavu zapnuto */
+.button-toggle[aria-pressed="true"] {
+  background: var(--chip-primary-bg);
+  border-color: var(--accent);
+  color: var(--chip-primary-text);
+  font-weight: 600;
+}
+
 @media (min-width: 640px) {
   .filters {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: end;
   }
 
-  .button-secondary {
-    grid-column: auto;
+  .filter-actions {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
@@ -332,6 +349,7 @@ select:disabled {
   padding: 0;
   list-style: none;
   display: grid;
+  align-content: start; /* karty se nenatahují, když je výsledků málo */
   gap: 8px;
 }
 
@@ -361,6 +379,55 @@ select:disabled {
   font-size: 0.875rem;
 }
 
+/* Položka seznamu: odkaz na cvik + hvězdička vedle */
+.exercise-item {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.exercise-item .exercise-link {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== Hvězdička (oblíbené) ===== */
+.star-button {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.star-button svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.star-button:hover {
+  color: var(--star);
+}
+
+.star-button[aria-pressed="true"] {
+  color: var(--star);
+}
+
+.star-button[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+
 /* ===== Detail cviku ===== */
 .back-link {
   display: inline-flex;
@@ -372,8 +439,16 @@ select:disabled {
   text-decoration: none;
 }
 
+.detail-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .detail h1 {
   margin: 0;
+  padding-top: 6px; /* zarovnání s hvězdičkou */
   font-size: 1.5rem;
   line-height: 1.25;
 }

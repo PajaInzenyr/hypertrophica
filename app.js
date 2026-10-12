@@ -4,6 +4,7 @@
 import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
+import { isFavorite, toggleFavorite, getFavorites, onExternalChange } from './js/favorites.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -26,6 +27,7 @@ const ui = {
   role: $('filter-role'),
   type: $('filter-type'),
   equipment: $('filter-equipment'),
+  favorites: $('filter-favorites'),
   reset: $('filter-reset'),
   count: $('result-count'),
   list: $('exercise-list'),
@@ -119,14 +121,26 @@ function bindEvents() {
   ui.role.addEventListener('change', () => setFilters({ role: ui.role.value }));
   ui.type.addEventListener('change', () => setFilters({ type: ui.type.value }));
   ui.equipment.addEventListener('change', () => setFilters({ equipment: ui.equipment.value }));
+  ui.favorites.addEventListener('click', () => setFilters({ favoritesOnly: !state.filters.favoritesOnly }));
   ui.reset.addEventListener('click', () => {
     setFilters({ ...EMPTY_FILTERS });
     ui.search.focus();
   });
+  // Hvězdičky v seznamu i v detailu – jeden posluchač pro celou stránku.
+  document.addEventListener('click', (event) => {
+    const star = event.target.closest('.star-button');
+    if (star) onStarClick(star);
+  });
+  // Změna oblíbených v jiné záložce: překresli, co je vidět.
+  onExternalChange(() => {
+    syncFilterControls();
+    renderList();
+    document.querySelectorAll('.star-button').forEach(updateStarButton);
+  });
   window.addEventListener('hashchange', route);
 }
 
-// Jediné místo, kde se mění filtry. Později sem napojíme i schéma svalů.
+// Jediné místo, kde se mění filtry (volá ho hledání, menu, schéma svalů i tlačítka).
 function setFilters(changes) {
   state.filters = { ...state.filters, ...changes };
   syncFilterControls();
@@ -144,28 +158,75 @@ function syncFilterControls() {
   ui.equipment.value = f.equipment;
   ui.role.disabled = !f.muscle; // zapojení má smysl jen u vybraného svalu
   ui.reset.disabled = !hasActiveFilters(f);
+  ui.favorites.setAttribute('aria-pressed', String(f.favoritesOnly));
+  ui.favorites.textContent = `★ ${t('filters.favoritesOnly', { count: getFavorites().size })}`;
   state.bodyMap.setActive(f.muscle);
 }
 
 // ===== Seznam =====
 function renderList() {
-  const results = filterExercises(state.exercises, state.filters);
+  const results = filterExercises(state.exercises, state.filters, getFavorites());
   ui.count.textContent = t('list.count', { count: results.length });
 
   if (results.length === 0) {
-    ui.list.replaceChildren(el('li', { className: 'status', textContent: t('list.empty') }));
+    const noFavorites = state.filters.favoritesOnly && getFavorites().size === 0;
+    const message = noFavorites ? t('favorites.empty') : t('list.empty');
+    ui.list.replaceChildren(el('li', { className: 'status', textContent: message }));
     return;
   }
 
   ui.list.replaceChildren(...results.map((ex) => {
     const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
-    return el('li', {},
+    return el('li', { className: 'exercise-item' },
       el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
         el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
         el('span', { className: 'exercise-meta', textContent: meta })
-      )
+      ),
+      starButton(ex.id)
     );
   }));
+}
+
+// ===== Oblíbené (hvězdička) =====
+// Obrys hvězdy; vyplnění řeší CSS podle aria-pressed.
+const STAR_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+  + '<path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>';
+
+function starButton(id) {
+  const button = el('button', { type: 'button', className: 'star-button' });
+  button.dataset.id = id;
+  button.innerHTML = STAR_SVG; // pevný text z kódu, ne z dat
+  updateStarButton(button);
+  return button;
+}
+
+// Nastaví stav a popisek tlačítka podle toho, zda je cvik oblíbený.
+function updateStarButton(button) {
+  const id = button.dataset.id;
+  const name = localized(state.exercises.find((ex) => ex.id === id)?.name);
+  const on = isFavorite(id);
+  button.setAttribute('aria-pressed', String(on));
+  button.setAttribute('aria-label', t(on ? 'favorites.remove' : 'favorites.add', { name }));
+  button.title = button.getAttribute('aria-label');
+}
+
+function onStarClick(button) {
+  const id = button.dataset.id;
+  toggleFavorite(id);
+  // Stejný cvik může mít hvězdičku v seznamu i v detailu – aktualizuj všechny.
+  document.querySelectorAll(`.star-button[data-id="${id}"]`).forEach(updateStarButton);
+  syncFilterControls(); // počet v tlačítku „Jen oblíbené“
+
+  // V režimu „jen oblíbené“ odebraný cvik zmizí ze seznamu → překreslit
+  // a fokus přesunout na sousední hvězdičku, aby se uživatel klávesnicí neztratil.
+  if (!state.filters.favoritesOnly) return;
+  const inList = ui.list.contains(button);
+  const index = [...ui.list.querySelectorAll('.star-button')].indexOf(button);
+  renderList();
+  if (inList) {
+    const remaining = ui.list.querySelectorAll('.star-button');
+    (remaining[Math.min(index, remaining.length - 1)] ?? ui.favorites).focus();
+  }
 }
 
 // ===== Přepínání pohledů podle adresy (#/ = seznam, #/cvik/<id> = detail) =====
@@ -223,7 +284,10 @@ function fact(label, value) {
 function detailContent(ex) {
   const nodes = [
     backLink(),
-    el('h1', { tabIndex: -1, textContent: localized(ex.name) }),
+    el('div', { className: 'detail-heading' },
+      el('h1', { tabIndex: -1, textContent: localized(ex.name) }),
+      starButton(ex.id)
+    ),
   ];
   // Anglický název jako podtitul, pokud se liší od zobrazeného.
   if (ex.name.en && ex.name.en !== localized(ex.name)) {
