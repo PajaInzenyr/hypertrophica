@@ -8,6 +8,7 @@ export const EMPTY_FILTERS = Object.freeze({
   role: 'any', // 'any' | 'primary' | 'secondary'
   type: '',
   equipment: '',
+  favoritesOnly: false,
 });
 
 // Převede text na tvar vhodný pro porovnání: malá písmena, bez diakritiky.
@@ -39,9 +40,11 @@ function matchesMuscle(exercise, muscle, role) {
 }
 
 // Vrátí cviky, které splňují všechny aktivní filtry zároveň (AND).
-export function filterExercises(exercises, filters) {
+// `favorites` = množina (Set) ID oblíbených cviků, použije se u filtru „jen oblíbené“.
+export function filterExercises(exercises, filters, favorites = new Set()) {
   return exercises.filter(
     (ex) =>
+      (!filters.favoritesOnly || favorites.has(ex.id)) &&
       matchesQuery(ex, filters.query) &&
       matchesMuscle(ex, filters.muscle, filters.role) &&
       (!filters.type || ex.type === filters.type) &&
