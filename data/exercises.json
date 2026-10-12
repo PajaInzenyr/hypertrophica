@@ -30,6 +30,46 @@
     "notes": { "cs": "Kladky drží napětí i v plně stažené pozici, kde je jednoručka už neposkytuje.", "en": "" }
   },
   {
+    "id": "push-up",
+    "name": { "cs": "Klik", "en": "Push-Up" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps", "abs"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Vzepři se na dlaních o něco šíře než ramena, tělo drž v jedné rovině od hlavy po paty, břicho a hýždě zpevněné. Spouštěj se, dokud se hrudník téměř nedotkne země, lokty směřují šikmo dozadu (asi 45° od trupu). Vytlač se zpět do natažených paží.", "en": "" },
+    "notes": { "cs": "Snazší varianta: ruce na vyvýšené ploše (lavice). Těžší: nohy na vyvýšené ploše, zátěžová vesta nebo pomalejší spouštění.", "en": "" }
+  },
+  {
+    "id": "dip-chest",
+    "name": { "cs": "Dipy s důrazem na hrudník", "en": "Chest Dip" },
+    "type": "compound",
+    "primary": ["chest", "triceps"],
+    "secondary": ["front_delts"],
+    "equipment": ["bodyweight", "dip_bars"],
+    "description": { "cs": "Vzepři se na bradlech v natažených pažích. Mírně se předkloň, lokty veď lehce do stran a spouštěj se, dokud nejsou ramena mírně pod úrovní loktů. Vytlač se zpět nahoru, předklon drž po celou dobu.", "en": "" },
+    "notes": { "cs": "Čím větší předklon, tím víc pracují prsní svaly; vzpřímený trup přesouvá zátěž na triceps. Do hloubky jdi jen tak daleko, jak ramena dovolí bez bolesti. Lze cvičit i na kruzích (náročnější na stabilitu).", "en": "" }
+  },
+  {
+    "id": "machine-chest-press",
+    "name": { "cs": "Tlaky na stroji", "en": "Machine Chest Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla ve výšce středu hrudníku. Lopatky přitiskni k opěradlu, stáhni je k sobě a dolů. Vytlač madla vpřed do téměř natažených paží a kontrolovaně je vrať do protažené pozice.", "en": "" },
+    "notes": { "cs": "Stroj nevyžaduje stabilizaci, takže je vhodný pro série do selhání bez dopomoci.", "en": "" }
+  },
+  {
+    "id": "pec-deck",
+    "name": { "cs": "Butterfly na stroji", "en": "Pec Deck" },
+    "type": "isolation",
+    "primary": ["chest"],
+    "secondary": ["front_delts"],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si zády k opěradlu, madla nebo opěrky předloktí ve výšce hrudníku. Lokty drž mírně pokrčené a přiváděj paže obloukem před sebe, dokud se madla nepotkají. Pomalu vrať do pozice, kde cítíš protažení prsních svalů.", "en": "" },
+    "notes": { "cs": "Nepouštěj paže za rovinu ramen, pokud to způsobuje nepříjemný tlak v ramenním kloubu.", "en": "" }
+  },
+  {
     "id": "overhead-press-barbell",
     "name": { "cs": "Tlaky s osou nad hlavu ve stoje", "en": "Barbell Overhead Press" },
     "type": "compound",
