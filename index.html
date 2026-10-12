@@ -109,7 +109,12 @@
          Obsah seznamu a tlačítka doplní app.js. -->
     <section id="plan-view" class="plan" aria-labelledby="plan-title" hidden>
       <a class="back-link" href="#/" id="plan-back"></a>
-      <h1 id="plan-title" tabindex="-1"></h1>
+      <div class="plan-heading">
+        <h1 id="plan-title" tabindex="-1"></h1>
+        <!-- Zámek proti nechtěnému přesunutí/odebrání cviků během tréninku.
+             Ikonu, popisek a stav (aria-pressed) doplní app.js. -->
+        <button id="plan-lock" class="icon-button lock-button" type="button" aria-pressed="false" hidden></button>
+      </div>
       <p id="plan-intro" class="plan-intro"></p>
       <!-- role="list": Safari jinak u seznamu bez odrážek nehlásí, že jde o seznam -->
       <ol id="plan-list" class="plan-list" role="list"></ol>
