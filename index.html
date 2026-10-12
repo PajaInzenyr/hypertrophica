@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Hypertrophica</title>
+  <link rel="stylesheet" href="./style.css">
+  <!-- type="module" = moderní JavaScript s import/export; spouští se až po načtení HTML -->
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="app-title" href="#/">
+      <span class="app-name">Hypertrophica</span>
+      <span class="app-subtitle" data-i18n="app.subtitle"></span>
+    </a>
+  </header>
+
+  <main>
+    <!-- Hláška o načítání / chybě. Texty doplní app.js ze souboru i18n/cs.json. -->
+    <p id="status" class="status" role="status">Načítám…</p>
+    <noscript><p class="status">Hypertrophica potřebuje zapnutý JavaScript.</p></noscript>
+
+    <!-- Pohled 1: seznam cviků s vyhledáváním a filtry -->
+    <section id="list-view" hidden>
+      <div class="search">
+        <label for="search-input" class="visually-hidden" data-i18n="search.label"></label>
+        <input id="search-input" type="search" autocomplete="off" spellcheck="false"
+               data-i18n-placeholder="search.placeholder">
+      </div>
+
+      <fieldset class="filters">
+        <legend class="visually-hidden" data-i18n="filters.heading"></legend>
+
+        <label class="filter">
+          <span data-i18n="filters.muscle"></span>
+          <select id="filter-muscle"></select>
+        </label>
+
+        <label class="filter">
+          <span data-i18n="filters.role"></span>
+          <select id="filter-role"></select>
+        </label>
+
+        <label class="filter">
+          <span data-i18n="filters.type"></span>
+          <select id="filter-type"></select>
+        </label>
+
+        <label class="filter">
+          <span data-i18n="filters.equipment"></span>
+          <select id="filter-equipment"></select>
+        </label>
+
+        <button id="filter-reset" type="button" class="button-secondary" data-i18n="filters.reset"></button>
+      </fieldset>
+
+      <p id="result-count" class="result-count" aria-live="polite"></p>
+      <ul id="exercise-list" class="exercise-list"></ul>
+    </section>
+
+    <!-- Pohled 2: detail jednoho cviku (otevře se přes adresu #/cvik/<id>) -->
+    <article id="detail-view" class="detail" hidden></article>
+  </main>
+</body>
+</html>
