@@ -95,6 +95,7 @@
   "bodymap": {
     "front": "Zepředu",
     "back": "Zezadu",
+    "heading": "Svaly",
     "hint": "Klepnutím na sval vyfiltruješ cviky. Dalším klepnutím filtr zrušíš.",
     "engagement": "Zapojené svaly",
     "legendPrimary": "primární",

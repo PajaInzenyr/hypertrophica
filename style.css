@@ -381,6 +381,7 @@ a {
   }
 
   /* Nadpis nad schématem (detail, trénink) vycentrovaný stejně jako obrázek */
+  .list-layout > .body-map h2,
   .detail > .body-map h2,
   .plan > .plan-map h2 {
     text-align: center;
@@ -904,6 +905,8 @@ select:disabled {
   margin-top: 24px;
 }
 
+/* Nadpis „Svaly“ nad schématem v seznamu má stejný vzhled jako nadpis schématu v tréninku */
+.body-map-heading,
 .plan-map h2 {
   margin: 0 0 8px;
   font-family: var(--font-display);
