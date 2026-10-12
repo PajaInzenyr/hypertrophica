@@ -20,6 +20,16 @@
     "notes": { "cs": "Větší sklon lavice přesouvá zátěž na přední delty.", "en": "" }
   },
   {
+    "id": "incline-press-smith",
+    "name": { "cs": "Tlaky na šikmé lavici v Smithově stroji", "en": "Smith Machine Incline Bench Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["smith_machine", "bench"],
+    "description": { "cs": "Postav lavici se sklonem 30–45° do Smithova stroje tak, aby osa dosedala na horní část hrudníku. Lopatky stáhni k sobě a dolů, chodidla pevně na zemi, úchop o něco širší než ramena. Odjisti osu otočením zápěstí, spouštěj ji kontrolovaně k horní části hrudníku a vytlač zpět nahoru.", "en": "" },
+    "notes": { "cs": "Vedená dráha umožňuje bezpečně cvičit blízko selhání bez dopomoci – nastav si bezpečnostní zarážky těsně pod úroveň hrudníku. Polohu lavice vyzkoušej s prázdnou osou.", "en": "" }
+  },
+  {
     "id": "cable-fly",
     "name": { "cs": "Rozpažování na kladkách", "en": "Cable Fly" },
     "type": "isolation",
@@ -118,6 +128,16 @@
     "equipment": ["dumbbell", "bench"],
     "description": { "cs": "Sedni si na lavici s opěradlem nastaveným téměř kolmo. Jednoručky drž ve výšce ramen, lokty mírně před tělem. Vytlač je nad hlavu, aniž by do sebe narazily, a kontrolovaně je spusť zpět k ramenům.", "en": "" },
     "notes": { "cs": "Jednoručky umožňují přirozenější dráhu než osa a odhalí rozdíl v síle mezi stranami.", "en": "" }
+  },
+  {
+    "id": "shoulder-press-smith",
+    "name": { "cs": "Tlak nad hlavu v Smithově stroji vsedě", "en": "Smith Machine Shoulder Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["smith_machine", "bench"],
+    "description": { "cs": "Postav lavici s opěradlem nastaveným téměř kolmo do Smithova stroje tak, aby osa klesala těsně před obličejem. Úchop o něco širší než ramena, lokty mírně před tělem. Odjisti osu, spouštěj ji kontrolovaně zhruba k bradě nebo horní části hrudníku a vytlač ji zpět nad hlavu.", "en": "" },
+    "notes": { "cs": "Pevná dráha umožňuje soustředit se jen na tlak a bezpečně dojít blízko selhání. Lavici neposouvej příliš dozadu – osa by pak klesala za hlavu a zbytečně zatěžovala ramenní kloub.", "en": "" }
   },
   {
     "id": "cable-lateral-raise",

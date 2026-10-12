@@ -63,6 +63,7 @@ Nová svalová skupina vyžaduje změnu `data/muscles.json` i SVG schématu (`to
 | `dumbbell` | Jednoručky | |
 | `cable` | Kladka | |
 | `machine` | Stroj | Posilovací stroj s vlastní dráhou pohybu |
+| `smith_machine` | Smithův stroj | Osa vedená v pevných kolejnicích; lavici uveď zvlášť (`bench`) |
 | `bench` | Lavice | Rovná, šikmá i Scottova lavice |
 | `squat_rack` | Klec / stojany | |
 | `pullup_bar` | Hrazda | |
