@@ -500,6 +500,76 @@
     "notes": { "cs": "Spouštění za hlavu (ne k čelu) víc protáhne dlouhou hlavu tricepsu.", "en": "" }
   },
   {
+    "id": "incline-curl-dumbbell",
+    "name": { "cs": "Bicepsový zdvih na šikmé lavici", "en": "Incline Dumbbell Curl" },
+    "type": "isolation",
+    "primary": ["biceps"],
+    "secondary": [],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na lavici se sklonem asi 45–60°, paže visí volně za tělem. Pokrč lokty a zvedni jednoručky k ramenům, lokty drž na místě. Pomalu spouštěj do plného natažení.", "en": "" },
+    "notes": { "cs": "Paže za tělem protahují biceps (hlavně dlouhou hlavu), což zvyšuje stimul pro růst.", "en": "" }
+  },
+  {
+    "id": "preacher-curl-ez-bar",
+    "name": { "cs": "Scottův zdvih", "en": "EZ-Bar Preacher Curl" },
+    "type": "isolation",
+    "primary": ["biceps"],
+    "secondary": ["forearms"],
+    "equipment": ["ez_bar", "bench"],
+    "description": { "cs": "Sedni si ke Scottově lavici, zadní strana paží leží na opěrce. Uchop EZ osu podhmatem a zvedni ji k ramenům. Spouštěj kontrolovaně téměř do natažených loktů.", "en": "" },
+    "notes": { "cs": "Nejtěžší je spodní část pohybu – tam nespěchej a nepouštěj osu volně dolů.", "en": "" }
+  },
+  {
+    "id": "overhead-triceps-extension-cable",
+    "name": { "cs": "Tricepsová extenze nad hlavou", "en": "Cable Overhead Triceps Extension" },
+    "type": "isolation",
+    "primary": ["triceps"],
+    "secondary": [],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se zády ke kladce, lano drž za hlavou, lokty směřují nahoru. Mírně se předkloň a natáhni lokty vpřed a nahoru. Pomalu vrať do maximálního pokrčení.", "en": "" },
+    "notes": { "cs": "Paže nad hlavou protahují dlouhou hlavu tricepsu; studie ukazují větší růst než u stahování kladky.", "en": "" }
+  },
+  {
+    "id": "close-grip-bench-press",
+    "name": { "cs": "Bench press úzkým úchopem", "en": "Close-Grip Bench Press" },
+    "type": "compound",
+    "primary": ["triceps"],
+    "secondary": ["chest", "front_delts"],
+    "equipment": ["barbell", "bench"],
+    "description": { "cs": "Lehni si na rovnou lavici, osu uchop na šířku ramen. Spouštěj ji ke spodní části hrudníku, lokty drž blíž u těla. Vytlač zpět nahoru.", "en": "" },
+    "notes": { "cs": "Příliš úzký úchop zbytečně zatěžuje zápěstí – stačí šířka ramen.", "en": "" }
+  },
+  {
+    "id": "diamond-push-up",
+    "name": { "cs": "Diamantový klik", "en": "Diamond Push-Up" },
+    "type": "compound",
+    "primary": ["triceps"],
+    "secondary": ["chest", "front_delts"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Vzepři se na dlaních pod hrudníkem tak, aby se palce a ukazováčky dotýkaly a tvořily kosočtverec. Tělo drž v jedné rovině, spouštěj se k rukám, lokty jdou podél těla. Vytlač se zpět.", "en": "" },
+    "notes": { "cs": "Snazší varianta: z kolen nebo s rukama na vyvýšené ploše.", "en": "" }
+  },
+  {
+    "id": "wrist-curl-barbell",
+    "name": { "cs": "Zápěstní flexe", "en": "Barbell Wrist Curl" },
+    "type": "isolation",
+    "primary": ["forearms"],
+    "secondary": [],
+    "equipment": ["barbell", "bench"],
+    "description": { "cs": "Sedni si na lavici, předloktí polož na stehna nebo lavici dlaněmi nahoru, zápěstí přesahují přes okraj. Spusť osu co nejníž, nech ji případně skutálet do prstů, a zvedni ji pokrčením zápěstí.", "en": "" },
+    "notes": { "cs": "Lze cvičit i s jednoručkami. Lehká váha a vyšší počet opakování (15–25).", "en": "" }
+  },
+  {
+    "id": "reverse-curl-ez-bar",
+    "name": { "cs": "Bicepsový zdvih nadhmatem", "en": "EZ-Bar Reverse Curl" },
+    "type": "isolation",
+    "primary": ["forearms"],
+    "secondary": ["biceps"],
+    "equipment": ["ez_bar"],
+    "description": { "cs": "Postav se vzpřímeně, EZ osu drž nadhmatem na šířku ramen. Pokrč lokty a zvedni osu k ramenům, lokty drž u těla. Pomalu spouštěj zpět.", "en": "" },
+    "notes": { "cs": "Zapojuje hlavně sval vřetenní a natahovače zápěstí na horní straně předloktí.", "en": "" }
+  },
+  {
     "id": "cable-crunch",
     "name": { "cs": "Zkracovačky na kladce v kleku", "en": "Cable Crunch" },
     "type": "isolation",
