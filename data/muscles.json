@@ -27,7 +27,7 @@
     "id": "forearms",
     "name": {"cs": "Předloktí", "en": "Forearms"},
     "latin": ["musculus brachioradialis", "musculi flexores antebrachii", "musculi extensores antebrachii"],
-    "views": ["front"]
+    "views": ["front", "back"]
   },
   {
     "id": "abs",

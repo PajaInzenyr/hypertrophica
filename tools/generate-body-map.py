@@ -126,7 +126,12 @@ BACK = [
     ("traps",       [(100, 50), (93, 54), (84, 61), (68, 70), (64, 77), (76, 80), (88, 86), (95, 96), (97, 112), (98, 140), (100, 152)], False),
     ("rear_delts",  [(62, 70), (48, 76), (40, 90), (40, 107), (52, 102), (63, 90), (69, 79)], True),
     ("triceps",     [(59, 106), (48, 107), (40, 120), (39, 142), (44, 155), (54, 151), (60, 130)], True),
+    ("forearms",    [(55, 161), (43, 163), (35, 178), (33, 204), (37, 216), (45, 211), (50, 190), (57, 170)], True),
 ]
+
+# Svaly zobrazené na obou pohledech (lýtka, předloktí). Na zadním pohledu dostanou
+# id s příponou -back (calves-back-l), aby byla id v celém SVG unikátní.
+SHARED = {m for m, _, _ in FRONT} & {m for m, _, _ in BACK}
 
 
 def abs_path():
@@ -149,12 +154,11 @@ def figure(view, muscles, offset, extra=()):
     lines.append(f'    <path class="body" d="{smooth_closed(symmetric(SILHOUETTE_HALF))}"/>')
     lines.append('    <ellipse class="body" cx="100" cy="28" rx="17" ry="21"/>')
     lines.extend(extra)
-    # Lýtka jsou na obou pohledech – id musí být v celém SVG unikátní.
-    suffix = "-back" if view == "back" else ""
     for muscle_id, half, paired in muscles:
+        suffix = "-back" if view == "back" and muscle_id in SHARED else ""
         if paired:
-            lines.append(muscle(f"{muscle_id}{suffix if muscle_id == 'calves' else ''}-l", muscle_id, smooth_closed(half)))
-            lines.append(muscle(f"{muscle_id}{suffix if muscle_id == 'calves' else ''}-r", muscle_id, smooth_closed(mirror(half))))
+            lines.append(muscle(f"{muscle_id}{suffix}-l", muscle_id, smooth_closed(half)))
+            lines.append(muscle(f"{muscle_id}{suffix}-r", muscle_id, smooth_closed(mirror(half))))
         else:
             lines.append(muscle(muscle_id, muscle_id, smooth_closed(symmetric(half))))
     lines.append("  </g>")
