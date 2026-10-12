@@ -30,6 +30,46 @@
     "notes": { "cs": "Kladky drží napětí i v plně stažené pozici, kde je jednoručka už neposkytuje.", "en": "" }
   },
   {
+    "id": "push-up",
+    "name": { "cs": "Klik", "en": "Push-Up" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps", "abs"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Vzepři se na dlaních o něco šíře než ramena, tělo drž v jedné rovině od hlavy po paty, břicho a hýždě zpevněné. Spouštěj se, dokud se hrudník téměř nedotkne země, lokty směřují šikmo dozadu (asi 45° od trupu). Vytlač se zpět do natažených paží.", "en": "" },
+    "notes": { "cs": "Snazší varianta: ruce na vyvýšené ploše (lavice). Těžší: nohy na vyvýšené ploše, zátěžová vesta nebo pomalejší spouštění.", "en": "" }
+  },
+  {
+    "id": "dip-chest",
+    "name": { "cs": "Dipy s důrazem na hrudník", "en": "Chest Dip" },
+    "type": "compound",
+    "primary": ["chest", "triceps"],
+    "secondary": ["front_delts"],
+    "equipment": ["bodyweight", "dip_bars"],
+    "description": { "cs": "Vzepři se na bradlech v natažených pažích. Mírně se předkloň, lokty veď lehce do stran a spouštěj se, dokud nejsou ramena mírně pod úrovní loktů. Vytlač se zpět nahoru, předklon drž po celou dobu.", "en": "" },
+    "notes": { "cs": "Čím větší předklon, tím víc pracují prsní svaly; vzpřímený trup přesouvá zátěž na triceps. Do hloubky jdi jen tak daleko, jak ramena dovolí bez bolesti. Lze cvičit i na kruzích (náročnější na stabilitu).", "en": "" }
+  },
+  {
+    "id": "machine-chest-press",
+    "name": { "cs": "Tlaky na stroji", "en": "Machine Chest Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla ve výšce středu hrudníku. Lopatky přitiskni k opěradlu, stáhni je k sobě a dolů. Vytlač madla vpřed do téměř natažených paží a kontrolovaně je vrať do protažené pozice.", "en": "" },
+    "notes": { "cs": "Stroj nevyžaduje stabilizaci, takže je vhodný pro série do selhání bez dopomoci.", "en": "" }
+  },
+  {
+    "id": "pec-deck",
+    "name": { "cs": "Butterfly na stroji", "en": "Pec Deck" },
+    "type": "isolation",
+    "primary": ["chest"],
+    "secondary": ["front_delts"],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si zády k opěradlu, madla nebo opěrky předloktí ve výšce hrudníku. Lokty drž mírně pokrčené a přiváděj paže obloukem před sebe, dokud se madla nepotkají. Pomalu vrať do pozice, kde cítíš protažení prsních svalů.", "en": "" },
+    "notes": { "cs": "Nepouštěj paže za rovinu ramen, pokud to způsobuje nepříjemný tlak v ramenním kloubu.", "en": "" }
+  },
+  {
     "id": "overhead-press-barbell",
     "name": { "cs": "Tlaky s osou nad hlavu ve stoje", "en": "Barbell Overhead Press" },
     "type": "compound",
@@ -70,12 +110,52 @@
     "notes": { "cs": "", "en": "" }
   },
   {
+    "id": "shoulder-press-dumbbell",
+    "name": { "cs": "Tlak s jednoručkami vsedě", "en": "Seated Dumbbell Shoulder Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na lavici s opěradlem nastaveným téměř kolmo. Jednoručky drž ve výšce ramen, lokty mírně před tělem. Vytlač je nad hlavu, aniž by do sebe narazily, a kontrolovaně je spusť zpět k ramenům.", "en": "" },
+    "notes": { "cs": "Jednoručky umožňují přirozenější dráhu než osa a odhalí rozdíl v síle mezi stranami.", "en": "" }
+  },
+  {
+    "id": "cable-lateral-raise",
+    "name": { "cs": "Upažování na kladce", "en": "Cable Lateral Raise" },
+    "type": "isolation",
+    "primary": ["side_delts"],
+    "secondary": ["traps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se bokem ke spodní kladce, madlo drž v ruce vzdálenější od kladky, kabel vede před tělem. S mírně pokrčeným loktem upažuj do výšky ramen a pomalu spouštěj zpět. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Kladka drží napětí i ve spodní části pohybu, kde jednoručka téměř nezatěžuje. Malá váha a čistá technika.", "en": "" }
+  },
+  {
+    "id": "reverse-pec-deck",
+    "name": { "cs": "Zapažování na stroji", "en": "Reverse Pec Deck" },
+    "type": "isolation",
+    "primary": ["rear_delts"],
+    "secondary": ["upper_back"],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si čelem k opěradlu stroje, madla drž v natažených pažích před sebou. Táhni paže obloukem do stran a dozadu, dokud nejsou v rovině s trupem. Pomalu vrať zpět.", "en": "" },
+    "notes": { "cs": "Neutrální úchop (palce nahoru) nebo nadhmat – obojí funguje. Nestahuj lopatky naplno, jinak přebírá práci střední část zad.", "en": "" }
+  },
+  {
+    "id": "handstand-push-up",
+    "name": { "cs": "Klik ve stojce u zdi", "en": "Wall Handstand Push-Up" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["triceps", "side_delts", "traps"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se do stojky na rukou zády nebo břichem ke zdi, ruce o něco šíře než ramena. Pokrčením loktů se spouštěj, dokud se hlava nedotkne země (nebo podložky), a vytlač se zpět do natažených paží. Tělo drž zpevněné.", "en": "" },
+    "notes": { "cs": "Náročný cvik. Pokud ho ještě nezvládneš, začni klikem s nohama na lavici v pozici „V“ nebo stojkou s částečným rozsahem.", "en": "" }
+  },
+  {
     "id": "pull-up",
     "name": { "cs": "Shyby nadhmatem", "en": "Pull-Up" },
     "type": "compound",
     "primary": ["lats"],
     "secondary": ["biceps", "upper_back", "forearms"],
-    "equipment": ["pullup_bar"],
+    "equipment": ["bodyweight", "pullup_bar"],
     "description": { "cs": "Visi na hrazdě nadhmatem, úchop o něco širší než ramena. Začni stažením lopatek dolů, pak táhni lokty k bokům, dokud není brada nad hrazdou. Spouštěj se kontrolovaně až do plného visu.", "en": "" },
     "notes": { "cs": "Pokud nezvládneš 5 čistých opakování, použij odporovou gumu nebo stroj s dopomocí.", "en": "" }
   },
@@ -98,6 +178,66 @@
     "equipment": ["barbell"],
     "description": { "cs": "Stoj na šířku boků, kolena mírně pokrčená, předklon v kyčlích na 30–45° s neutrálními zády. Táhni osu ke spodní části břicha, lokty vedou dozadu. Kontrolovaně spouštěj do natažení paží.", "en": "" },
     "notes": { "cs": "Záda drž rovná po celou sérii; trhání trupem snižuje účinnost i bezpečnost.", "en": "" }
+  },
+  {
+    "id": "seated-cable-row",
+    "name": { "cs": "Přítah kladky vsedě", "en": "Seated Cable Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Sedni si ke kladce, chodidla na opěrkách, kolena mírně pokrčená. Z protažené pozice s předsunutými rameny táhni madlo k břichu, lokty podél těla, lopatky stáhni k sobě. Pomalu vrať zpět do plného protažení.", "en": "" },
+    "notes": { "cs": "Trup se může mírně pohybovat, ale nehoupej se. Úzké madlo zapojí víc široký sval zádový, široké víc horní část zad.", "en": "" }
+  },
+  {
+    "id": "chest-supported-row-dumbbell",
+    "name": { "cs": "Přítah jednoruček s oporou hrudníku", "en": "Chest-Supported Dumbbell Row" },
+    "type": "compound",
+    "primary": ["upper_back"],
+    "secondary": ["lats", "rear_delts", "biceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Lehni si břichem na šikmou lavici (asi 30–45°), jednoručky visí pod rameny. Táhni je k bokům, lopatky stáhni k sobě, a kontrolovaně je spusť do plného natažení paží.", "en": "" },
+    "notes": { "cs": "Opora hrudníku vylučuje švihání a nezatěžuje bedra – vhodné i po náročném tréninku nohou.", "en": "" }
+  },
+  {
+    "id": "one-arm-row-dumbbell",
+    "name": { "cs": "Jednoruční přítah", "en": "One-Arm Dumbbell Row" },
+    "type": "compound",
+    "primary": ["lats"],
+    "secondary": ["upper_back", "rear_delts", "biceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Opři se jednou rukou a kolenem o lavici, záda rovná, přibližně rovnoběžná se zemí. Jednoručku táhni volnou rukou k boku, loket veď podél těla dozadu. Spouštěj kontrolovaně až do plného protažení. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Tah směrem ke kyčli (ne k rameni) víc zapojí široký sval zádový.", "en": "" }
+  },
+  {
+    "id": "straight-arm-pulldown",
+    "name": { "cs": "Stahování kladky s nataženými pažemi", "en": "Straight-Arm Pulldown" },
+    "type": "isolation",
+    "primary": ["lats"],
+    "secondary": ["triceps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se čelem k horní kladce, uchop tyč nebo lano, mírně se předkloň. S téměř nataženými lokty stahuj tyč obloukem k stehnům a pomalu ji vrať nahoru do protažení.", "en": "" },
+    "notes": { "cs": "Izoluje široký sval zádový bez zapojení bicepsu. Hodí se jako předvyčerpání před shyby.", "en": "" }
+  },
+  {
+    "id": "chin-up",
+    "name": { "cs": "Shyb podhmatem", "en": "Chin-Up" },
+    "type": "compound",
+    "primary": ["lats", "biceps"],
+    "secondary": ["upper_back", "forearms"],
+    "equipment": ["bodyweight", "pullup_bar"],
+    "description": { "cs": "Visi na hrazdě podhmatem, úchop na šířku ramen. Stáhni lopatky dolů a táhni se nahoru, dokud není brada nad hrazdou. Spouštěj se kontrolovaně do plného visu.", "en": "" },
+    "notes": { "cs": "Oproti shybům nadhmatem víc zapojuje biceps. Pokud nezvládneš 5 čistých opakování, použij odporovou gumu.", "en": "" }
+  },
+  {
+    "id": "inverted-row",
+    "name": { "cs": "Australský shyb", "en": "Inverted Row" },
+    "type": "compound",
+    "primary": ["upper_back"],
+    "secondary": ["lats", "rear_delts", "biceps"],
+    "equipment": ["bodyweight", "unspecified"],
+    "description": { "cs": "Lehni si pod tyč nebo madla ve výšce pasu a uchop je nadhmatem o něco šíře než ramena. Tělo drž rovně od hlavy po paty, paty na zemi. Přitáhni hrudník k tyči, stáhni lopatky k sobě a pomalu se spusť zpět.", "en": "" },
+    "notes": { "cs": "Lze cvičit na ose v kleci, na Smithově stroji, na kruzích nebo na pevném stole. Čím vodorovněji leží tělo, tím je cvik těžší.", "en": "" }
   },
   {
     "id": "shrug-dumbbell",
@@ -230,6 +370,96 @@
     "notes": { "cs": "Pauza v dolní pozici omezí odraz od šlach a zvýší práci svalu.", "en": "" }
   },
   {
+    "id": "hack-squat",
+    "name": { "cs": "Hack dřep", "en": "Hack Squat" },
+    "type": "compound",
+    "primary": ["quads"],
+    "secondary": ["glutes", "adductors"],
+    "equipment": ["machine"],
+    "description": { "cs": "Opři se zády o opěradlo stroje, ramena pod polštáři, chodidla na plošině na šířku ramen. Uvolni pojistky a spouštěj se do hlubokého dřepu, kolena jdou ve směru špiček. Vytlač se zpět nahoru, kolena v horní poloze nezamykej.", "en": "" },
+    "notes": { "cs": "Nižší postavení chodidel na plošině zvýší zapojení kvadricepsů.", "en": "" }
+  },
+  {
+    "id": "seated-leg-curl",
+    "name": { "cs": "Zakopávání vsedě", "en": "Seated Leg Curl" },
+    "type": "isolation",
+    "primary": ["hamstrings"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav stroj tak, aby kolena byla v ose otáčení a polštář ležel nad kotníky. Stehna zafixuj horní opěrkou. Pokrč kolena co nejvíc a pomalu vrať do natažení.", "en": "" },
+    "notes": { "cs": "Díky ohnutým kyčlím pracují hamstringy v protažené pozici, což podle studií vede k většímu růstu než zakopávání vleže. Mírný předklon trupu efekt zesílí.", "en": "" }
+  },
+  {
+    "id": "seated-calf-raise",
+    "name": { "cs": "Výpony vsedě", "en": "Seated Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si do stroje, polštář na stehnech těsně nad koleny, špičky na nášlapu. Spusť paty co nejníž do protažení, krátce vydrž a vytlač se na špičky co nejvýš.", "en": "" },
+    "notes": { "cs": "S pokrčenými koleny pracuje hlavně šikmý sval lýtkový (soleus), který vestoje dostává méně. Doplňuje výpony ve stoje.", "en": "" }
+  },
+  {
+    "id": "walking-lunge-dumbbell",
+    "name": { "cs": "Výpady v chůzi", "en": "Dumbbell Walking Lunge" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors", "hamstrings"],
+    "equipment": ["dumbbell"],
+    "description": { "cs": "S jednoručkami v rukou udělej dlouhý krok vpřed a spusť se, dokud se zadní koleno téměř nedotkne země. Odraz se přední nohou a pokračuj krokem druhou nohou vpřed.", "en": "" },
+    "notes": { "cs": "Delší krok a mírný předklon víc zapojí hýždě, kratší krok víc kvadricepsy.", "en": "" }
+  },
+  {
+    "id": "goblet-squat",
+    "name": { "cs": "Goblet dřep", "en": "Goblet Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors", "abs"],
+    "equipment": ["dumbbell"],
+    "description": { "cs": "Drž jednoručku svisle u hrudníku oběma rukama. Chodidla mírně šíře než ramena, špičky lehce ven. Spouštěj se do hlubokého dřepu, trup vzpřímený, lokty mezi koleny. Vytlač se zpět nahoru.", "en": "" },
+    "notes": { "cs": "Dobrý cvik na nácvik techniky dřepu a pro dny, kdy nechceš zatěžovat záda osou.", "en": "" }
+  },
+  {
+    "id": "nordic-curl",
+    "name": { "cs": "Nordic curl", "en": "Nordic Hamstring Curl" },
+    "type": "isolation",
+    "primary": ["hamstrings"],
+    "secondary": [],
+    "equipment": ["bodyweight", "unspecified"],
+    "description": { "cs": "Klekni si na měkkou podložku, paty zafixuj (partner, opěrka stroje nebo pevný předmět). Tělo drž rovně od kolen po hlavu a co nejpomaleji padej vpřed. Když už pohyb neubrzdíš, zachyť se rukama a odraz se zpět.", "en": "" },
+    "notes": { "cs": "Velmi náročný excentrický cvik. Začni s malým rozsahem a 1–2 sériemi, svalovka bývá výrazná.", "en": "" }
+  },
+  {
+    "id": "sissy-squat",
+    "name": { "cs": "Sissy dřep", "en": "Sissy Squat" },
+    "type": "isolation",
+    "primary": ["quads"],
+    "secondary": [],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se na špičky, jednou rukou se přidrž opory. Pokrč kolena a posouvej je vpřed, zatímco se trup zaklání – boky a ramena zůstávají v jedné linii. Spusť se co nejníž a vrať se nahoru silou kvadricepsů.", "en": "" },
+    "notes": { "cs": "Zatěžuje přímý sval stehenní v protažené pozici. Pokud tě bolí kolena, zmenši rozsah.", "en": "" }
+  },
+  {
+    "id": "pistol-squat",
+    "name": { "cs": "Dřep na jedné noze", "en": "Pistol Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se na jednu nohu, druhou natáhni vpřed. Spouštěj se do hlubokého dřepu na stojné noze, paže předpaž pro rovnováhu. Vytlač se zpět nahoru, aniž by se natažená noha dotkla země. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Snazší varianta: dřep na lavici nebo přidržování se opory.", "en": "" }
+  },
+  {
+    "id": "single-leg-calf-raise",
+    "name": { "cs": "Výpon na jedné noze", "en": "Single-Leg Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se špičkou jedné nohy na hranu schodu, rukou se přidrž. Spusť patu co nejníž do protažení, krátce vydrž a vytlač se na špičku co nejvýš. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Zátěž zvýšíš jednoručkou ve volné ruce.", "en": "" }
+  },
+  {
     "id": "barbell-curl",
     "name": { "cs": "Bicepsový zdvih s osou", "en": "Barbell Curl" },
     "type": "isolation",
@@ -270,6 +500,76 @@
     "notes": { "cs": "Spouštění za hlavu (ne k čelu) víc protáhne dlouhou hlavu tricepsu.", "en": "" }
   },
   {
+    "id": "incline-curl-dumbbell",
+    "name": { "cs": "Bicepsový zdvih na šikmé lavici", "en": "Incline Dumbbell Curl" },
+    "type": "isolation",
+    "primary": ["biceps"],
+    "secondary": [],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na lavici se sklonem asi 45–60°, paže visí volně za tělem. Pokrč lokty a zvedni jednoručky k ramenům, lokty drž na místě. Pomalu spouštěj do plného natažení.", "en": "" },
+    "notes": { "cs": "Paže za tělem protahují biceps (hlavně dlouhou hlavu), což zvyšuje stimul pro růst.", "en": "" }
+  },
+  {
+    "id": "preacher-curl-ez-bar",
+    "name": { "cs": "Scottův zdvih", "en": "EZ-Bar Preacher Curl" },
+    "type": "isolation",
+    "primary": ["biceps"],
+    "secondary": ["forearms"],
+    "equipment": ["ez_bar", "bench"],
+    "description": { "cs": "Sedni si ke Scottově lavici, zadní strana paží leží na opěrce. Uchop EZ osu podhmatem a zvedni ji k ramenům. Spouštěj kontrolovaně téměř do natažených loktů.", "en": "" },
+    "notes": { "cs": "Nejtěžší je spodní část pohybu – tam nespěchej a nepouštěj osu volně dolů.", "en": "" }
+  },
+  {
+    "id": "overhead-triceps-extension-cable",
+    "name": { "cs": "Tricepsová extenze nad hlavou", "en": "Cable Overhead Triceps Extension" },
+    "type": "isolation",
+    "primary": ["triceps"],
+    "secondary": [],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se zády ke kladce, lano drž za hlavou, lokty směřují nahoru. Mírně se předkloň a natáhni lokty vpřed a nahoru. Pomalu vrať do maximálního pokrčení.", "en": "" },
+    "notes": { "cs": "Paže nad hlavou protahují dlouhou hlavu tricepsu; studie ukazují větší růst než u stahování kladky.", "en": "" }
+  },
+  {
+    "id": "close-grip-bench-press",
+    "name": { "cs": "Bench press úzkým úchopem", "en": "Close-Grip Bench Press" },
+    "type": "compound",
+    "primary": ["triceps"],
+    "secondary": ["chest", "front_delts"],
+    "equipment": ["barbell", "bench"],
+    "description": { "cs": "Lehni si na rovnou lavici, osu uchop na šířku ramen. Spouštěj ji ke spodní části hrudníku, lokty drž blíž u těla. Vytlač zpět nahoru.", "en": "" },
+    "notes": { "cs": "Příliš úzký úchop zbytečně zatěžuje zápěstí – stačí šířka ramen.", "en": "" }
+  },
+  {
+    "id": "diamond-push-up",
+    "name": { "cs": "Diamantový klik", "en": "Diamond Push-Up" },
+    "type": "compound",
+    "primary": ["triceps"],
+    "secondary": ["chest", "front_delts"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Vzepři se na dlaních pod hrudníkem tak, aby se palce a ukazováčky dotýkaly a tvořily kosočtverec. Tělo drž v jedné rovině, spouštěj se k rukám, lokty jdou podél těla. Vytlač se zpět.", "en": "" },
+    "notes": { "cs": "Snazší varianta: z kolen nebo s rukama na vyvýšené ploše.", "en": "" }
+  },
+  {
+    "id": "wrist-curl-barbell",
+    "name": { "cs": "Zápěstní flexe", "en": "Barbell Wrist Curl" },
+    "type": "isolation",
+    "primary": ["forearms"],
+    "secondary": [],
+    "equipment": ["barbell", "bench"],
+    "description": { "cs": "Sedni si na lavici, předloktí polož na stehna nebo lavici dlaněmi nahoru, zápěstí přesahují přes okraj. Spusť osu co nejníž, nech ji případně skutálet do prstů, a zvedni ji pokrčením zápěstí.", "en": "" },
+    "notes": { "cs": "Lze cvičit i s jednoručkami. Lehká váha a vyšší počet opakování (15–25).", "en": "" }
+  },
+  {
+    "id": "reverse-curl-ez-bar",
+    "name": { "cs": "Bicepsový zdvih nadhmatem", "en": "EZ-Bar Reverse Curl" },
+    "type": "isolation",
+    "primary": ["forearms"],
+    "secondary": ["biceps"],
+    "equipment": ["ez_bar"],
+    "description": { "cs": "Postav se vzpřímeně, EZ osu drž nadhmatem na šířku ramen. Pokrč lokty a zvedni osu k ramenům, lokty drž u těla. Pomalu spouštěj zpět.", "en": "" },
+    "notes": { "cs": "Zapojuje hlavně sval vřetenní a natahovače zápěstí na horní straně předloktí.", "en": "" }
+  },
+  {
     "id": "cable-crunch",
     "name": { "cs": "Zkracovačky na kladce v kleku", "en": "Cable Crunch" },
     "type": "isolation",
@@ -285,7 +585,7 @@
     "type": "isolation",
     "primary": ["abs"],
     "secondary": ["obliques", "forearms"],
-    "equipment": ["pullup_bar"],
+    "equipment": ["bodyweight", "pullup_bar"],
     "description": { "cs": "Visi na hrazdě. Zvedej nohy (pokrčené nebo natažené) nahoru a na konci podsaď pánev, aby pracovalo břicho, ne jen ohybače kyčle. Pomalu spouštěj bez houpání.", "en": "" },
     "notes": { "cs": "", "en": "" }
   },
@@ -298,5 +598,35 @@
     "equipment": ["cable"],
     "description": { "cs": "Postav se bokem ke kladce nastavené vysoko, madlo drž oběma rukama. Táhni madlo šikmo dolů přes tělo k opačnému boku, rotace vychází z trupu. Pomalu vrať zpět a po sérii vyměň stranu.", "en": "" },
     "notes": { "cs": "", "en": "" }
+  },
+  {
+    "id": "barbell-rollout",
+    "name": { "cs": "Rollout s osou", "en": "Barbell Rollout" },
+    "type": "isolation",
+    "primary": ["abs"],
+    "secondary": ["lats", "obliques"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Klekni si za osu s kulatými kotouči, uchop ji na šířku ramen. Se zpevněným břichem a mírně podsazenou pánví ji pomalu rolluj vpřed, dokud udržíš rovná záda. Stažením břicha se vrať zpět.", "en": "" },
+    "notes": { "cs": "Stejně funguje kolečko na břicho. Nepropínej se v bedrech – zastav dřív, než se začnou prohýbat.", "en": "" }
+  },
+  {
+    "id": "l-sit",
+    "name": { "cs": "L-sed", "en": "L-Sit" },
+    "type": "isolation",
+    "primary": ["abs"],
+    "secondary": ["quads", "triceps"],
+    "equipment": ["bodyweight", "dip_bars"],
+    "description": { "cs": "Vzepři se na bradlech v natažených pažích, ramena stlač dolů. Zvedni natažené nohy před sebe do vodorovné polohy a vydrž.", "en": "" },
+    "notes": { "cs": "Snazší varianta: pokrčená kolena (tuck). Měří se čas výdrže, např. 3–5× 10–30 s.", "en": "" }
+  },
+  {
+    "id": "side-plank",
+    "name": { "cs": "Boční plank", "en": "Side Plank" },
+    "type": "isolation",
+    "primary": ["obliques"],
+    "secondary": ["abs", "abductors"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Lehni si na bok, opři se o předloktí, loket pod ramenem. Zvedni boky tak, aby tělo tvořilo rovnou linii od hlavy po kotníky, a vydrž. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Těžší varianta: zvednout horní nohu nebo položit zátěž na bok.", "en": "" }
   }
 ]
