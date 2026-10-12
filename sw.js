@@ -8,7 +8,7 @@
 // DŮLEŽITÉ: Při každé změně obsahu nebo kódu zvyš CACHE_VERSION. Prohlížeč pozná novou
 // verzi jen podle toho, že se změnil tento soubor – jinak mobil dál ukazuje starou verzi.
 // Nová verze se stáhne při otevření aplikace a zobrazí se po dalším obnovení stránky.
-const CACHE_VERSION = 9;
+const CACHE_VERSION = 10;
 const CACHE_NAME = `hypertrophica-v${CACHE_VERSION}`;
 
 // Všechny soubory, které aplikace potřebuje. Nový soubor (modul, ikona, data) sem přidej.
@@ -39,7 +39,10 @@ const FILES = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(FILES))
+      // cache: 'reload' = stáhni soubory vždy znovu ze serveru. Bez toho by je prohlížeč mohl
+      // vzít ze své běžné HTTP cache (GitHub Pages povoluje soubory držet 10 minut)
+      // a nová verze aplikace by se uložila se starými soubory.
+      .then((cache) => cache.addAll(FILES.map((url) => new Request(url, { cache: 'reload' }))))
       // Nová verze se aktivuje hned, nečeká na zavření všech oken aplikace.
       .then(() => self.skipWaiting())
   );
