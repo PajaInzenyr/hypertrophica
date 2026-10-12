@@ -386,12 +386,13 @@ a {
     text-align: center;
   }
 
-  /* Trénink: obsah vpravo svisle na střed okna.
+  /* Trénink a detail cviku: obsah vpravo svisle na střed okna.
      Mřížka má nahoře a dole pružný řádek (1fr), mezi nimi řádky pro jednotlivé prvky.
      Zbylé místo se rozdělí rovným dílem nahoru a dolů → obsah je uprostřed.
      Když je obsah vyšší než okno, pružné řádky mají výšku 0 a obsah začíná nahoře.
      Prvky mají řádek pevně daný, aby první z nich nepřipadl do horního pružného řádku. */
-  .plan {
+  .plan,
+  .detail {
     grid-template-rows: 1fr repeat(8, auto) 1fr;
     min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
     min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
@@ -405,6 +406,17 @@ a {
   .plan > .week-summary { grid-row: 7; }
   .plan > .plan-actions { grid-row: 8; }
   .plan > .plan-feedback { grid-row: 9; }
+
+  /* Detail: popis a poznámky jsou v HTML za schématem jako dvojice nadpis h2 + odstavec p
+     (každá je nepovinná), proto se řádek určuje podle pořadí za schématem (figure). */
+  .detail > .back-link { grid-row: 2; }
+  .detail > .detail-heading { grid-row: 3; }
+  .detail > .detail-subtitle { grid-row: 4; }
+  .detail > .detail-facts { grid-row: 5; }
+  .detail > figure + h2 { grid-row: 6; }
+  .detail > figure + h2 + p { grid-row: 7; }
+  .detail > figure + h2 + p + h2 { grid-row: 8; }
+  .detail > figure + h2 + p + h2 + p { grid-row: 9; }
 
 }
 
