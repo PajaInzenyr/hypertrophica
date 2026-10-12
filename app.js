@@ -18,6 +18,8 @@ const state = {
   scrollY: { list: 0, plan: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
   returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, nebo trénink)
+  planHash: '#/trenink', // adresa naposledy zobrazeného tréninku (vlastní, nebo sdílený)
+  sharedPlan: null, // ID cviků ze sdíleného odkazu; null = zobrazuje se vlastní trénink
   bodyMap: null, // hlavní klikací schéma svalů
 };
 
@@ -332,13 +334,35 @@ function showPlan(previous) {
 }
 
 function renderPlan() {
+  if (state.sharedPlan) {
+    renderSharedPlan(state.sharedPlan);
+    return;
+  }
   const ids = plan.getPlan();
   ui.planTitle.textContent = t('plan.title');
   ui.planIntro.textContent = t(ids.length ? 'plan.hint' : 'plan.empty');
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length)));
-  ui.planActions.replaceChildren(...(ids.length ? [
-    actionButton('button-secondary', t('plan.clear'), onClearPlan),
-  ] : []));
+  if (ids.length === 0) {
+    ui.planActions.replaceChildren();
+    return;
+  }
+  ui.planActions.replaceChildren(
+    // Sdílet přes systémovou nabídku (WhatsApp, Messenger…) umí hlavně mobilní prohlížeče.
+    ...(navigator.share ? [actionButton('button-primary', t('plan.share'), onSharePlan)] : []),
+    actionButton('button-secondary', t('plan.copyLink'), onCopyPlanLink),
+    actionButton('button-secondary', t('plan.clear'), onClearPlan)
+  );
+}
+
+// Náhled tréninku, který přišel odkazem: jen pořadí, bez úprav; lze ho uložit jako vlastní.
+function renderSharedPlan(ids) {
+  ui.planTitle.textContent = t('plan.sharedTitle');
+  ui.planIntro.textContent = t(ids.length ? 'plan.sharedIntro' : 'plan.sharedEmpty');
+  ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, false)));
+  ui.planActions.replaceChildren(
+    ...(ids.length ? [actionButton('button-primary', t('plan.import'), onImportPlan)] : []),
+    el('a', { className: 'button-secondary', href: '#/', textContent: t('plan.close') })
+  );
 }
 
 function actionButton(className, text, onClick) {
@@ -374,20 +398,26 @@ function numberBadge(number) {
 }
 
 // Jedna položka tréninku: pořadí | cvik | ↑ ↓ | ×
-function planItem(ex, index, total) {
+// Ve sdíleném náhledu (editable = false) jen pořadí a cvik.
+function planItem(ex, index, total, editable = true) {
   const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
-  return el('li', { className: 'plan-item' },
+  const item = el('li', { className: 'plan-item' },
     numberBadge(index + 1),
     el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
       el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
       el('span', { className: 'exercise-meta', textContent: meta })
-    ),
-    el('div', { className: 'plan-move' },
-      iconButton('up', ex, index === 0),
-      iconButton('down', ex, index === total - 1)
-    ),
-    iconButton('remove', ex)
+    )
   );
+  if (editable) {
+    item.append(
+      el('div', { className: 'plan-move' },
+        iconButton('up', ex, index === 0),
+        iconButton('down', ex, index === total - 1)
+      ),
+      iconButton('remove', ex)
+    );
+  }
+  return item;
 }
 
 function onPlanItemAction(button) {
@@ -415,6 +445,58 @@ function onPlanItemAction(button) {
   (same.disabled ? other : same).focus();
 }
 
+// ===== Sdílení tréninku odkazem =====
+// Trénink se celý zapíše do adresy: …/hypertrophica/#/trenink?cviky=id1,id2,…
+// Nic se neposílá na server – kdo odkaz otevře, uvidí trénink ve své Hypertrophice.
+function planShareUrl(ids) {
+  return `${location.origin}${location.pathname}#/trenink?cviky=${ids.join(',')}`;
+}
+
+// Z textu „id1,id2,…“ vezme jen existující cviky, každý jednou.
+function parseSharedIds(text) {
+  return [...new Set(text.split(','))].filter((id) => state.byId.has(id));
+}
+
+async function onSharePlan() {
+  const ids = plan.getPlan();
+  const list = ids.map((id, i) => `${i + 1}. ${localized(state.byId.get(id).name)}`).join('\n');
+  try {
+    await navigator.share({
+      title: t('plan.shareTitle'),
+      text: `${t('plan.shareTitle')}\n${list}\n`,
+      url: planShareUrl(ids),
+    });
+  } catch (error) {
+    // AbortError = uživatel nabídku sdílení zavřel; jinak zkus aspoň zkopírovat odkaz.
+    if (error.name !== 'AbortError') onCopyPlanLink();
+  }
+}
+
+async function onCopyPlanLink() {
+  const url = planShareUrl(plan.getPlan());
+  try {
+    await navigator.clipboard.writeText(url);
+    ui.planFeedback.textContent = t('plan.copied');
+  } catch {
+    // Schránka není dostupná (starší prohlížeč, zakázané oprávnění) → ukaž odkaz ke zkopírování ručně.
+    window.prompt(t('plan.copyManually'), url);
+  }
+}
+
+function onImportPlan() {
+  const ids = state.sharedPlan;
+  const current = plan.getPlan();
+  const differs = current.join(',') !== ids.join(',');
+  if (current.length > 0 && differs
+    && !window.confirm(t('plan.replaceConfirm', { count: current.length }))) return;
+  plan.setPlan(ids);
+  // Adresu přepiš na vlastní trénink (bez přidání do historie, tlačítko Zpět nevede na náhled).
+  history.replaceState(null, '', '#/trenink');
+  route();
+  afterPlanChange();
+  ui.planFeedback.textContent = t('plan.imported');
+}
+
 function onClearPlan() {
   if (!window.confirm(t('plan.clearConfirm'))) return;
   plan.clearPlan();
@@ -424,7 +506,8 @@ function onClearPlan() {
 }
 
 // ===== Přepínání pohledů podle adresy =====
-// #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink
+// #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink,
+// #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit)
 function route() {
   const previous = state.view;
   // Zapamatuj si, kam se v seznamu / tréninku odscrollovalo, ať se tam dá vrátit.
@@ -433,9 +516,16 @@ function route() {
   const detail = location.hash.match(/^#\/cvik\/([\w-]+)$/);
   if (detail) {
     // „Zpět“ z detailu vede tam, odkud byl detail otevřen.
-    if (previous !== 'detail') state.returnHash = previous === 'plan' ? '#/trenink' : '#/';
+    if (previous !== 'detail') state.returnHash = previous === 'plan' ? state.planHash : '#/';
     showDetail(detail[1]);
-  } else if (/^#\/trenink$/.test(location.hash)) {
+    return;
+  }
+
+  const planMatch = location.hash.match(/^#\/trenink(?:\?(.*))?$/);
+  if (planMatch) {
+    state.planHash = location.hash;
+    const shared = new URLSearchParams(planMatch[1] ?? '').get('cviky');
+    state.sharedPlan = shared === null ? null : parseSharedIds(shared);
     showPlan(previous);
   } else {
     showList(previous);
