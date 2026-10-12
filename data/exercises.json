@@ -598,5 +598,35 @@
     "equipment": ["cable"],
     "description": { "cs": "Postav se bokem ke kladce nastavené vysoko, madlo drž oběma rukama. Táhni madlo šikmo dolů přes tělo k opačnému boku, rotace vychází z trupu. Pomalu vrať zpět a po sérii vyměň stranu.", "en": "" },
     "notes": { "cs": "", "en": "" }
+  },
+  {
+    "id": "barbell-rollout",
+    "name": { "cs": "Rollout s osou", "en": "Barbell Rollout" },
+    "type": "isolation",
+    "primary": ["abs"],
+    "secondary": ["lats", "obliques"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Klekni si za osu s kulatými kotouči, uchop ji na šířku ramen. Se zpevněným břichem a mírně podsazenou pánví ji pomalu rolluj vpřed, dokud udržíš rovná záda. Stažením břicha se vrať zpět.", "en": "" },
+    "notes": { "cs": "Stejně funguje kolečko na břicho. Nepropínej se v bedrech – zastav dřív, než se začnou prohýbat.", "en": "" }
+  },
+  {
+    "id": "l-sit",
+    "name": { "cs": "L-sed", "en": "L-Sit" },
+    "type": "isolation",
+    "primary": ["abs"],
+    "secondary": ["quads", "triceps"],
+    "equipment": ["bodyweight", "dip_bars"],
+    "description": { "cs": "Vzepři se na bradlech v natažených pažích, ramena stlač dolů. Zvedni natažené nohy před sebe do vodorovné polohy a vydrž.", "en": "" },
+    "notes": { "cs": "Snazší varianta: pokrčená kolena (tuck). Měří se čas výdrže, např. 3–5× 10–30 s.", "en": "" }
+  },
+  {
+    "id": "side-plank",
+    "name": { "cs": "Boční plank", "en": "Side Plank" },
+    "type": "isolation",
+    "primary": ["obliques"],
+    "secondary": ["abs", "abductors"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Lehni si na bok, opři se o předloktí, loket pod ramenem. Zvedni boky tak, aby tělo tvořilo rovnou linii od hlavy po kotníky, a vydrž. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Těžší varianta: zvednout horní nohu nebo položit zátěž na bok.", "en": "" }
   }
 ]
