@@ -389,9 +389,46 @@ a {
     padding-left: calc(var(--map-col) + 48px);
   }
 
-  /* Karty cviků ve více sloupcích, když je dost místa (na 1920 px dva sloupce) */
-  .exercise-list {
-    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+}
+
+/* ===== Panel oblíbených =====
+   Mobil a menší monitory: skrytý (oblíbené ukáže tlačítko „Oblíbené“ ve filtrech).
+   Od 1200 px: třetí sloupec vpravo od seznamu, přilepený jako schéma.
+   Když je oblíbených víc, než se vejde do výšky okna, panel se posouvá sám. */
+.favorites-panel {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .list-layout {
+    grid-template-columns: var(--map-col) minmax(0, 1fr) clamp(300px, 22vw, 400px);
+  }
+
+  .list-layout > .favorites-panel {
+    display: block;
+    grid-column: 3;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--header-h) + var(--page-pad-y));
+    max-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    max-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    overflow-y: auto;
+    margin-left: -16px; /* mezera mezi seznamem a panelem 32 px místo 48 px */
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+  }
+
+  .favorites-heading {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .favorites-list .status {
+    margin: 0;
+    font-size: 0.875rem;
   }
 }
 

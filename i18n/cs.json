@@ -21,7 +21,9 @@
   "favorites": {
     "add": "Přidat do oblíbených: {name}",
     "remove": "Odebrat z oblíbených: {name}",
-    "empty": "Zatím nemáš žádné oblíbené cviky. Přidáš je klepnutím na hvězdičku u cviku."
+    "empty": "Zatím nemáš žádné oblíbené cviky. Přidáš je klepnutím na hvězdičku u cviku.",
+    "heading": "Oblíbené cviky",
+    "panelEmpty": "Zatím nemáš žádné oblíbené cviky. Přidáš je kliknutím na hvězdičku u cviku."
   },
   "plan": {
     "title": "Trénink {number}",

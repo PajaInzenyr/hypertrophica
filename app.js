@@ -40,6 +40,7 @@ const ui = {
   reset: $('filter-reset'),
   count: $('result-count'),
   list: $('exercise-list'),
+  favoritesList: $('favorites-list'),
   bodyMap: $('body-map'),
   planLink: $('plan-link'),
   planCount: $('plan-count'),
@@ -127,6 +128,7 @@ async function init() {
   updatePlanLink();
   bindEvents();
   renderList();
+  renderFavorites();
   route();
 }
 
@@ -195,6 +197,7 @@ function bindEvents() {
   onExternalChange(() => {
     syncFilterControls();
     renderList();
+    renderFavorites();
     document.querySelectorAll('.star-button').forEach(updateStarButton);
   });
   window.addEventListener('hashchange', route);
@@ -235,17 +238,32 @@ function renderList() {
     return;
   }
 
-  ui.list.replaceChildren(...results.map((ex) => {
-    const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
-    return el('li', { className: 'exercise-item' },
-      el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
-        el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
-        el('span', { className: 'exercise-meta', textContent: meta })
-      ),
-      planButton(ex.id),
-      starButton(ex.id)
-    );
-  }));
+  ui.list.replaceChildren(...results.map(exerciseItem));
+}
+
+// Jedna položka seznamu: odkaz na detail + tlačítko „do tréninku“ + hvězdička.
+function exerciseItem(ex) {
+  const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
+  return el('li', { className: 'exercise-item' },
+    el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
+      el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
+      el('span', { className: 'exercise-meta', textContent: meta })
+    ),
+    planButton(ex.id),
+    starButton(ex.id)
+  );
+}
+
+// Panel oblíbených (na PC vpravo od seznamu). Ukazuje vždy všechny oblíbené cviky
+// bez ohledu na filtry, seřazené stejně jako hlavní seznam (podle názvu).
+function renderFavorites() {
+  const favorites = getFavorites();
+  const items = state.exercises.filter((ex) => favorites.has(ex.id));
+  if (items.length === 0) {
+    ui.favoritesList.replaceChildren(el('li', { className: 'status', textContent: t('favorites.panelEmpty') }));
+    return;
+  }
+  ui.favoritesList.replaceChildren(...items.map(exerciseItem));
 }
 
 // ===== Oblíbené (hvězdička) =====
@@ -280,6 +298,18 @@ function onStarClick(button) {
   // Stejný cvik může mít hvězdičku v seznamu i v detailu – aktualizuj všechny.
   document.querySelectorAll(`.star-button[data-id="${id}"]`).forEach(updateStarButton);
   syncFilterControls(); // počet v tlačítku „Jen oblíbené“
+
+  // Panel oblíbených: překreslit. Když se hvězdička klikla přímo v panelu (cvik z něj zmizí),
+  // přesune se fokus na sousední hvězdičku v panelu, nebo na tlačítko „Oblíbené“, když je panel prázdný.
+  const inPanel = ui.favoritesList.contains(button);
+  const panelIndex = [...ui.favoritesList.querySelectorAll('.star-button')].indexOf(button);
+  renderFavorites();
+  if (inPanel) {
+    const remaining = ui.favoritesList.querySelectorAll('.star-button');
+    const next = remaining[Math.min(panelIndex, remaining.length - 1)];
+    if (next) next.focus();
+    else ui.favorites.focus();
+  }
 
   // V režimu „jen oblíbené“ odebraný cvik zmizí ze seznamu → překreslit
   // a fokus přesunout na sousední hvězdičku, aby se uživatel klávesnicí neztratil.
