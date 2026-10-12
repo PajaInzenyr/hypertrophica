@@ -10,6 +10,16 @@
     "notes": { "cs": "Pro maximální stimul prsou nevynechávej spodní fázi pohybu. Při těžkých sériích cvič s dopomocí nebo v kleci s bezpečnostními zarážkami.", "en": "" }
   },
   {
+    "id": "bench-press-smith",
+    "name": { "cs": "Bench press v Smithově stroji", "en": "Smith Machine Bench Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["smith_machine", "bench"],
+    "description": { "cs": "Postav rovnou lavici do Smithova stroje tak, aby osa dosedala na spodní část hrudníku. Lopatky stáhni k sobě a dolů, chodidla pevně na zemi, úchop o něco širší než ramena. Odjisti osu otočením zápěstí, spouštěj ji kontrolovaně k hrudníku, lokty drž přibližně 45–70° od trupu, a vytlač ji zpět nahoru.", "en": "" },
+    "notes": { "cs": "Vedená dráha umožňuje bezpečně cvičit blízko selhání bez dopomoci – nastav si bezpečnostní zarážky těsně pod úroveň hrudníku. Polohu lavice vyzkoušej s prázdnou osou.", "en": "" }
+  },
+  {
     "id": "incline-press-dumbbell",
     "name": { "cs": "Tlaky s jednoručkami na šikmé lavici", "en": "Incline Dumbbell Press" },
     "type": "compound",
@@ -18,6 +28,16 @@
     "equipment": ["dumbbell", "bench"],
     "description": { "cs": "Nastav lavici na 30–45°. Jednoručky drž nad hrudníkem, lopatky stažené. Spouštěj je do strany k horní části hrudníku, dokud neucítíš protažení prsou, a pak je vytlač zpět nahoru po mírném oblouku.", "en": "" },
     "notes": { "cs": "Větší sklon lavice přesouvá zátěž na přední delty.", "en": "" }
+  },
+  {
+    "id": "incline-press-smith",
+    "name": { "cs": "Tlaky na šikmé lavici v Smithově stroji", "en": "Smith Machine Incline Bench Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["smith_machine", "bench"],
+    "description": { "cs": "Postav lavici se sklonem 30–45° do Smithova stroje tak, aby osa dosedala na horní část hrudníku. Lopatky stáhni k sobě a dolů, chodidla pevně na zemi, úchop o něco širší než ramena. Odjisti osu otočením zápěstí, spouštěj ji kontrolovaně k horní části hrudníku a vytlač zpět nahoru.", "en": "" },
+    "notes": { "cs": "Vedená dráha umožňuje bezpečně cvičit blízko selhání bez dopomoci – nastav si bezpečnostní zarážky těsně pod úroveň hrudníku. Polohu lavice vyzkoušej s prázdnou osou.", "en": "" }
   },
   {
     "id": "cable-fly",
@@ -118,6 +138,16 @@
     "equipment": ["dumbbell", "bench"],
     "description": { "cs": "Sedni si na lavici s opěradlem nastaveným téměř kolmo. Jednoručky drž ve výšce ramen, lokty mírně před tělem. Vytlač je nad hlavu, aniž by do sebe narazily, a kontrolovaně je spusť zpět k ramenům.", "en": "" },
     "notes": { "cs": "Jednoručky umožňují přirozenější dráhu než osa a odhalí rozdíl v síle mezi stranami.", "en": "" }
+  },
+  {
+    "id": "shoulder-press-smith",
+    "name": { "cs": "Tlak nad hlavu v Smithově stroji vsedě", "en": "Smith Machine Shoulder Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["smith_machine", "bench"],
+    "description": { "cs": "Postav lavici s opěradlem nastaveným téměř kolmo do Smithova stroje tak, aby osa klesala těsně před obličejem. Úchop o něco širší než ramena, lokty mírně před tělem. Odjisti osu, spouštěj ji kontrolovaně zhruba k bradě nebo horní části hrudníku a vytlač ji zpět nad hlavu.", "en": "" },
+    "notes": { "cs": "Pevná dráha umožňuje soustředit se jen na tlak a bezpečně dojít blízko selhání. Lavici neposouvej příliš dozadu – osa by pak klesala za hlavu a zbytečně zatěžovala ramenní kloub.", "en": "" }
   },
   {
     "id": "cable-lateral-raise",
@@ -250,6 +280,16 @@
     "notes": { "cs": "Ramena nekruž – pohyb je čistě nahoru a dolů.", "en": "" }
   },
   {
+    "id": "shrug-smith",
+    "name": { "cs": "Krčení ramen v Smithově stroji", "en": "Smith Machine Shrug" },
+    "type": "isolation",
+    "primary": ["traps"],
+    "secondary": ["forearms"],
+    "equipment": ["smith_machine"],
+    "description": { "cs": "Postav se čelem k ose Smithova stroje, osu nastav zhruba do výšky stehen. Uchop ji nadhmatem na šíři ramen, odjisti ji a stoj vzpřímeně s rukama napnutýma. Zvedej ramena svisle k uším, nahoře krátce zastav a pomalu spusť do plného natažení.", "en": "" },
+    "notes": { "cs": "Ramena nekruž – pohyb je čistě nahoru a dolů. Pevná dráha umožňuje použít větší váhu bez balancování; při slabším úchopu použij trhačky.", "en": "" }
+  },
+  {
     "id": "deadlift-barbell",
     "name": { "cs": "Mrtvý tah", "en": "Deadlift" },
     "type": "compound",
@@ -290,6 +330,16 @@
     "notes": { "cs": "Těžké série cvič v kleci s bezpečnostními zarážkami.", "en": "" }
   },
   {
+    "id": "squat-smith",
+    "name": { "cs": "Dřep v Smithově stroji", "en": "Smith Machine Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors"],
+    "equipment": ["smith_machine"],
+    "description": { "cs": "Postav se pod osu Smithova stroje, osa leží na horní části trapézů. Chodidla na šířku ramen, mírně před tělem, špičky lehce vytočené. Odjisti osu, zpevni trup a dřepni kontrolovaně co nejníž s neutrálními zády, pak se vytlač celým chodidlem zpět nahoru.", "en": "" },
+    "notes": { "cs": "Chodidla víc před tělem přesouvají zátěž na hýždě a hamstringy, chodidla pod osou na kvadricepsy. Nastav si bezpečnostní zarážky těsně pod nejnižší bod dřepu.", "en": "" }
+  },
+  {
     "id": "bulgarian-split-squat-dumbbell",
     "name": { "cs": "Bulharský dřep s jednoručkami", "en": "Dumbbell Bulgarian Split Squat" },
     "type": "compound",
@@ -298,6 +348,16 @@
     "equipment": ["dumbbell", "bench"],
     "description": { "cs": "Zadní nohu opři nártem o lavici, přední je asi metr před ní. S jednoručkami v rukou klesej, dokud se zadní koleno téměř nedotkne země, pak se vytlač přední nohou nahoru.", "en": "" },
     "notes": { "cs": "Delší krok a předklon trupu víc zapojí hýždě, kratší krok a vzpřímený trup kvadricepsy.", "en": "" }
+  },
+  {
+    "id": "split-squat-smith",
+    "name": { "cs": "Výpad na místě v Smithově stroji", "en": "Smith Machine Split Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors"],
+    "equipment": ["smith_machine"],
+    "description": { "cs": "Postav se pod osu Smithova stroje, osa leží na horní části trapézů. Udělej dlouhý krok – jedna noha vpředu, druhá vzadu na špičce. Odjisti osu a klesej svisle dolů, dokud zadní koleno téměř nedosedne na zem, pak se vytlač přední nohou zpět nahoru. Po dokončení série vystřídej nohy.", "en": "" },
+    "notes": { "cs": "Delší krok víc zapojí hýždě, kratší krok kvadricepsy. Vedená dráha usnadňuje rovnováhu, takže se můžeš soustředit na pracující nohu.", "en": "" }
   },
   {
     "id": "leg-press",
