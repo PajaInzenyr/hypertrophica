@@ -370,6 +370,96 @@
     "notes": { "cs": "Pauza v dolní pozici omezí odraz od šlach a zvýší práci svalu.", "en": "" }
   },
   {
+    "id": "hack-squat",
+    "name": { "cs": "Hack dřep", "en": "Hack Squat" },
+    "type": "compound",
+    "primary": ["quads"],
+    "secondary": ["glutes", "adductors"],
+    "equipment": ["machine"],
+    "description": { "cs": "Opři se zády o opěradlo stroje, ramena pod polštáři, chodidla na plošině na šířku ramen. Uvolni pojistky a spouštěj se do hlubokého dřepu, kolena jdou ve směru špiček. Vytlač se zpět nahoru, kolena v horní poloze nezamykej.", "en": "" },
+    "notes": { "cs": "Nižší postavení chodidel na plošině zvýší zapojení kvadricepsů.", "en": "" }
+  },
+  {
+    "id": "seated-leg-curl",
+    "name": { "cs": "Zakopávání vsedě", "en": "Seated Leg Curl" },
+    "type": "isolation",
+    "primary": ["hamstrings"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav stroj tak, aby kolena byla v ose otáčení a polštář ležel nad kotníky. Stehna zafixuj horní opěrkou. Pokrč kolena co nejvíc a pomalu vrať do natažení.", "en": "" },
+    "notes": { "cs": "Díky ohnutým kyčlím pracují hamstringy v protažené pozici, což podle studií vede k většímu růstu než zakopávání vleže. Mírný předklon trupu efekt zesílí.", "en": "" }
+  },
+  {
+    "id": "seated-calf-raise",
+    "name": { "cs": "Výpony vsedě", "en": "Seated Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si do stroje, polštář na stehnech těsně nad koleny, špičky na nášlapu. Spusť paty co nejníž do protažení, krátce vydrž a vytlač se na špičky co nejvýš.", "en": "" },
+    "notes": { "cs": "S pokrčenými koleny pracuje hlavně šikmý sval lýtkový (soleus), který vestoje dostává méně. Doplňuje výpony ve stoje.", "en": "" }
+  },
+  {
+    "id": "walking-lunge-dumbbell",
+    "name": { "cs": "Výpady v chůzi", "en": "Dumbbell Walking Lunge" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors", "hamstrings"],
+    "equipment": ["dumbbell"],
+    "description": { "cs": "S jednoručkami v rukou udělej dlouhý krok vpřed a spusť se, dokud se zadní koleno téměř nedotkne země. Odraz se přední nohou a pokračuj krokem druhou nohou vpřed.", "en": "" },
+    "notes": { "cs": "Delší krok a mírný předklon víc zapojí hýždě, kratší krok víc kvadricepsy.", "en": "" }
+  },
+  {
+    "id": "goblet-squat",
+    "name": { "cs": "Goblet dřep", "en": "Goblet Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors", "abs"],
+    "equipment": ["dumbbell"],
+    "description": { "cs": "Drž jednoručku svisle u hrudníku oběma rukama. Chodidla mírně šíře než ramena, špičky lehce ven. Spouštěj se do hlubokého dřepu, trup vzpřímený, lokty mezi koleny. Vytlač se zpět nahoru.", "en": "" },
+    "notes": { "cs": "Dobrý cvik na nácvik techniky dřepu a pro dny, kdy nechceš zatěžovat záda osou.", "en": "" }
+  },
+  {
+    "id": "nordic-curl",
+    "name": { "cs": "Nordic curl", "en": "Nordic Hamstring Curl" },
+    "type": "isolation",
+    "primary": ["hamstrings"],
+    "secondary": [],
+    "equipment": ["bodyweight", "unspecified"],
+    "description": { "cs": "Klekni si na měkkou podložku, paty zafixuj (partner, opěrka stroje nebo pevný předmět). Tělo drž rovně od kolen po hlavu a co nejpomaleji padej vpřed. Když už pohyb neubrzdíš, zachyť se rukama a odraz se zpět.", "en": "" },
+    "notes": { "cs": "Velmi náročný excentrický cvik. Začni s malým rozsahem a 1–2 sériemi, svalovka bývá výrazná.", "en": "" }
+  },
+  {
+    "id": "sissy-squat",
+    "name": { "cs": "Sissy dřep", "en": "Sissy Squat" },
+    "type": "isolation",
+    "primary": ["quads"],
+    "secondary": [],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se na špičky, jednou rukou se přidrž opory. Pokrč kolena a posouvej je vpřed, zatímco se trup zaklání – boky a ramena zůstávají v jedné linii. Spusť se co nejníž a vrať se nahoru silou kvadricepsů.", "en": "" },
+    "notes": { "cs": "Zatěžuje přímý sval stehenní v protažené pozici. Pokud tě bolí kolena, zmenši rozsah.", "en": "" }
+  },
+  {
+    "id": "pistol-squat",
+    "name": { "cs": "Dřep na jedné noze", "en": "Pistol Squat" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors"],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se na jednu nohu, druhou natáhni vpřed. Spouštěj se do hlubokého dřepu na stojné noze, paže předpaž pro rovnováhu. Vytlač se zpět nahoru, aniž by se natažená noha dotkla země. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Snazší varianta: dřep na lavici nebo přidržování se opory.", "en": "" }
+  },
+  {
+    "id": "single-leg-calf-raise",
+    "name": { "cs": "Výpon na jedné noze", "en": "Single-Leg Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["bodyweight"],
+    "description": { "cs": "Postav se špičkou jedné nohy na hranu schodu, rukou se přidrž. Spusť patu co nejníž do protažení, krátce vydrž a vytlač se na špičku co nejvýš. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Zátěž zvýšíš jednoručkou ve volné ruce.", "en": "" }
+  },
+  {
     "id": "barbell-curl",
     "name": { "cs": "Bicepsový zdvih s osou", "en": "Barbell Curl" },
     "type": "isolation",
