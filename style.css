@@ -299,12 +299,20 @@ a {
     --header-h: 50px;       /* výška hlavičky (změřeno v prohlížeči) */
     --page-pad-y: 24px;     /* mezera nad a pod obsahem */
     --map-col: clamp(360px, 30vw, 520px); /* šířka sloupce se schématem */
+    --side-col: clamp(300px, 22vw, 400px); /* šířka pravého sloupce (panel oblíbených), od 1200 px */
     --map-chrome: 150px;    /* místo pro nadpis, popisky a legendu kolem obrázku */
   }
 
   main,
   .app-header-inner {
     max-width: var(--max-width-wide);
+  }
+
+  /* Místo pro posuvník (scrollbar) je vyhrazené vždy, i na krátké stránce bez posuvníku.
+     Jinak by se na Windows při přechodu mezi dlouhým seznamem a krátkým detailem
+     celá stránka i s nadpisem Hypertrophica posunula o polovinu šířky posuvníku. */
+  html {
+    scrollbar-gutter: stable;
   }
 
   main {
@@ -324,7 +332,7 @@ a {
      poslední řádek 1fr pohltí výšku schématu, aby mezi prvky nevznikaly mezery. */
   .list-layout,
   .detail,
-  .plan:has(> .plan-map:not([hidden])) {
+  .plan {
     display: grid;
     grid-template-columns: var(--map-col) minmax(0, 1fr);
     grid-template-rows: repeat(9, auto) 1fr;
@@ -378,16 +386,37 @@ a {
     text-align: center;
   }
 
-  /* Obsah vpravo: text v detailu a tréninku nemá příliš dlouhé řádky */
-  .detail > :not(.body-map),
-  .plan > :not(.plan-map) {
-    max-width: 860px;
+  /* Trénink a detail cviku: obsah vpravo svisle na střed okna.
+     Mřížka má nahoře a dole pružný řádek (1fr), mezi nimi řádky pro jednotlivé prvky.
+     Zbylé místo se rozdělí rovným dílem nahoru a dolů → obsah je uprostřed.
+     Když je obsah vyšší než okno, pružné řádky mají výšku 0 a obsah začíná nahoře.
+     Prvky mají řádek pevně daný, aby první z nich nepřipadl do horního pružného řádku. */
+  .plan,
+  .detail {
+    grid-template-rows: 1fr repeat(8, auto) 1fr;
+    min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
   }
 
-  /* Prázdný trénink (bez schématu): obsah zarovnaný se sloupcem vpravo jako v ostatních pohledech */
-  .plan:not(:has(> .plan-map:not([hidden]))) {
-    padding-left: calc(var(--map-col) + 48px);
-  }
+  .plan > .back-link { grid-row: 2; }
+  .plan > .plan-tabs { grid-row: 3; }
+  .plan > .plan-heading { grid-row: 4; }
+  .plan > .plan-intro { grid-row: 5; }
+  .plan > .plan-list { grid-row: 6; }
+  .plan > .week-summary { grid-row: 7; }
+  .plan > .plan-actions { grid-row: 8; }
+  .plan > .plan-feedback { grid-row: 9; }
+
+  /* Detail: popis a poznámky jsou v HTML za schématem jako dvojice nadpis h2 + odstavec p
+     (každá je nepovinná), proto se řádek určuje podle pořadí za schématem (figure). */
+  .detail > .back-link { grid-row: 2; }
+  .detail > .detail-heading { grid-row: 3; }
+  .detail > .detail-subtitle { grid-row: 4; }
+  .detail > .detail-facts { grid-row: 5; }
+  .detail > figure + h2 { grid-row: 6; }
+  .detail > figure + h2 + p { grid-row: 7; }
+  .detail > figure + h2 + p + h2 { grid-row: 8; }
+  .detail > figure + h2 + p + h2 + p { grid-row: 9; }
 
 }
 
@@ -400,30 +429,43 @@ a {
 }
 
 @media (min-width: 1200px) {
-  .list-layout {
-    grid-template-columns: var(--map-col) minmax(0, 1fr) clamp(300px, 22vw, 400px);
+  /* Všechny pohledy mají stejné tři sloupce, aby měl obsah uprostřed všude stejnou šířku.
+     V detailu a tréninku zůstává pravý sloupec prázdný. */
+  .list-layout,
+  .detail,
+  .plan {
+    grid-template-columns: var(--map-col) minmax(0, 1fr) var(--side-col);
   }
 
   .list-layout > .favorites-panel {
-    display: block;
     grid-column: 3;
     grid-row: 1 / -1;
     position: sticky;
     top: calc(var(--header-h) + var(--page-pad-y));
-    max-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
-    max-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
     overflow-y: auto;
+    /* Obsah panelu svisle na střed okna (jako schéma). Automatické okraje nadpisu a seznamu
+       (margin: auto) rozdělí volné místo nahoru a dolů; když se oblíbené nevejdou,
+       okraje jsou 0, panel začne nahoře a dá se posouvat. */
+    display: flex;
+    flex-direction: column;
     margin-left: -16px; /* mezera mezi seznamem a panelem 32 px místo 48 px */
     padding-left: 24px;
     border-left: 1px solid var(--border);
   }
 
   .favorites-heading {
-    margin: 0 0 12px;
+    margin: auto 0 12px;
     font-family: var(--font-display);
     font-size: 1.25rem;
     font-weight: 600;
     letter-spacing: 0.02em;
+  }
+
+  /* .favorites-panel na začátku: jinak by ho přebilo pravidlo .exercise-list { margin: 0 } níže */
+  .favorites-panel .favorites-list {
+    margin-bottom: auto;
   }
 
   .favorites-list .status {
