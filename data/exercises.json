@@ -180,6 +180,66 @@
     "notes": { "cs": "Záda drž rovná po celou sérii; trhání trupem snižuje účinnost i bezpečnost.", "en": "" }
   },
   {
+    "id": "seated-cable-row",
+    "name": { "cs": "Přítah kladky vsedě", "en": "Seated Cable Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Sedni si ke kladce, chodidla na opěrkách, kolena mírně pokrčená. Z protažené pozice s předsunutými rameny táhni madlo k břichu, lokty podél těla, lopatky stáhni k sobě. Pomalu vrať zpět do plného protažení.", "en": "" },
+    "notes": { "cs": "Trup se může mírně pohybovat, ale nehoupej se. Úzké madlo zapojí víc široký sval zádový, široké víc horní část zad.", "en": "" }
+  },
+  {
+    "id": "chest-supported-row-dumbbell",
+    "name": { "cs": "Přítah jednoruček s oporou hrudníku", "en": "Chest-Supported Dumbbell Row" },
+    "type": "compound",
+    "primary": ["upper_back"],
+    "secondary": ["lats", "rear_delts", "biceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Lehni si břichem na šikmou lavici (asi 30–45°), jednoručky visí pod rameny. Táhni je k bokům, lopatky stáhni k sobě, a kontrolovaně je spusť do plného natažení paží.", "en": "" },
+    "notes": { "cs": "Opora hrudníku vylučuje švihání a nezatěžuje bedra – vhodné i po náročném tréninku nohou.", "en": "" }
+  },
+  {
+    "id": "one-arm-row-dumbbell",
+    "name": { "cs": "Jednoruční přítah", "en": "One-Arm Dumbbell Row" },
+    "type": "compound",
+    "primary": ["lats"],
+    "secondary": ["upper_back", "rear_delts", "biceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Opři se jednou rukou a kolenem o lavici, záda rovná, přibližně rovnoběžná se zemí. Jednoručku táhni volnou rukou k boku, loket veď podél těla dozadu. Spouštěj kontrolovaně až do plného protažení. Po sérii vyměň stranu.", "en": "" },
+    "notes": { "cs": "Tah směrem ke kyčli (ne k rameni) víc zapojí široký sval zádový.", "en": "" }
+  },
+  {
+    "id": "straight-arm-pulldown",
+    "name": { "cs": "Stahování kladky s nataženými pažemi", "en": "Straight-Arm Pulldown" },
+    "type": "isolation",
+    "primary": ["lats"],
+    "secondary": ["triceps"],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se čelem k horní kladce, uchop tyč nebo lano, mírně se předkloň. S téměř nataženými lokty stahuj tyč obloukem k stehnům a pomalu ji vrať nahoru do protažení.", "en": "" },
+    "notes": { "cs": "Izoluje široký sval zádový bez zapojení bicepsu. Hodí se jako předvyčerpání před shyby.", "en": "" }
+  },
+  {
+    "id": "chin-up",
+    "name": { "cs": "Shyb podhmatem", "en": "Chin-Up" },
+    "type": "compound",
+    "primary": ["lats", "biceps"],
+    "secondary": ["upper_back", "forearms"],
+    "equipment": ["bodyweight", "pullup_bar"],
+    "description": { "cs": "Visi na hrazdě podhmatem, úchop na šířku ramen. Stáhni lopatky dolů a táhni se nahoru, dokud není brada nad hrazdou. Spouštěj se kontrolovaně do plného visu.", "en": "" },
+    "notes": { "cs": "Oproti shybům nadhmatem víc zapojuje biceps. Pokud nezvládneš 5 čistých opakování, použij odporovou gumu.", "en": "" }
+  },
+  {
+    "id": "inverted-row",
+    "name": { "cs": "Australský shyb", "en": "Inverted Row" },
+    "type": "compound",
+    "primary": ["upper_back"],
+    "secondary": ["lats", "rear_delts", "biceps"],
+    "equipment": ["bodyweight", "unspecified"],
+    "description": { "cs": "Lehni si pod tyč nebo madla ve výšce pasu a uchop je nadhmatem o něco šíře než ramena. Tělo drž rovně od hlavy po paty, paty na zemi. Přitáhni hrudník k tyči, stáhni lopatky k sobě a pomalu se spusť zpět.", "en": "" },
+    "notes": { "cs": "Lze cvičit na ose v kleci, na Smithově stroji, na kruzích nebo na pevném stole. Čím vodorovněji leží tělo, tím je cvik těžší.", "en": "" }
+  },
+  {
     "id": "shrug-dumbbell",
     "name": { "cs": "Krčení ramen s jednoručkami", "en": "Dumbbell Shrug" },
     "type": "isolation",
