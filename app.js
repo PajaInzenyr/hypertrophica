@@ -189,7 +189,10 @@ function renderList() {
 
 // ===== Oblíbené (hvězdička) =====
 // Obrys hvězdy; vyplnění řeší CSS podle aria-pressed.
-const STAR_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+// Velikost a barva jsou i přímo v atributech SVG: hvězdička je pak vidět,
+// i kdyby prohlížeč měl v cache starší style.css (jinak by měla velikost 0×0).
+const STAR_SVG = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"'
+  + ' stroke-width="1.6" stroke-linejoin="round" aria-hidden="true" focusable="false">'
   + '<path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>';
 
 function starButton(id) {
