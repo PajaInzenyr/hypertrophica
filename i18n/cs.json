@@ -172,5 +172,29 @@
     "empty": "Zatím nemáš zapsané žádné série. Sérii zapíšeš v detailu cviku v sekci Záznam.",
     "summary": "Počet sérií: {sets} · tréninkových dní: {days}",
     "more": "Zobrazit starší"
+  },
+  "backup": {
+    "title": "Záloha dat",
+    "intro": "Série, oblíbené a tréninky jsou uložené jen v tomto prohlížeči. Zálohu ulož do souboru a schovej ji (Disk Google, e-mail…). Ze zálohy je obnovíš i na jiném zařízení.",
+    "exportJson": "Exportovat zálohu (JSON)",
+    "import": "Importovat zálohu",
+    "exported": "Záloha uložena do souboru {file}.",
+    "shared": "Záloha odeslána.",
+    "errorExport": "Zálohu se nepodařilo vytvořit.",
+    "errorRead": "Soubor se nepodařilo přečíst.",
+    "errorJson": "Soubor není platný JSON.",
+    "errorNotBackup": "Soubor není záloha Hypertrophica.",
+    "errorVersion": "Záloha pochází z novější verze aplikace. Nejdřív aplikaci aktualizuj (obnov stránku) a import zopakuj.",
+    "errorImport": "Import se nepodařil. Data v zařízení zůstala beze změny.",
+    "preview": "Záloha z {date}: série {sets}, oblíbené {favorites}, cviky v trénincích {workouts}.",
+    "previewSkipped": "Neplatné série nebo série neznámých cviků budou vynechány: {count}.",
+    "modeHint": "Sloučit: přidá série, které v zařízení chybí, sjednotí oblíbené a doplní jen prázdné tréninky. Nahradit: smaže data v zařízení a obnoví je ze zálohy.",
+    "merge": "Sloučit s daty v zařízení",
+    "replace": "Nahradit vše",
+    "cancel": "Zrušit",
+    "replaceConfirm": "Opravdu smazat všechna data v tomto zařízení (série, oblíbené, tréninky) a nahradit je zálohou?",
+    "cancelled": "Import zrušen.",
+    "imported": "Import dokončen. Série: přidáno {added}, aktualizováno {updated}, beze změny {unchanged}.",
+    "unknownDate": "neznámého data"
   }
 }

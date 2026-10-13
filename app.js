@@ -4,10 +4,11 @@
 import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
-import { isFavorite, toggleFavorite, getFavorites, onExternalChange } from './js/favorites.js';
+import { isFavorite, toggleFavorite, getFavorites, replaceFavorites, onExternalChange } from './js/favorites.js';
 import * as plan from './js/plan.js';
 import { initThemeToggle } from './js/theme.js';
 import * as log from './js/log.js';
+import * as backup from './js/backup.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -70,6 +71,11 @@ const ui = {
   historyIntro: $('history-intro'),
   historyList: $('history-list'),
   historyMore: $('history-more'),
+  backupExport: $('backup-export'),
+  backupImport: $('backup-import'),
+  backupFile: $('backup-file'),
+  backupConfirm: $('backup-confirm'),
+  backupFeedback: $('backup-feedback'),
 };
 
 // Pomocná funkce pro vytvoření HTML prvku:
@@ -213,6 +219,9 @@ function bindEvents() {
     renderFavorites();
     document.querySelectorAll('.star-button').forEach(updateStarButton);
   });
+  ui.backupExport.addEventListener('click', onExportBackup);
+  ui.backupImport.addEventListener('click', () => ui.backupFile.click());
+  ui.backupFile.addEventListener('change', onBackupFileChosen);
   ui.historyMore.addEventListener('click', () => {
     state.historyDays += HISTORY_PAGE;
     renderHistory();
@@ -1191,6 +1200,10 @@ let historyRenderId = 0;
 
 async function showHistory(previous) {
   setView('history');
+  if (previous !== 'detail') {
+    ui.backupFeedback.textContent = '';
+    closeImportPreview();
+  }
   state.historyDays = Math.max(state.historyDays, HISTORY_PAGE);
   await renderHistory();
   if (previous === 'detail') {
@@ -1236,4 +1249,102 @@ async function renderHistory() {
     )
   ));
   ui.historyMore.hidden = dates.length <= state.historyDays;
+}
+
+// ===== Záloha dat (v pohledu Historie) =====
+async function onExportBackup() {
+  const filename = `hypertrophica-zaloha-${log.localDate()}.json`;
+  try {
+    const data = backup.createBackup({
+      sets: await log.getAllSets(),
+      favorites: [...getFavorites()],
+      week: plan.getWeek(),
+    });
+    // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
+    const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
+    if (result !== 'cancelled') {
+      ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exported', { file: filename });
+    }
+  } catch (error) {
+    console.error(error);
+    ui.backupFeedback.textContent = t('backup.errorExport');
+  }
+}
+
+// Vybraný soubor se přečte a zkontroluje; zatím se nic neukládá – nejdřív náhled s volbou.
+async function onBackupFileChosen() {
+  const file = ui.backupFile.files[0];
+  ui.backupFile.value = ''; // aby šel stejný soubor vybrat znovu
+  if (!file) return;
+  closeImportPreview();
+  let parsed;
+  try {
+    parsed = backup.parseBackup(await file.text(), new Set(state.byId.keys()));
+  } catch (error) {
+    if (!(error instanceof backup.BackupError)) console.error(error);
+    ui.backupFeedback.textContent = t(error instanceof backup.BackupError ? error.key : 'backup.errorRead');
+    return;
+  }
+  showImportPreview(parsed);
+}
+
+function showImportPreview(parsed) {
+  const workouts = Array.isArray(parsed.week?.slots)
+    ? parsed.week.slots.filter(Array.isArray).reduce((sum, ids) => sum + ids.length, 0)
+    : 0;
+  const date = parsed.exportedAt
+    ? new Date(parsed.exportedAt).toLocaleString('cs', { dateStyle: 'medium', timeStyle: 'short' })
+    : t('backup.unknownDate');
+  const choice = (className, key, mode) => actionButton(className, t(key), () => onImportChoice(parsed, mode));
+  ui.backupConfirm.replaceChildren(
+    el('p', { textContent: t('backup.preview', {
+      date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts,
+    }) }),
+    ...(parsed.skipped ? [el('p', { textContent: t('backup.previewSkipped', { count: parsed.skipped }) })] : []),
+    el('p', { className: 'backup-hint', textContent: t('backup.modeHint') }),
+    el('div', { className: 'backup-actions' },
+      choice('button-primary', 'backup.merge', 'merge'),
+      choice('button-secondary', 'backup.replace', 'replace'),
+      choice('button-secondary', 'backup.cancel', null)
+    )
+  );
+  ui.backupConfirm.hidden = false;
+  ui.backupFeedback.textContent = '';
+  ui.backupConfirm.querySelector('button').focus();
+}
+
+function closeImportPreview() {
+  ui.backupConfirm.hidden = true;
+  ui.backupConfirm.replaceChildren();
+}
+
+async function onImportChoice(parsed, mode) {
+  if (mode === 'replace' && !window.confirm(t('backup.replaceConfirm'))) return;
+  closeImportPreview();
+  ui.backupImport.focus();
+  if (!mode) {
+    ui.backupFeedback.textContent = t('backup.cancelled');
+    return;
+  }
+  let result;
+  try {
+    // Série první: kdyby zápis do IndexedDB selhal, oblíbené a tréninky zůstanou beze změny.
+    result = await log.importSets(parsed.sets, mode);
+  } catch (error) {
+    console.error(error);
+    ui.backupFeedback.textContent = t('backup.errorImport');
+    return;
+  }
+  replaceFavorites(mode === 'replace'
+    ? parsed.favorites
+    : [...new Set([...getFavorites(), ...parsed.favorites])]);
+  plan.importWeek(parsed.week, mode, new Set(state.byId.keys()));
+
+  // Překresli vše, co oblíbené a tréninky zobrazuje.
+  syncFilterControls();
+  renderList();
+  renderFavorites();
+  afterPlanChange();
+  await renderHistory();
+  ui.backupFeedback.textContent = t('backup.imported', result);
 }

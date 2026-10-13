@@ -166,6 +166,21 @@
       <p id="history-intro" class="history-intro"></p>
       <div id="history-list" class="history-list"></div>
       <button id="history-more" class="button-secondary" type="button" data-i18n="history.more" hidden></button>
+
+      <!-- Záloha všech dat do souboru a obnova ze zálohy (js/backup.js) -->
+      <section class="backup" aria-labelledby="backup-title">
+        <h2 id="backup-title" data-i18n="backup.title"></h2>
+        <p class="backup-intro" data-i18n="backup.intro"></p>
+        <div class="backup-actions">
+          <button id="backup-export" class="button-primary" type="button" data-i18n="backup.exportJson"></button>
+          <button id="backup-import" class="button-secondary" type="button" data-i18n="backup.import"></button>
+          <!-- Skrytý výběr souboru; otevře ho tlačítko „Importovat zálohu“ -->
+          <input id="backup-file" type="file" accept=".json,application/json" hidden>
+        </div>
+        <!-- Náhled importu s volbou Sloučit / Nahradit; obsah doplní app.js -->
+        <div id="backup-confirm" class="backup-confirm" hidden></div>
+        <p id="backup-feedback" class="backup-feedback" role="status"></p>
+      </section>
     </section>
   </main>
 </body>
