@@ -328,11 +328,14 @@ a {
   }
 
   /* Společná mřížka: schéma vlevo, obsah vpravo.
+     Historie schéma nemá, levý sloupec u ní zůstává prázdný – obsah je tak stejně
+     široký a na stejném místě jako u tréninku a detailu.
      Řádky „auto“ zabírají jednotlivé prvky obsahu (prázdné mají výšku 0),
      poslední řádek 1fr pohltí výšku schématu, aby mezi prvky nevznikaly mezery. */
   .list-layout,
   .detail,
-  .plan {
+  .plan,
+  .history {
     display: grid;
     grid-template-columns: var(--map-col) minmax(0, 1fr);
     grid-template-rows: repeat(9, auto) 1fr;
@@ -343,7 +346,8 @@ a {
 
   .list-layout > *,
   .detail > *,
-  .plan > * {
+  .plan > *,
+  .history > * {
     grid-area: auto;
     grid-column: 2;
   }
@@ -454,7 +458,8 @@ a {
      V detailu a tréninku zůstává pravý sloupec prázdný. */
   .list-layout,
   .detail,
-  .plan {
+  .plan,
+  .history {
     grid-template-columns: var(--map-col) minmax(0, 1fr) var(--side-col);
   }
 
@@ -1377,28 +1382,28 @@ a.button-secondary {
 }
 
 /* ===== Historie ===== */
-/* Na PC zůstává pohled v úzkém sloupci uprostřed (bez schématu svalů). */
-.history {
-  max-width: var(--max-width);
-  margin-inline: auto;
-}
-
-/* PC: obsah svisle na střed okna, stejně jako trénink a detail cviku.
-   Pohled je vysoký aspoň jako okno a obsah se v něm vycentruje; když je obsah
-   delší než okno, začíná nahoře a stránka se normálně posouvá. */
+/* PC: sloupce stejné jako u tréninku (viz „Rozložení na PC“), obsah svisle na střed okna.
+   Stejný princip jako detail cviku: pružný řádek (1fr) nahoře a dole rozdělí volné místo
+   rovným dílem; když je obsah delší než okno, mají výšku 0 a obsah začíná nahoře.
+   Prvky mají řádek pevně daný, aby první z nich nepřipadl do horního pružného řádku. */
 @media (min-width: 900px) {
   .history {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    grid-template-rows: 1fr repeat(6, auto) 1fr;
     min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
     min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
   }
 
+  .history > .back-link { grid-row: 2; }
+  .history > h1 { grid-row: 3; }
+  .history > .history-intro { grid-row: 4; }
+  .history > .history-list { grid-row: 5; }
+  .history > #history-more { grid-row: 6; }
+  .history > .backup { grid-row: 7; }
+
   /* Odkaz zpět a tlačítko „Zobrazit starší“ jen tak široké jako jejich text, ne přes celý sloupec */
   .history > .back-link,
   .history > #history-more {
-    align-self: flex-start;
+    justify-self: start;
   }
 }
 

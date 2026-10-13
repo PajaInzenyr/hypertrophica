@@ -228,6 +228,8 @@ function bindEvents() {
     state.historyDays += HISTORY_PAGE;
     renderHistory();
   });
+  document.addEventListener('click', onDetailBackgroundClick);
+  document.addEventListener('keydown', onDetailEscape);
   window.addEventListener('hashchange', route);
 }
 
@@ -928,6 +930,37 @@ function showDetail(id) {
   window.scrollTo(0, 0);
   // Fokus na nadpis, aby čtečka obrazovky oznámila nový obsah.
   ui.detailView.querySelector('h1')?.focus();
+}
+
+// Detail cviku na PC: klik do prázdného místa vlevo nebo vpravo od obsahu = „Zpět“
+// (stejně jako odkaz „← Zpět na …“). Jen od 900 px – na mobilu jsou okraje úzké
+// a omylem klepnutý okraj by uprostřed cvičení zavřel rozepsaný záznam série.
+const wideLayout = window.matchMedia('(min-width: 900px)');
+
+function onDetailBackgroundClick(event) {
+  if (state.view !== 'detail' || !wideLayout.matches) return;
+  const target = event.target;
+  // Jen pozadí stránky – ne hlavička, ovládací prvky ani schéma svalů vlevo.
+  const onBackground = target === document.documentElement || target === document.body || target.closest('main');
+  if (!onBackground || target.closest('a, button, input, select, label, figure')) return;
+  // Konec označování textu myší taky vyvolá „klik“ – ten se nepočítá.
+  if (!window.getSelection().isCollapsed) return;
+  // Klik do sloupce s obsahem (i do mezery mezi sekcemi) nic nedělá, počítají se jen strany.
+  // Odkaz zpět je na PC roztažený přes celou šířku sloupce, proto podle něj.
+  const column = ui.detailView.querySelector('.back-link').getBoundingClientRect();
+  if (event.clientX >= column.left && event.clientX <= column.right) return;
+  location.hash = state.returnHash;
+}
+
+// Detail cviku: klávesa Esc = „Zpět“. Neplatí, když se právě píše do políčka formuláře
+// (Esc tam jen opustí políčko), aby se omylem nezavřela rozepsaná série.
+function onDetailEscape(event) {
+  if (state.view !== 'detail' || event.key !== 'Escape' || event.defaultPrevented) return;
+  if (event.target.closest('input, select, textarea')) {
+    event.target.blur();
+    return;
+  }
+  location.hash = state.returnHash;
 }
 
 function backLink() {
