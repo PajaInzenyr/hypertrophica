@@ -434,7 +434,7 @@
     "name": { "cs": "Výpad na místě v Smithově stroji", "en": "Smith Machine Split Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors"],
+    "secondary": ["adductors", "abductors"],
     "equipment": ["smith_machine"],
     "description": { "cs": "Postav se pod osu Smithova stroje, osa leží na horní části trapézů. Udělej dlouhý krok – jedna noha vpředu, druhá vzadu na špičce. Odjisti osu a klesej svisle dolů, dokud zadní koleno téměř nedosedne na zem, pak se vytlač přední nohou zpět nahoru. Po dokončení série vystřídej nohy.", "en": "" },
     "notes": { "cs": "Delší krok víc zapojí hýždě, kratší krok kvadricepsy. Vedená dráha usnadňuje rovnováhu, takže se můžeš soustředit na pracující nohu.", "en": "" }
@@ -564,7 +564,7 @@
     "name": { "cs": "Goblet dřep", "en": "Goblet Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors", "abs"],
+    "secondary": ["adductors", "abs", "lower_back"],
     "equipment": ["dumbbell"],
     "description": { "cs": "Drž jednoručku svisle u hrudníku oběma rukama. Chodidla mírně šíře než ramena, špičky lehce ven. Spouštěj se do hlubokého dřepu, trup vzpřímený, lokty mezi koleny. Vytlač se zpět nahoru.", "en": "" },
     "notes": { "cs": "Dobrý cvik na nácvik techniky dřepu a pro dny, kdy nechceš zatěžovat záda osou.", "en": "" }
