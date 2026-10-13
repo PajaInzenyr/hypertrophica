@@ -30,6 +30,16 @@
     "notes": { "cs": "Větší sklon lavice přesouvá zátěž na přední delty. Při těžkých sériích cvič s dopomocí nebo v kleci s bezpečnostními zarážkami.", "en": "" }
   },
   {
+    "id": "bench-press-dumbbell",
+    "name": { "cs": "Tlaky s jednoručkami na rovné lavici", "en": "Dumbbell Bench Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na konec rovné lavice s jednoručkami na stehnech, lehni si a přenes je nad hrudník. Lopatky stáhni k sobě a dolů, chodidla pevně na zemi. Jednoručky spouštěj kontrolovaně do strany ke spodní části hrudníku, lokty drž přibližně 45–70° od trupu, dokud neucítíš protažení prsou, a pak je vytlač zpět nahoru po mírném oblouku.", "en": "" },
+    "notes": { "cs": "Oproti ose umožňují jednoručky větší rozsah pohybu a vyrovnávají rozdíly v síle mezi stranami. Po sérii jednoručky polož na stehna a posaď se, nepouštěj je do strany.", "en": "" }
+  },
+  {
     "id": "incline-press-dumbbell",
     "name": { "cs": "Tlaky s jednoručkami na šikmé lavici", "en": "Incline Dumbbell Press" },
     "type": "compound",
