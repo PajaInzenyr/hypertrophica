@@ -1383,6 +1383,25 @@ a.button-secondary {
   margin-inline: auto;
 }
 
+/* PC: obsah svisle na střed okna, stejně jako trénink a detail cviku.
+   Pohled je vysoký aspoň jako okno a obsah se v něm vycentruje; když je obsah
+   delší než okno, začíná nahoře a stránka se normálně posouvá. */
+@media (min-width: 900px) {
+  .history {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+  }
+
+  /* Odkaz zpět a tlačítko „Zobrazit starší“ jen tak široké jako jejich text, ne přes celý sloupec */
+  .history > .back-link,
+  .history > #history-more {
+    align-self: flex-start;
+  }
+}
+
 .history h1 {
   margin: 0;
   font-family: var(--font-display);
