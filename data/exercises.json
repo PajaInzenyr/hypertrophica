@@ -20,6 +20,16 @@
     "notes": { "cs": "Vedená dráha umožňuje bezpečně cvičit blízko selhání bez dopomoci – nastav si bezpečnostní zarážky těsně pod úroveň hrudníku. Polohu lavice vyzkoušej s prázdnou osou.", "en": "" }
   },
   {
+    "id": "incline-press-barbell",
+    "name": { "cs": "Bench press s osou na šikmé lavici", "en": "Incline Barbell Bench Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["barbell", "bench"],
+    "description": { "cs": "Nastav lavici na 30–45° a lehni si tak, aby osa ve stojanu byla nad očima. Lopatky stáhni k sobě a dolů, chodidla pevně na zemi, úchop o něco širší než ramena. Osu spouštěj kontrolovaně k horní části hrudníku pod klíční kosti, lokty drž přibližně 45–70° od trupu, a vytlač ji zpět nad ramena.", "en": "" },
+    "notes": { "cs": "Větší sklon lavice přesouvá zátěž na přední delty. Při těžkých sériích cvič s dopomocí nebo v kleci s bezpečnostními zarážkami.", "en": "" }
+  },
+  {
     "id": "incline-press-dumbbell",
     "name": { "cs": "Tlaky s jednoručkami na šikmé lavici", "en": "Incline Dumbbell Press" },
     "type": "compound",
