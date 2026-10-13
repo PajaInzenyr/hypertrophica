@@ -380,6 +380,26 @@
     "notes": { "cs": "Zátěž zvýšíš kotoučem drženým na hrudníku.", "en": "" }
   },
   {
+    "id": "good-morning-barbell",
+    "name": { "cs": "Good morning s osou", "en": "Barbell Good Morning" },
+    "type": "compound",
+    "primary": ["hamstrings", "lower_back"],
+    "secondary": ["glutes", "adductors"],
+    "equipment": ["barbell", "squat_rack"],
+    "description": { "cs": "Osu si polož na horní část trapézů jako při dřepu, chodidla na šířku boků, kolena mírně pokrčená. Posouvej boky dozadu a předkláněj trup, dokud neucítíš silné protažení hamstringů (obvykle trup téměř vodorovně). Záda drž celou dobu neutrální. Vrať se do stoje vytlačením boků vpřed.", "en": "" },
+    "notes": { "cs": "Začni s lehkou zátěží – páka je dlouhá a spodní záda nesou velkou zátěž. Rozsah ukončí kulacení zad, ne hloubka předklonu.", "en": "" }
+  },
+  {
+    "id": "reverse-hyperextension",
+    "name": { "cs": "Reverzní hyperextenze", "en": "Reverse Hyperextension" },
+    "type": "isolation",
+    "primary": ["glutes", "lower_back"],
+    "secondary": ["hamstrings"],
+    "equipment": ["machine"],
+    "description": { "cs": "Lehni si břichem na polštář stroje tak, aby boky byly na jeho hraně a nohy volně visely. Drž se madel. Zpevněnýma nohama švihni dozadu nahoru do přímky s trupem, krátce zastav a kontrolovaně spusť dolů.", "en": "" },
+    "notes": { "cs": "Bez stroje jde provést vleže na vysoké lavici nebo opěradle lavice na hyperextenze. Nezakláněj nohy nad úroveň trupu.", "en": "" }
+  },
+  {
     "id": "squat-barbell",
     "name": { "cs": "Dřep s osou", "en": "Barbell Back Squat" },
     "type": "compound",
