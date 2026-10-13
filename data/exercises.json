@@ -100,6 +100,26 @@
     "notes": { "cs": "Stroj nevyžaduje stabilizaci, takže je vhodný pro série do selhání bez dopomoci.", "en": "" }
   },
   {
+    "id": "machine-incline-chest-press",
+    "name": { "cs": "Šikmé tlaky na stroji", "en": "Machine Incline Chest Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["front_delts", "triceps"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla ve výšce horní části hrudníku. Lopatky přitiskni k opěradlu, stáhni je k sobě a dolů, hrudník vytáhni nahoru. Vytlač madla šikmo vzhůru do téměř natažených paží a kontrolovaně je vrať do protažené pozice.", "en": "" },
+    "notes": { "cs": "Šikmá dráha klade větší důraz na horní (klíční) část prsních svalů. Když sedák posadíš příliš nízko, přebírají práci přední delty.", "en": "" }
+  },
+  {
+    "id": "machine-decline-chest-press",
+    "name": { "cs": "Negativní tlaky na stroji", "en": "Machine Decline Chest Press" },
+    "type": "compound",
+    "primary": ["chest"],
+    "secondary": ["triceps", "front_delts"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla ve výšce spodní části hrudníku. Lopatky přitiskni k opěradlu, stáhni je k sobě a dolů. Vytlač madla šikmo dolů a vpřed do téměř natažených paží a kontrolovaně je vrať do protažené pozice.", "en": "" },
+    "notes": { "cs": "Dráha směřující dolů klade větší důraz na spodní (břišní) část prsních svalů a méně zatěžuje přední delty.", "en": "" }
+  },
+  {
     "id": "pec-deck",
     "name": { "cs": "Butterfly na stroji", "en": "Pec Deck" },
     "type": "isolation",
