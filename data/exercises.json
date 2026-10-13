@@ -150,6 +150,16 @@
     "notes": { "cs": "Pevná dráha umožňuje soustředit se jen na tlak a bezpečně dojít blízko selhání. Lavici neposouvej příliš dozadu – osa by pak klesala za hlavu a zbytečně zatěžovala ramenní kloub.", "en": "" }
   },
   {
+    "id": "machine-shoulder-press",
+    "name": { "cs": "Tlaky nad hlavu na stroji", "en": "Machine Shoulder Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, aby madla byla zhruba ve výšce ramen. Opři se celými zády o opěradlo, chodidla měj pevně na zemi. Vytlač madla nad hlavu do téměř natažených paží a kontrolovaně je spusť zpět do výšky ramen.", "en": "" },
+    "notes": { "cs": "Stroj nevyžaduje stabilizaci, takže je vhodný pro série do selhání bez dopomoci. Neprohýbej se v bedrech a neodlepuj záda od opěradla – při prohnutí přebírají práci prsní svaly.", "en": "" }
+  },
+  {
     "id": "cable-lateral-raise",
     "name": { "cs": "Upažování na kladce", "en": "Cable Lateral Raise" },
     "type": "isolation",
