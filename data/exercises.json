@@ -264,7 +264,7 @@
     "name": { "cs": "Přítah kladky vsedě", "en": "Seated Cable Row" },
     "type": "compound",
     "primary": ["upper_back", "lats"],
-    "secondary": ["rear_delts", "biceps"],
+    "secondary": ["rear_delts", "biceps", "lower_back"],
     "equipment": ["cable"],
     "description": { "cs": "Sedni si ke kladce, chodidla na opěrkách, kolena mírně pokrčená. Z protažené pozice s předsunutými rameny táhni madlo k břichu, lokty podél těla, lopatky stáhni k sobě. Pomalu vrať zpět do plného protažení.", "en": "" },
     "notes": { "cs": "Trup se může mírně pohybovat, ale nehoupej se. Úzké madlo zapojí víc široký sval zádový, široké víc horní část zad.", "en": "" }
@@ -394,7 +394,7 @@
     "name": { "cs": "Dřep v Smithově stroji", "en": "Smith Machine Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors"],
+    "secondary": ["adductors", "lower_back"],
     "equipment": ["smith_machine"],
     "description": { "cs": "Postav se pod osu Smithova stroje, osa leží na horní části trapézů. Chodidla na šířku ramen, mírně před tělem, špičky lehce vytočené. Odjisti osu, zpevni trup a dřepni kontrolovaně co nejníž s neutrálními zády, pak se vytlač celým chodidlem zpět nahoru.", "en": "" },
     "notes": { "cs": "Chodidla víc před tělem přesouvají zátěž na hýždě a hamstringy, chodidla pod osou na kvadricepsy. Nastav si bezpečnostní zarážky těsně pod nejnižší bod dřepu.", "en": "" }
@@ -404,7 +404,7 @@
     "name": { "cs": "Bulharský dřep s jednoručkami", "en": "Dumbbell Bulgarian Split Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors"],
+    "secondary": ["adductors", "abductors"],
     "equipment": ["dumbbell", "bench"],
     "description": { "cs": "Zadní nohu opři nártem o lavici, přední je asi metr před ní. S jednoručkami v rukou klesej, dokud se zadní koleno téměř nedotkne země, pak se vytlač přední nohou nahoru.", "en": "" },
     "notes": { "cs": "Delší krok a předklon trupu víc zapojí hýždě, kratší krok a vzpřímený trup kvadricepsy.", "en": "" }
@@ -534,7 +534,7 @@
     "name": { "cs": "Výpady v chůzi", "en": "Dumbbell Walking Lunge" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors", "hamstrings"],
+    "secondary": ["adductors", "hamstrings", "abductors"],
     "equipment": ["dumbbell"],
     "description": { "cs": "S jednoručkami v rukou udělej dlouhý krok vpřed a spusť se, dokud se zadní koleno téměř nedotkne země. Odraz se přední nohou a pokračuj krokem druhou nohou vpřed.", "en": "" },
     "notes": { "cs": "Delší krok a mírný předklon víc zapojí hýždě, kratší krok víc kvadricepsy.", "en": "" }
@@ -574,7 +574,7 @@
     "name": { "cs": "Dřep na jedné noze", "en": "Pistol Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors"],
+    "secondary": ["adductors", "abductors"],
     "equipment": ["bodyweight"],
     "description": { "cs": "Postav se na jednu nohu, druhou natáhni vpřed. Spouštěj se do hlubokého dřepu na stojné noze, paže předpaž pro rovnováhu. Vytlač se zpět nahoru, aniž by se natažená noha dotkla země. Po sérii vyměň stranu.", "en": "" },
     "notes": { "cs": "Snazší varianta: dřep na lavici nebo přidržování se opory.", "en": "" }
