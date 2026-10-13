@@ -35,7 +35,15 @@ Osobní wiki cviků pro hypertrofický trénink. Statická webová aplikace (PWA
 5. **Oblíbené:** hvězdička u cviku, ukládání do `localStorage` (klíč `hw.favorites`, pole ID). Přístup do `localStorage` vždy v `try/catch`; aplikace musí fungovat i bez něj.
 6. **Offline (PWA):** `manifest.json` + service worker (`sw.js`) se strategií cache-first pro statické soubory. Cache verzovaná konstantou `CACHE_VERSION`. **Při každé změně obsahu nebo kódu zvyš `CACHE_VERSION`**, jinak mobil zobrazí starou verzi.
 
-Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi zařízeními, logování tréninků, obrázky/videa cviků.
+Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi zařízeními, obrázky/videa cviků.
+
+## Rozsah v2: záznam sérií a záloha dat
+
+7. **Záznam sérií:** v detailu cviku formulář hmotnost (kg) / opakování / RIR (nepovinné), dnešní série a souhrn posledních tréninků. Pohled **Historie** (`#/historie`) seskupený po dnech.
+8. **Úložiště:** IndexedDB (databáze `hypertrophica`, tabulka `sets`, modul `js/log.js`), jeden záznam = jedna série. Při změně struktury zvyš `SCHEMA_VERSION` v `js/log.js` a doplň převod v `upgrade()`. Bez IndexedDB aplikace funguje se záznamy jen v paměti a upozorní na to.
+9. **Záloha:** export/import JSON se všemi daty (série, oblíbené, tréninky) a export sérií do CSV (`js/backup.js`). Import kontroluje data a nabízí *Sloučit* / *Nahradit vše*.
+
+Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zařízeními (přenos jen přes soubor zálohy), jednotky lb.
 
 ## Struktura projektu
 
@@ -43,7 +51,7 @@ Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi z
 index.html
 style.css
 app.js              # vstupní bod, stav aplikace, render
-js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js
+js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, theme.js, log.js, backup.js
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
@@ -94,6 +102,25 @@ README.md
 - `views`: `"front"`, `"back"` nebo obojí (např. lýtka) – na kterém pohledu SVG schématu se sval zobrazí.
 
 Při úpravě dat **validuj**: unikátní `id`, platné hodnoty `type`, existující ID svalů. Pro validaci vytvoř jednoduchý skript `tools/validate.html` (otevře se v prohlížeči a vypíše chyby), aby nebylo nutné instalovat Node.
+
+Série (IndexedDB, tabulka `sets`, ne soubor v repozitáři) – objekt:
+
+```json
+{
+  "id": "3f2c…",
+  "exerciseId": "bench-press-barbell",
+  "date": "2026-10-13",
+  "reps": 8,
+  "weightKg": 80,
+  "rir": 2,
+  "createdAt": "2026-10-13T18:22:05.000Z",
+  "updatedAt": "2026-10-13T18:22:05.000Z"
+}
+```
+
+- `id`: UUID, podle něj se při importu zálohy párují stejné série.
+- `date`: den tréninku v místním čase; `reps` 1–100; `weightKg` 0–1000 (0 = vlastní váha); `rir` 0–10 nebo `null`.
+- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 1, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] } }`.
 
 ## Svalové skupiny (výchozí granularita)
 

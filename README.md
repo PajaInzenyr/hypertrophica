@@ -23,6 +23,26 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 
 Protože odkazy a uložené tréninky používají `id` cviků, je o to důležitější `id` existujícího cviku neměnit. Cviky, které už v datech nejsou, se z tréninku i ze sdíleného odkazu tiše vynechají.
 
+## Záznam sérií a historie
+
+- **Zápis:** v detailu cviku sekce *Záznam*: hmotnost v kg (desetinná čárka i tečka, `0` = vlastní váha), počet opakování a nepovinně **RIR** (kolik opakování zbývalo do selhání, 0–10). Tlačítka − a + mění hodnotu bez psaní (hmotnost po 2,5 kg). *Přidat sérii* sérii uloží; hodnoty ve formuláři zůstanou, takže další stejnou sérii zapíšeš jedním klepnutím.
+- **Předvyplnění:** při otevření detailu se formulář vyplní hodnotami poslední zapsané série cviku.
+- **V detailu** je vidět seznam dnešních sérií (× sérii smaže) a souhrn posledních 5 tréninků cviku, např. `80 kg × 8, 8, 7 · 85 kg × 6` (série se stejnou hmotností jdoucí po sobě se sloučí).
+- **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*.
+- **Uložení:** v IndexedDB prohlížeče (databáze `hypertrophica`, modul `js/log.js`) – **jen v daném prohlížeči a zařízení**. Smazáním dat prohlížeče se záznamy ztratí, proto pravidelně zálohuj (viz níže). Aplikace při prvním zápisu požádá prohlížeč o trvalé úložiště (`navigator.storage.persist()`), aby data nemazal při nedostatku místa. Na iPhonu se doporučuje používat aplikaci přidanou na plochu – Safari jinak data webu, který se 7 dní neotevřel, maže.
+
+## Záloha a obnova dat
+
+V pohledu *Historie* dole, sekce *Záloha dat* (modul `js/backup.js`):
+
+- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Soubor si ulož na bezpečné místo (Disk Google, e-mail sám sobě…).
+- **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
+  - **Sloučit s daty v zařízení** – přidá série, které v zařízení chybí (stejná série se nezdvojí), sjednotí oblíbené a doplní jen prázdné tréninky.
+  - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
+  - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
+- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka). Slouží jen k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
+- **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
+
 ## Jak přidat cvik
 
 Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů oddělených čárkou; nový cvik vlož k ostatním cvikům na stejnou partii.
@@ -121,6 +141,6 @@ Ikony v `assets/icons/` generuje skript `python3 tools/generate-icons.py` (vyža
 ## Testování
 
 - **Po merge** otestuj změnu na `https://pajainzenyr.github.io/hypertrophica/` na PC i na mobilu podle checklistu v popisu PR.
-- **Před PR** se změna ověřuje v cloudovém prostředí: lokální server `python3 -m http.server 8000` v kořeni projektu a kontrola v headless prohlížeči (načtení bez chyb, filtry, trénink, mobilní šířka ~375 px).
+- **Před PR** se změna ověřuje v cloudovém prostředí: lokální server `python3 -m http.server 8000` v kořeni projektu a kontrola v headless prohlížeči (načtení bez chyb, filtry, trénink, záznam sérií, záloha a import, mobilní šířka ~375 px).
 - Pokud se změna na webu neprojeví, je to téměř vždy cache service workeru: zkontroluj, že byl zvýšen `CACHE_VERSION`, a stránku obnov dvakrát (nainstalovanou aplikaci zavři a znovu otevři).
 - Spuštění z disku (`file://`) nefunguje, protože prohlížeč tak nenačte data přes `fetch` – vždy použij lokální server a otevři `http://localhost:8000`.
