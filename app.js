@@ -229,6 +229,7 @@ function bindEvents() {
     renderHistory();
   });
   document.addEventListener('click', onDetailBackgroundClick);
+  document.addEventListener('keydown', onDetailEscape);
   window.addEventListener('hashchange', route);
 }
 
@@ -948,6 +949,17 @@ function onDetailBackgroundClick(event) {
   // Odkaz zpět je na PC roztažený přes celou šířku sloupce, proto podle něj.
   const column = ui.detailView.querySelector('.back-link').getBoundingClientRect();
   if (event.clientX >= column.left && event.clientX <= column.right) return;
+  location.hash = state.returnHash;
+}
+
+// Detail cviku: klávesa Esc = „Zpět“. Neplatí, když se právě píše do políčka formuláře
+// (Esc tam jen opustí políčko), aby se omylem nezavřela rozepsaná série.
+function onDetailEscape(event) {
+  if (state.view !== 'detail' || event.key !== 'Escape' || event.defaultPrevented) return;
+  if (event.target.closest('input, select, textarea')) {
+    event.target.blur();
+    return;
+  }
   location.hash = state.returnHash;
 }
 
