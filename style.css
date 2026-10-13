@@ -1260,10 +1260,34 @@ select:disabled {
 }
 
 .plan-item .exercise-link {
+  position: relative; /* kotva pro kroužek s počtem odcvičených sérií */
   flex: 1;
   min-width: 0;
   align-self: stretch;
   margin-right: 4px;
+}
+
+/* Kroužek s počtem dnes odcvičených sérií v pravém horním rohu karty cviku
+   (stejný vzhled jako odznak počtu cviků u ikony tréninku v hlavičce) */
+.done-count {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.done-count:empty {
+  display: none;
 }
 
 .plan-move {

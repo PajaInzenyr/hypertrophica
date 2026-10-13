@@ -14,6 +14,7 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 - **Přepínač:** v pohledu tréninku řada tlačítek *1 2 3 4 Týden*. Malé číslo u tlačítka = počet cviků v tréninku. Klepnutí na 1–4 udělá trénink **aktivním**.
 - **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu přidává do **aktivního** tréninku (✓ = cvik už v něm je). Nový cvik se přidá na konec. Stejný cvik může být ve více trénincích.
 - **Zobrazení:** ikona seznamu v hlavičce (odznak = počet cviků v aktivním tréninku), adresa `#/trenink`; souhrn týdne na adrese `#/tyden`.
+- **Odcvičeno dnes:** cvik, u kterého jsou dnes zapsané série (sekce *Záznam* v detailu cviku), má v pravém horním rohu karty kroužek s počtem dnešních sérií. Další den kroužky zmizí.
 - **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže aktivní trénink.
 - **Zámek:** ikona zámku vedle nadpisu. Platí pro všechny tréninky najednou. Zamčené tréninky skryjí šipky, křížky, *Vymazat trénink* i *Nový týden* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení. Stav zámku se ukládá v `localStorage` pod klíčem `hw.planLocked`.
 - **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Na každé zapojené partii je malé číslo = počet cviků v tréninku, které ji zapojují (primárně i sekundárně). Schéma je i u sdíleného tréninku.

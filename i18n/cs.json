@@ -32,6 +32,7 @@
     "remove": "Odebrat z tréninku: {name}",
     "empty": "Trénink {number} je zatím prázdný. Cviky přidáš v seznamu nebo v detailu cviku tlačítkem ⊕.",
     "hint": "Pořadí změníš šipkami. Tréninky jsou uložené jen v tomto prohlížeči.",
+    "doneToday": "Dnes odcvičeno sérií: {count}.",
     "lockedHint": "Tréninky jsou zamčené – cviky nejde přesouvat ani odebírat. Odemkneš je ikonou zámku.",
     "lock": "Zamknout tréninky (zabrání přesunutí a odebrání cviků)",
     "unlock": "Odemknout tréninky",

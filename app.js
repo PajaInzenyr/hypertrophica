@@ -464,6 +464,7 @@ function renderPlan() {
   updateLockButton();
   ui.planIntro.textContent = t(!ids.length ? 'plan.empty' : locked ? 'plan.lockedHint' : 'plan.hint', { number });
   ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, !locked)));
+  updateDoneCounts();
   renderPlanMap(ids);
   if (ids.length === 0) {
     ui.planActions.replaceChildren();
@@ -726,9 +727,13 @@ function planItem(ex, index, total, editable = true) {
     numberBadge(index + 1),
     el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
       el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
-      el('span', { className: 'exercise-meta', textContent: meta })
+      el('span', { className: 'exercise-meta', textContent: meta }),
+      // Počet dnes odcvičených sérií: kroužek pro oči, skrytý text pro čtečku. Doplní updateDoneCounts().
+      ariaHidden(el('span', { className: 'done-count' })),
+      el('span', { className: 'done-label visually-hidden' })
     )
   );
+  item.dataset.id = ex.id;
   if (editable) {
     item.append(
       el('div', { className: 'plan-move' },
@@ -739,6 +744,25 @@ function planItem(ex, index, total, editable = true) {
     );
   }
   return item;
+}
+
+function ariaHidden(node) {
+  node.setAttribute('aria-hidden', 'true');
+  return node;
+}
+
+// Doplní ke cvikům v tréninku počet dnes zapsaných sérií (kroužek s číslem v rohu karty).
+// Série se čtou z IndexedDB asynchronně, proto se doplní až po vykreslení seznamu.
+async function updateDoneCounts() {
+  const counts = new Map(); // id cviku → počet dnešních sérií
+  (await log.getSetsForDate(log.localDate())).forEach((s) => {
+    counts.set(s.exerciseId, (counts.get(s.exerciseId) ?? 0) + 1);
+  });
+  ui.planList.querySelectorAll('.plan-item').forEach((item) => {
+    const count = counts.get(item.dataset.id) ?? 0;
+    item.querySelector('.done-count').textContent = count ? String(count) : '';
+    item.querySelector('.done-label').textContent = count ? t('plan.doneToday', { count }) : '';
+  });
 }
 
 function onPlanItemAction(button) {

@@ -100,6 +100,15 @@ export async function getSetsForExercise(exerciseId) {
   return sets.sort(chronological);
 }
 
+// Všechny série jednoho dne ("2026-10-13"), např. pro odznaky odcvičených sérií v tréninku.
+export async function getSetsForDate(date) {
+  const db = await openDb();
+  const sets = db
+    ? await done(db.transaction(STORE).objectStore(STORE).index('date').getAll(date))
+    : [...memory.values()].filter((s) => s.date === date);
+  return sets.sort(chronological);
+}
+
 // ===== Zápis =====
 
 // Uloží novou sérii a vrátí celý uložený záznam.
