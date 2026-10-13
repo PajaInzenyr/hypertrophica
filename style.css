@@ -400,6 +400,11 @@ a {
     min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
   }
 
+  /* Detail má o řádek víc (sekce Záznam). */
+  .detail {
+    grid-template-rows: 1fr repeat(9, auto) 1fr;
+  }
+
   /* Trénink: horní mezera se nepočítá podle právě zobrazeného obsahu, ale podle
      tréninku s nejvíce cviky (počet nastaví app.js do --plan-max). Při přepínání
      1–4 a Týden je tak mezera pořád stejná a záložky se svisle neposouvají.
@@ -428,10 +433,11 @@ a {
   .detail > .detail-heading { grid-row: 3; }
   .detail > .detail-subtitle { grid-row: 4; }
   .detail > .detail-facts { grid-row: 5; }
-  .detail > figure + h2 { grid-row: 6; }
-  .detail > figure + h2 + p { grid-row: 7; }
-  .detail > figure + h2 + p + h2 { grid-row: 8; }
-  .detail > figure + h2 + p + h2 + p { grid-row: 9; }
+  .detail > .log { grid-row: 6; }
+  .detail > figure + h2 { grid-row: 7; }
+  .detail > figure + h2 + p { grid-row: 8; }
+  .detail > figure + h2 + p + h2 { grid-row: 9; }
+  .detail > figure + h2 + p + h2 + p { grid-row: 10; }
 
 }
 
@@ -909,6 +915,182 @@ select:disabled {
 
 .legend .legend-secondary::before {
   background: var(--map-secondary);
+}
+
+/* ===== Záznam sérií (detail cviku) =====
+   Formulář: dvě políčka vedle sebe (hmotnost, opakování), RIR pod nimi.
+   Každé políčko má tlačítka − a + (44 × 44 px), aby šlo hodnoty měnit bez psaní. */
+.log {
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.detail .log h2 {
+  margin-top: 0;
+}
+
+.log h3 {
+  margin: 16px 0 4px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.log-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.log-field label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* RIR: celý řádek kvůli vysvětlivce, samotné políčko ale stejně široké jako ostatní */
+.log-field:last-child {
+  grid-column: 1 / -1;
+}
+
+.log-field:last-child .log-stepper {
+  max-width: calc(50% - var(--gap) / 2);
+}
+
+.log-stepper {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.log-step {
+  flex: none;
+  width: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  font-size: 1.375rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.log-step:hover {
+  background: var(--chip-bg);
+}
+
+.log-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 4px;
+  background: var(--surface);
+  border: 0;
+  border-inline: 1px solid var(--border);
+  border-radius: 0;
+  font-size: 1.125rem; /* ≥ 16 px: iOS pak při psaní nezoomuje stránku */
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.log-input[aria-invalid="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.log .log-hint {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.log-submit {
+  width: 100%;
+  margin-top: var(--gap);
+  font-size: 1.0625rem;
+}
+
+.log .log-feedback {
+  min-height: 1.5em;
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.log .log-warning {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  background: var(--chip-primary-bg);
+  border-radius: var(--radius);
+  color: var(--chip-primary-text);
+  font-size: 0.875rem;
+}
+
+.log .log-empty {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.log-today,
+.log-history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.log-set {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.log-set:first-child {
+  border-top: 0;
+}
+
+.log-set-text {
+  flex: 1;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.log-history li {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+
+.log-history li:first-child {
+  border-top: 0;
+}
+
+.log-date {
+  min-width: 6.5em;
+  color: var(--text-muted);
+}
+
+.log-all {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin-top: 8px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 /* ===== Trénink ===== */

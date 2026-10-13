@@ -7,6 +7,7 @@ import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, onExternalChange } from './js/favorites.js';
 import * as plan from './js/plan.js';
 import { initThemeToggle } from './js/theme.js';
+import * as log from './js/log.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -906,6 +907,7 @@ function detailContent(ex) {
     ...fact(t('detail.secondary'), chipList(ex.secondary.map(muscleName))),
     ...fact(t('detail.equipment'), chipList(ex.equipment.map((e) => t(`equipment.${e}`))))
   ));
+  nodes.push(logSection(ex));
   nodes.push(engagementMap(ex));
 
   const description = localized(ex.description);
@@ -930,5 +932,227 @@ function engagementMap(ex) {
       el('li', { textContent: t('bodymap.legendPrimary') }),
       el('li', { className: 'legend-secondary', textContent: t('bodymap.legendSecondary') })
     )
+  );
+}
+
+// ===== Záznam sérií (v detailu cviku) =====
+// Formulář hmotnost / opakování / RIR, pod ním dnešní série a souhrn posledních tréninků.
+// Série ukládá js/log.js do IndexedDB; čtení je asynchronní, proto se seznamy
+// doplní až po načtení (renderLog).
+
+// Kolik předchozích tréninků cviku ukázat v detailu (všechny jsou v Historii).
+const LOG_HISTORY_DAYS = 5;
+
+// Čísla v české podobě: 82,5 (desetinná čárka).
+const numberFormat = new Intl.NumberFormat('cs', { maximumFractionDigits: 2, useGrouping: false });
+const formatNumber = (value) => numberFormat.format(value);
+
+// "80 kg × 8" nebo "80 kg × 8 · RIR 2"
+function formatSet(set) {
+  const params = { weight: formatNumber(set.weightKg), reps: set.reps, rir: set.rir };
+  return t(set.rir === null ? 'log.set' : 'log.setRir', params);
+}
+
+// Souhrn sérií jednoho dne: po sobě jdoucí série se stejnou hmotností se sloučí.
+// [80×8, 80×8, 80×7, 85×6] → "80 kg × 8, 8, 7 · 85 kg × 6"
+function summarizeSets(sets) {
+  const groups = [];
+  sets.forEach((set) => {
+    const last = groups[groups.length - 1];
+    if (last && last.weightKg === set.weightKg) last.reps.push(set.reps);
+    else groups.push({ weightKg: set.weightKg, reps: [set.reps] });
+  });
+  return groups.map((g) => `${formatNumber(g.weightKg)} kg × ${g.reps.join(', ')}`).join(' · ');
+}
+
+// "2026-10-13" → "13. 10. 2026" (s dlouhým: "pondělí 13. 10. 2026")
+function formatDate(isoDate, withWeekday = false) {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('cs', {
+    ...(withWeekday ? { weekday: 'long' } : {}),
+    day: 'numeric', month: 'numeric', year: 'numeric',
+  });
+}
+
+// Text z políčka → číslo. Přijme desetinnou čárku i tečku. Prázdné políčko = null, nesmysl = NaN.
+function parseNumber(text) {
+  const value = text.trim().replace(',', '.');
+  if (value === '') return null;
+  return /^\d+(\.\d+)?$/.test(value) ? Number(value) : NaN;
+}
+
+// Políčko s tlačítky − a + (na mobilu se hodnota mění klepnutím, bez psaní).
+// step = o kolik tlačítka mění hodnotu; start = hodnota po klepnutí na + u prázdného políčka.
+function stepperField({ id, label, hint, inputMode, step, start, min, max }) {
+  const input = el('input', { id, type: 'text', inputMode, autocomplete: 'off', className: 'log-input' });
+  const change = (direction) => {
+    const value = parseNumber(input.value);
+    if (value === null || Number.isNaN(value)) {
+      if (direction > 0) input.value = formatNumber(start);
+      return;
+    }
+    input.value = formatNumber(Math.min(max, Math.max(min, value + direction * step)));
+    input.removeAttribute('aria-invalid');
+  };
+  const stepButton = (direction, symbol, key) => {
+    const button = el('button', { type: 'button', className: 'log-step', textContent: symbol });
+    button.setAttribute('aria-label', t(key, { name: label }));
+    button.addEventListener('click', () => change(direction));
+    return button;
+  };
+  if (hint) input.setAttribute('aria-describedby', `${id}-hint`);
+  const field = el('div', { className: 'log-field' },
+    el('label', { htmlFor: id, textContent: label }),
+    el('div', { className: 'log-stepper' }, stepButton(-1, '−', 'log.decrease'), input, stepButton(1, '+', 'log.increase')),
+    hint ? el('p', { id: `${id}-hint`, className: 'log-hint', textContent: hint }) : null
+  );
+  return { field, input };
+}
+
+// Pořadové číslo posledního vykreslení – pomalejší starší načtení pak nepřepíše novější.
+let logRenderId = 0;
+
+function logSection(ex) {
+  const weight = stepperField({
+    id: 'log-weight', label: t('log.weight'), inputMode: 'decimal',
+    step: 2.5, start: 20, ...log.LIMITS.weightKg,
+  });
+  const reps = stepperField({
+    id: 'log-reps', label: t('log.reps'), inputMode: 'numeric',
+    step: 1, start: 8, ...log.LIMITS.reps,
+  });
+  const rir = stepperField({
+    id: 'log-rir', label: t('log.rir'), hint: t('log.rirHint'), inputMode: 'numeric',
+    step: 1, start: 2, ...log.LIMITS.rir,
+  });
+  const feedback = el('p', { className: 'log-feedback' });
+  feedback.setAttribute('role', 'status');
+  const lists = el('div', { className: 'log-lists' });
+  const form = el('form', { className: 'log-form', noValidate: true },
+    el('div', { className: 'log-fields' }, weight.field, reps.field, rir.field),
+    el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('log.add') })
+  );
+  const section = el('section', { className: 'log' },
+    el('h2', { id: 'log-heading', textContent: t('log.heading') }),
+    form,
+    feedback,
+    lists
+  );
+  section.setAttribute('aria-labelledby', 'log-heading');
+  const inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
+    const values = readLogForm(inputs, feedback);
+    if (!values) return;
+    let saved;
+    try {
+      saved = await log.addSet({ exerciseId: ex.id, ...values });
+    } catch (error) {
+      console.error(error);
+      feedback.textContent = t('log.errorSave');
+      return;
+    }
+    // Hodnoty ve formuláři zůstanou – další série bývá stejná, stačí znovu klepnout.
+    const today = await renderLog(lists, ex.id, inputs);
+    feedback.textContent = t('log.saved', { number: today.length, set: formatSet(saved) });
+  });
+
+  lists.addEventListener('click', async (event) => {
+    const button = event.target.closest('.log-delete');
+    if (!button) return;
+    const { id, number, label } = button.dataset;
+    if (!window.confirm(t('log.deleteConfirm', { number, set: label }))) return;
+    await log.deleteSet(id);
+    await renderLog(lists, ex.id, inputs);
+    feedback.textContent = t('log.deleted');
+    form.querySelector('.log-submit').focus(); // smazané tlačítko zmizelo, fokus nesmí zůstat „nikde“
+  });
+
+  renderLog(lists, ex.id, inputs, true);
+  return section;
+}
+
+// Zkontroluje formulář. Vrátí { weightKg, reps, rir }, nebo null a ukáže chybu u políčka.
+function readLogForm(inputs, feedback) {
+  Object.values(inputs).forEach((input) => input.removeAttribute('aria-invalid'));
+  const fail = (input, key) => {
+    input.setAttribute('aria-invalid', 'true');
+    feedback.textContent = t(key);
+    input.focus();
+    return null;
+  };
+  const weightKg = log.cleanWeight(parseNumber(inputs.weight.value));
+  if (weightKg === null) return fail(inputs.weight, 'log.errorWeight');
+  const reps = parseNumber(inputs.reps.value);
+  if (!log.isValidReps(reps)) return fail(inputs.reps, 'log.errorReps');
+  const rir = parseNumber(inputs.rir.value);
+  if (!log.isValidRir(rir)) return fail(inputs.rir, 'log.errorRir');
+  return { weightKg, reps, rir };
+}
+
+// Načte série cviku a vykreslí dnešní série + souhrn předchozích tréninků.
+// prefill = při otevření detailu předvyplnit formulář hodnotami poslední série.
+// Vrátí dnešní série.
+async function renderLog(container, exerciseId, inputs, prefill = false) {
+  const renderId = ++logRenderId;
+  const [sets, persistent] = await Promise.all([log.getSetsForExercise(exerciseId), log.isStorageAvailable()]);
+  const today = log.localDate();
+  const todaySets = sets.filter((s) => s.date === today);
+  if (renderId !== logRenderId) return todaySets;
+
+  const last = sets[sets.length - 1];
+  if (prefill && last && Object.values(inputs).every((input) => input.value === '')) {
+    inputs.weight.value = formatNumber(last.weightKg);
+    inputs.reps.value = String(last.reps);
+    inputs.rir.value = last.rir === null ? '' : String(last.rir);
+  }
+
+  // Předchozí dny: seskupit podle data, nejnovější nahoře.
+  const byDate = new Map();
+  sets.filter((s) => s.date < today).forEach((s) => {
+    if (!byDate.has(s.date)) byDate.set(s.date, []);
+    byDate.get(s.date).push(s);
+  });
+  const previous = [...byDate].reverse().slice(0, LOG_HISTORY_DAYS);
+
+  container.replaceChildren(
+    ...(persistent ? [] : [el('p', { className: 'log-warning', textContent: t('log.memoryOnly') })]),
+    el('h3', { textContent: t('log.today') }),
+    todaySets.length
+      ? listWithRole('ol', 'log-today', todaySets.map(logTodayItem))
+      : el('p', { className: 'log-empty', textContent: t('log.todayEmpty') }),
+    ...(previous.length ? [
+      el('h3', { textContent: t('log.previous') }),
+      listWithRole('ul', 'log-history', previous.map(([date, daySets]) => el('li', {},
+        el('span', { className: 'log-date', textContent: formatDate(date) }),
+        el('span', { textContent: summarizeSets(daySets) })
+      ))),
+    ] : []),
+    el('a', { className: 'log-all', href: '#/historie', textContent: t('log.allHistory') })
+  );
+  return todaySets;
+}
+
+// Seznam bez odrážek s role="list" (Safari jinak nehlásí čtečce obrazovky, že jde o seznam).
+function listWithRole(tag, className, items) {
+  const list = el(tag, { className }, ...items);
+  list.setAttribute('role', 'list');
+  return list;
+}
+
+// Jedna dnešní série: číslo | 80 kg × 8 · RIR 2 | ×
+function logTodayItem(set, index) {
+  const label = formatSet(set);
+  const button = el('button', { type: 'button', className: 'icon-button log-delete' });
+  Object.assign(button.dataset, { id: set.id, number: String(index + 1), label });
+  button.setAttribute('aria-label', t('log.deleteSet', { number: index + 1, set: label }));
+  button.title = button.getAttribute('aria-label');
+  button.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">'
+    + ICONS.remove + '</svg>';
+  return el('li', { className: 'log-set' },
+    numberBadge(index + 1),
+    el('span', { className: 'log-set-text', textContent: label }),
+    button
   );
 }

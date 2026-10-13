@@ -139,5 +139,30 @@
     "newWeek": "Nový týden",
     "newWeekConfirm": "Vymazat všechny tréninky 1–4 a začít nový týden?",
     "cleared": "Všechny tréninky byly vymazány."
+  },
+  "log": {
+    "heading": "Záznam",
+    "weight": "Hmotnost (kg)",
+    "reps": "Opakování",
+    "rir": "RIR",
+    "rirHint": "Nepovinné: kolik opakování zbývalo do selhání.",
+    "decrease": "Ubrat: {name}",
+    "increase": "Přidat: {name}",
+    "add": "Přidat sérii",
+    "saved": "Uloženo: série {number} – {set}.",
+    "deleted": "Série smazána.",
+    "deleteSet": "Smazat sérii {number}: {set}",
+    "deleteConfirm": "Smazat sérii {number} ({set})?",
+    "today": "Dnes",
+    "todayEmpty": "Dnes zatím žádná série.",
+    "previous": "Předchozí tréninky",
+    "allHistory": "Celá historie →",
+    "errorWeight": "Zadej hmotnost 0–1000 kg (0 = vlastní váha).",
+    "errorReps": "Zadej počet opakování 1–100.",
+    "errorRir": "RIR musí být celé číslo 0–10, nebo nech pole prázdné.",
+    "errorSave": "Sérii se nepodařilo uložit.",
+    "memoryOnly": "Prohlížeč nepovoluje ukládání dat (např. anonymní okno). Série zůstanou jen do zavření stránky.",
+    "set": "{weight} kg × {reps}",
+    "setRir": "{weight} kg × {reps} · RIR {rir}"
   }
 }
