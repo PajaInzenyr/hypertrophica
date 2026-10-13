@@ -1048,7 +1048,7 @@ function formatSet(set) {
 }
 
 // Souhrn sérií jednoho dne: po sobě jdoucí série se stejnou hmotností se sloučí.
-// [80×8, 80×8, 80×7, 85×6] → "80 kg × 8, 8, 7 · 85 kg × 6"
+// [80×8, 80×8, 80×7, 85×6] → "80 kg × 8, 8, 7 | 85 kg × 6"
 function summarizeSets(sets) {
   const groups = [];
   sets.forEach((set) => {
@@ -1056,7 +1056,7 @@ function summarizeSets(sets) {
     if (last && last.weightKg === set.weightKg) last.reps.push(set.reps);
     else groups.push({ weightKg: set.weightKg, reps: [set.reps] });
   });
-  return groups.map((g) => `${formatNumber(g.weightKg)} kg × ${g.reps.join(', ')}`).join(' · ');
+  return groups.map((g) => `${formatNumber(g.weightKg)} kg × ${g.reps.join(', ')}`).join(' | ');
 }
 
 // "2026-10-13" → "13. 10. 2026" (s dlouhým: "pondělí 13. 10. 2026")
