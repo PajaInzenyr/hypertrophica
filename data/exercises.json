@@ -360,6 +360,16 @@
     "notes": { "cs": "V horní pozici se nezakláněj, stačí propnout kyčle. Záda drž neutrální po celou dobu; jakmile se začnou kulatit, sniž váhu. Když nestačí úchop, použij trhačky.", "en": "" }
   },
   {
+    "id": "sumo-deadlift-barbell",
+    "name": { "cs": "Sumo mrtvý tah", "en": "Sumo Deadlift" },
+    "type": "compound",
+    "primary": ["glutes", "hamstrings", "adductors"],
+    "secondary": ["quads", "lower_back", "abductors", "traps", "upper_back", "forearms"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Postav se do širokého postoje (chodidla zhruba 1,5–2× šíře ramen), špičky vytočené ven, holeně téměř u osy. Uchop osu mezi koleny na šířku ramen, ruce visí svisle. Narovnej záda, tlač kolena ven ve směru špiček a zpevni trup. Odtlač se nohama od země a osu veď svisle těsně u těla do vzpřímeného stoje s propnutými kyčlemi. Spouštěj stejnou dráhou zpět.", "en": "" },
+    "notes": { "cs": "Proti klasickému mrtvému tahu je trup vzpřímenější, takže víc pracují přitahovače stehen a kvadricepsy a méně spodní záda. Kolena po celou dobu míří ve směru špiček.", "en": "" }
+  },
+  {
     "id": "romanian-deadlift-barbell",
     "name": { "cs": "Rumunský mrtvý tah s osou", "en": "Barbell Romanian Deadlift" },
     "type": "compound",
@@ -434,7 +444,7 @@
     "name": { "cs": "Výpad na místě v Smithově stroji", "en": "Smith Machine Split Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors"],
+    "secondary": ["adductors", "abductors"],
     "equipment": ["smith_machine"],
     "description": { "cs": "Postav se pod osu Smithova stroje, osa leží na horní části trapézů. Udělej dlouhý krok – jedna noha vpředu, druhá vzadu na špičce. Odjisti osu a klesej svisle dolů, dokud zadní koleno téměř nedosedne na zem, pak se vytlač přední nohou zpět nahoru. Po dokončení série vystřídej nohy.", "en": "" },
     "notes": { "cs": "Delší krok víc zapojí hýždě, kratší krok kvadricepsy. Vedená dráha usnadňuje rovnováhu, takže se můžeš soustředit na pracující nohu.", "en": "" }
@@ -564,7 +574,7 @@
     "name": { "cs": "Goblet dřep", "en": "Goblet Squat" },
     "type": "compound",
     "primary": ["quads", "glutes"],
-    "secondary": ["adductors", "abs"],
+    "secondary": ["adductors", "abs", "lower_back"],
     "equipment": ["dumbbell"],
     "description": { "cs": "Drž jednoručku svisle u hrudníku oběma rukama. Chodidla mírně šíře než ramena, špičky lehce ven. Spouštěj se do hlubokého dřepu, trup vzpřímený, lokty mezi koleny. Vytlač se zpět nahoru.", "en": "" },
     "notes": { "cs": "Dobrý cvik na nácvik techniky dřepu a pro dny, kdy nechceš zatěžovat záda osou.", "en": "" }
