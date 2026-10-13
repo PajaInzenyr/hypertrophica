@@ -30,6 +30,14 @@
         <span class="app-name">Hypertrophica</span>
         <span class="app-subtitle" data-i18n="app.subtitle"></span>
       </a>
+      <!-- Odkaz na historii zapsaných sérií -->
+      <a id="history-link" class="header-button" href="#/historie" hidden>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/>
+          <path d="M3.5 3.5V8H8"/>
+          <path d="M12 7.5V12l3 2"/>
+        </svg>
+      </a>
       <!-- Odkaz na trénink s počtem cviků; popisek a počet doplní app.js -->
       <a id="plan-link" class="header-button" href="#/trenink" hidden>
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
@@ -148,6 +156,32 @@
       <p id="plan-feedback" class="plan-feedback" role="status"></p>
       <!-- Hlášení pro čtečky obrazovky (např. nová pozice cviku po posunu) -->
       <p id="plan-announcer" class="visually-hidden" aria-live="polite"></p>
+    </section>
+
+    <!-- Pohled 4: historie zapsaných sérií (adresa #/historie), seskupená po dnech.
+         Obsah doplní app.js. -->
+    <section id="history-view" class="history" aria-labelledby="history-title" hidden>
+      <a class="back-link" href="#/" id="history-back"></a>
+      <h1 id="history-title" tabindex="-1" data-i18n="history.title"></h1>
+      <p id="history-intro" class="history-intro"></p>
+      <div id="history-list" class="history-list"></div>
+      <button id="history-more" class="button-secondary" type="button" data-i18n="history.more" hidden></button>
+
+      <!-- Záloha všech dat do souboru a obnova ze zálohy (js/backup.js) -->
+      <section class="backup" aria-labelledby="backup-title">
+        <h2 id="backup-title" data-i18n="backup.title"></h2>
+        <p class="backup-intro" data-i18n="backup.intro"></p>
+        <div class="backup-actions">
+          <button id="backup-export" class="button-primary" type="button" data-i18n="backup.exportJson"></button>
+          <button id="backup-export-csv" class="button-secondary" type="button" data-i18n="backup.exportCsv"></button>
+          <button id="backup-import" class="button-secondary" type="button" data-i18n="backup.import"></button>
+          <!-- Skrytý výběr souboru; otevře ho tlačítko „Importovat zálohu“ -->
+          <input id="backup-file" type="file" accept=".json,application/json" hidden>
+        </div>
+        <!-- Náhled importu s volbou Sloučit / Nahradit; obsah doplní app.js -->
+        <div id="backup-confirm" class="backup-confirm" hidden></div>
+        <p id="backup-feedback" class="backup-feedback" role="status"></p>
+      </section>
     </section>
   </main>
 </body>

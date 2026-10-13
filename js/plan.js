@@ -34,16 +34,20 @@ function cleanIds(value) {
   return Array.isArray(value) ? unique(value.filter((id) => typeof id === 'string')) : [];
 }
 
+// Z uložené hodnoty (localStorage nebo záloha) udělá platný týden; null, když to týden není.
+function cleanWeek(stored) {
+  if (!stored || !Array.isArray(stored.slots)) return null;
+  const result = emptyWeek();
+  result.slots = result.slots.map((_, i) => cleanIds(stored.slots[i]));
+  const active = Number(stored.active);
+  result.active = Number.isInteger(active) && active >= 0 && active < SLOT_COUNT ? active : 0;
+  return result;
+}
+
 function read() {
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (stored && Array.isArray(stored.slots)) {
-      const result = emptyWeek();
-      result.slots = result.slots.map((_, i) => cleanIds(stored.slots[i]));
-      const active = Number(stored.active);
-      result.active = Number.isInteger(active) && active >= 0 && active < SLOT_COUNT ? active : 0;
-      return result;
-    }
+    const stored = cleanWeek(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+    if (stored) return stored;
     // Nová data zatím nejsou → zkus převést starý jediný trénink.
     const legacy = cleanIds(JSON.parse(localStorage.getItem(LEGACY_KEY)));
     const result = emptyWeek();
@@ -151,6 +155,25 @@ export function setActive(index) {
 // Kopie všech slotů: pole 4 polí ID cviků.
 export function getSlots() {
   return week.slots.map((ids) => [...ids]);
+}
+
+// Celý týden { active, slots } jako kopie (pro zálohu do souboru).
+export function getWeek() {
+  return { active: week.active, slots: getSlots() };
+}
+
+// Import ze zálohy. mode 'replace': tréninky se nahradí zálohou.
+// mode 'merge': ze zálohy se převezmou jen tréninky, které jsou v zařízení prázdné.
+// knownIds = ID existujících cviků (neznámé se vynechají).
+export function importWeek(data, mode, knownIds) {
+  const imported = cleanWeek(data) ?? emptyWeek();
+  imported.slots = imported.slots.map((ids) => ids.filter((id) => knownIds.has(id)));
+  if (mode === 'replace') {
+    week = imported;
+  } else {
+    week.slots = week.slots.map((ids, i) => (ids.length ? ids : imported.slots[i]));
+  }
+  write();
 }
 
 // „Nový týden“: vyprázdní všechny sloty a aktivním udělá slot 1.

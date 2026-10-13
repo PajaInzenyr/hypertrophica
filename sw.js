@@ -8,7 +8,7 @@
 // DŮLEŽITÉ: Při každé změně obsahu nebo kódu zvyš CACHE_VERSION. Prohlížeč pozná novou
 // verzi jen podle toho, že se změnil tento soubor – jinak mobil dál ukazuje starou verzi.
 // Nová verze se stáhne při otevření aplikace a zobrazí se po dalším obnovení stránky.
-const CACHE_VERSION = 18;
+const CACHE_VERSION = 19;
 const CACHE_NAME = `hypertrophica-v${CACHE_VERSION}`;
 
 // Všechny soubory, které aplikace potřebuje. Nový soubor (modul, ikona, data) sem přidej.
@@ -18,10 +18,12 @@ const FILES = [
   './style.css',
   './app.js',
   './manifest.json',
+  './js/backup.js',
   './js/bodymap.js',
   './js/favorites.js',
   './js/filters.js',
   './js/i18n.js',
+  './js/log.js',
   './js/plan.js',
   './js/theme.js',
   './data/exercises.json',

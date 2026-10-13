@@ -42,6 +42,12 @@ export function getFavorites() {
   return favorites;
 }
 
+// Nahradí všechny oblíbené novým seznamem ID (import ze zálohy).
+export function replaceFavorites(ids) {
+  favorites = new Set(ids.filter((id) => typeof id === 'string'));
+  write();
+}
+
 // Zavolá `callback`, když se oblíbené změní v jiné záložce téhož prohlížeče.
 export function onExternalChange(callback) {
   window.addEventListener('storage', (event) => {
