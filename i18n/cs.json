@@ -115,7 +115,8 @@
     "notes": "Poznámky",
     "notFound": "Cvik nebyl nalezen.",
     "none": "–",
-    "backToPlan": "Zpět na trénink"
+    "backToPlan": "Zpět na trénink",
+    "backToHistory": "Zpět na historii"
   },
   "week": {
     "tabsLabel": "Tréninky v týdnu",
@@ -164,5 +165,12 @@
     "memoryOnly": "Prohlížeč nepovoluje ukládání dat (např. anonymní okno). Série zůstanou jen do zavření stránky.",
     "set": "{weight} kg × {reps}",
     "setRir": "{weight} kg × {reps} · RIR {rir}"
+  },
+  "history": {
+    "headerLabel": "Historie tréninků",
+    "title": "Historie",
+    "empty": "Zatím nemáš zapsané žádné série. Sérii zapíšeš v detailu cviku v sekci Záznam.",
+    "summary": "Počet sérií: {sets} · tréninkových dní: {days}",
+    "more": "Zobrazit starší"
   }
 }

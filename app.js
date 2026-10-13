@@ -15,15 +15,16 @@ const state = {
   byId: new Map(), // id cviku → objekt z exercises.json
   muscles: new Map(), // id svalu → objekt z muscles.json
   filters: { ...EMPTY_FILTERS },
-  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan'
-  scrollY: { list: 0, plan: 0 }, // pozice, kam se vrátit z detailu
+  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan' | 'history'
+  scrollY: { list: 0, plan: 0, history: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
-  returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, nebo trénink)
+  returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, trénink, nebo historie)
   planHash: '#/trenink', // adresa naposledy zobrazeného tréninku (vlastní, sdílený, nebo Týden)
   sharedPlan: null, // ID cviků ze sdíleného odkazu; null = zobrazuje se vlastní trénink
   showWeek: false, // true = v pohledu Trénink je otevřená záložka Týden (souhrn tréninků 1–4)
   bodyMap: null, // hlavní klikací schéma svalů
   planMap: null, // schéma svalů zapojených v tréninku (jen pro čtení)
+  historyDays: 0, // kolik dní se v historii zobrazuje (tlačítko „Zobrazit starší“ přidává)
 };
 
 // ===== Odkazy na prvky stránky =====
@@ -62,6 +63,13 @@ const ui = {
   planActions: $('plan-actions'),
   planFeedback: $('plan-feedback'),
   planAnnouncer: $('plan-announcer'),
+  historyLink: $('history-link'),
+  historyView: $('history-view'),
+  historyBack: $('history-back'),
+  historyTitle: $('history-title'),
+  historyIntro: $('history-intro'),
+  historyList: $('history-list'),
+  historyMore: $('history-more'),
 };
 
 // Pomocná funkce pro vytvoření HTML prvku:
@@ -124,6 +132,10 @@ async function init() {
   state.planMap = createBodyMap(ui.planMapFigure); // bez onSelect = neklikací kopie
   syncFilterControls();
   ui.planBack.textContent = `← ${t('detail.back')}`;
+  ui.historyBack.textContent = `← ${t('detail.back')}`;
+  ui.historyLink.setAttribute('aria-label', t('history.headerLabel'));
+  ui.historyLink.title = t('history.headerLabel');
+  ui.historyLink.hidden = false;
   createPlanTabs();
   ui.planLink.hidden = false;
   updatePlanLink();
@@ -200,6 +212,10 @@ function bindEvents() {
     renderList();
     renderFavorites();
     document.querySelectorAll('.star-button').forEach(updateStarButton);
+  });
+  ui.historyMore.addEventListener('click', () => {
+    state.historyDays += HISTORY_PAGE;
+    renderHistory();
   });
   window.addEventListener('hashchange', route);
 }
@@ -803,16 +819,19 @@ function onClearPlan() {
 // ===== Přepínání pohledů podle adresy =====
 // #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink,
 // #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit),
-// #/tyden = souhrn tréninků 1–4 (stejný pohled jako trénink, jiná záložka)
+// #/tyden = souhrn tréninků 1–4 (stejný pohled jako trénink, jiná záložka),
+// #/historie = historie zapsaných sérií
 function route() {
   const previous = state.view;
-  // Zapamatuj si, kam se v seznamu / tréninku odscrollovalo, ať se tam dá vrátit.
-  if (previous === 'list' || previous === 'plan') state.scrollY[previous] = window.scrollY;
+  // Zapamatuj si, kam se v seznamu / tréninku / historii odscrollovalo, ať se tam dá vrátit.
+  if (previous in state.scrollY) state.scrollY[previous] = window.scrollY;
 
   const detail = location.hash.match(/^#\/cvik\/([\w-]+)$/);
   if (detail) {
     // „Zpět“ z detailu vede tam, odkud byl detail otevřen.
-    if (previous !== 'detail') state.returnHash = previous === 'plan' ? state.planHash : '#/';
+    if (previous !== 'detail') {
+      state.returnHash = { plan: state.planHash, history: '#/historie' }[previous] ?? '#/';
+    }
     showDetail(detail[1]);
     return;
   }
@@ -824,6 +843,8 @@ function route() {
     state.sharedPlan = shared === null ? null : parseSharedIds(shared);
     state.showWeek = false;
     showPlan(previous);
+  } else if (location.hash === '#/historie') {
+    showHistory(previous);
   } else if (location.hash === '#/tyden') {
     state.planHash = location.hash;
     state.sharedPlan = null;
@@ -840,9 +861,12 @@ function setView(name) {
   ui.listView.hidden = name !== 'list';
   ui.detailView.hidden = name !== 'detail';
   ui.planView.hidden = name !== 'plan';
-  // Zvýrazní ikonu tréninku v hlavičce, když je trénink otevřený.
-  if (name === 'plan') ui.planLink.setAttribute('aria-current', 'page');
-  else ui.planLink.removeAttribute('aria-current');
+  ui.historyView.hidden = name !== 'history';
+  // Zvýrazní ikonu tréninku / historie v hlavičce, když je pohled otevřený.
+  [[ui.planLink, 'plan'], [ui.historyLink, 'history']].forEach(([link, view]) => {
+    if (name === view) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
 }
 
 // Návrat z detailu: obnov pozici a fokus na naposledy otevřený cvik.
@@ -872,8 +896,10 @@ function showDetail(id) {
 }
 
 function backLink() {
-  const toPlan = state.returnHash !== '#/';
-  const text = t(toPlan ? 'detail.backToPlan' : 'detail.back');
+  const key = state.returnHash === '#/' ? 'detail.back'
+    : state.returnHash === '#/historie' ? 'detail.backToHistory'
+      : 'detail.backToPlan';
+  const text = t(key);
   return el('a', { className: 'back-link', href: state.returnHash, textContent: `← ${text}` });
 }
 
@@ -1155,4 +1181,59 @@ function logTodayItem(set, index) {
     el('span', { className: 'log-set-text', textContent: label }),
     button
   );
+}
+
+// ===== Pohled Historie =====
+// Všechny zapsané série seskupené po dnech (nejnovější nahoře), v rámci dne po cvicích.
+// Zobrazuje se po HISTORY_PAGE dnech, starší přidá tlačítko „Zobrazit starší“.
+const HISTORY_PAGE = 20;
+let historyRenderId = 0;
+
+async function showHistory(previous) {
+  setView('history');
+  state.historyDays = Math.max(state.historyDays, HISTORY_PAGE);
+  await renderHistory();
+  if (previous === 'detail') {
+    restorePosition('history', ui.historyList);
+  } else {
+    window.scrollTo(0, 0);
+    ui.historyTitle.focus();
+  }
+}
+
+async function renderHistory() {
+  const renderId = ++historyRenderId;
+  const sets = await log.getAllSets();
+  if (renderId !== historyRenderId) return;
+
+  // datum → (id cviku → série); Map zachová pořadí, v jakém byly cviky ten den poprvé zapsány.
+  const days = new Map();
+  sets.forEach((s) => {
+    if (!days.has(s.date)) days.set(s.date, new Map());
+    const exercises = days.get(s.date);
+    if (!exercises.has(s.exerciseId)) exercises.set(s.exerciseId, []);
+    exercises.get(s.exerciseId).push(s);
+  });
+  const dates = [...days.keys()].reverse();
+
+  ui.historyIntro.textContent = sets.length
+    ? t('history.summary', { sets: sets.length, days: dates.length })
+    : t('history.empty');
+  ui.historyList.replaceChildren(...dates.slice(0, state.historyDays).map((date) =>
+    el('section', { className: 'history-day' },
+      el('h2', { textContent: formatDate(date, true) }),
+      listWithRole('ul', 'history-exercises', [...days.get(date)].map(([exerciseId, daySets]) =>
+        el('li', {},
+          el('a', {
+            className: 'history-exercise',
+            href: `#/cvik/${exerciseId}`,
+            // Cvik, který už v datech není, se ukáže aspoň pod svým ID.
+            textContent: localized(state.byId.get(exerciseId)?.name) || exerciseId,
+          }),
+          el('span', { className: 'history-sets', textContent: summarizeSets(daySets) })
+        )
+      ))
+    )
+  ));
+  ui.historyMore.hidden = dates.length <= state.historyDays;
 }

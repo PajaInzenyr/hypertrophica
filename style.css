@@ -1351,3 +1351,80 @@ a.button-secondary {
   margin: 24px 0 0;
   font-weight: 600;
 }
+
+/* ===== Historie ===== */
+/* Na PC zůstává pohled v úzkém sloupci uprostřed (bez schématu svalů). */
+.history {
+  max-width: var(--max-width);
+  margin-inline: auto;
+}
+
+.history h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.history h1:focus {
+  outline: none;
+}
+
+.history-intro {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+}
+
+.history-day h2 {
+  margin: 24px 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.history-day h2::first-letter {
+  text-transform: uppercase; /* „pondělí“ → „Pondělí“ */
+}
+
+.history-exercises {
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.history-exercises li {
+  padding: 4px 0 10px;
+  border-top: 1px solid var(--border);
+}
+
+.history-exercises li:first-child {
+  border-top: 0;
+}
+
+.history-exercise {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.history-exercise:hover {
+  color: var(--accent);
+}
+
+.history-sets {
+  display: block;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+#history-more {
+  margin-top: 20px;
+}
