@@ -177,9 +177,11 @@
     "title": "Záloha dat",
     "intro": "Série, oblíbené a tréninky jsou uložené jen v tomto prohlížeči. Zálohu ulož do souboru a schovej ji (Disk Google, e-mail…). Ze zálohy je obnovíš i na jiném zařízení.",
     "exportJson": "Exportovat zálohu (JSON)",
+    "exportCsv": "Exportovat série (CSV)",
     "import": "Importovat zálohu",
     "exported": "Záloha uložena do souboru {file}.",
-    "shared": "Záloha odeslána.",
+    "exportedCsv": "Série uloženy do souboru {file}.",
+    "shared": "Soubor odeslán.",
     "errorExport": "Zálohu se nepodařilo vytvořit.",
     "errorRead": "Soubor se nepodařilo přečíst.",
     "errorJson": "Soubor není platný JSON.",
@@ -195,6 +197,7 @@
     "replaceConfirm": "Opravdu smazat všechna data v tomto zařízení (série, oblíbené, tréninky) a nahradit je zálohou?",
     "cancelled": "Import zrušen.",
     "imported": "Import dokončen. Série: přidáno {added}, aktualizováno {updated}, beze změny {unchanged}.",
-    "unknownDate": "neznámého data"
+    "unknownDate": "neznámého data",
+    "csvEmpty": "Zatím nejsou zapsané žádné série k exportu."
   }
 }

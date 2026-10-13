@@ -72,6 +72,7 @@ const ui = {
   historyList: $('history-list'),
   historyMore: $('history-more'),
   backupExport: $('backup-export'),
+  backupExportCsv: $('backup-export-csv'),
   backupImport: $('backup-import'),
   backupFile: $('backup-file'),
   backupConfirm: $('backup-confirm'),
@@ -220,6 +221,7 @@ function bindEvents() {
     document.querySelectorAll('.star-button').forEach(updateStarButton);
   });
   ui.backupExport.addEventListener('click', onExportBackup);
+  ui.backupExportCsv.addEventListener('click', onExportCsv);
   ui.backupImport.addEventListener('click', () => ui.backupFile.click());
   ui.backupFile.addEventListener('change', onBackupFileChosen);
   ui.historyMore.addEventListener('click', () => {
@@ -1264,6 +1266,26 @@ async function onExportBackup() {
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
     if (result !== 'cancelled') {
       ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exported', { file: filename });
+    }
+  } catch (error) {
+    console.error(error);
+    ui.backupFeedback.textContent = t('backup.errorExport');
+  }
+}
+
+// Tabulka sérií pro Excel; na rozdíl od zálohy JSON nejde importovat zpět.
+async function onExportCsv() {
+  const filename = `hypertrophica-serie-${log.localDate()}.csv`;
+  try {
+    const sets = await log.getAllSets();
+    if (sets.length === 0) {
+      ui.backupFeedback.textContent = t('backup.csvEmpty');
+      return;
+    }
+    const csv = backup.createCsv(sets, (id) => localized(state.byId.get(id)?.name) || id);
+    const result = await backup.saveFile(filename, csv, 'text/csv');
+    if (result !== 'cancelled') {
+      ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedCsv', { file: filename });
     }
   } catch (error) {
     console.error(error);

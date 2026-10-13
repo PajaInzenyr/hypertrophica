@@ -66,6 +66,29 @@ export function parseBackup(text, knownIds) {
   };
 }
 
+// Tabulka sérií pro Excel / Tabulky Google (jen export, zpět importovat nejde).
+// Česká podoba: oddělovač středník, desetinná čárka. Na začátku je znak BOM,
+// podle kterého Excel pozná kódování UTF-8 (jinak by rozbil diakritiku).
+// sets = série seřazené chronologicky, nameOf(id) = název cviku.
+export function createCsv(sets, nameOf) {
+  const header = ['datum', 'cvik', 'id_cviku', 'série', 'opakování', 'hmotnost_kg', 'rir'];
+  const counters = new Map(); // "datum|cvik" → pořadí série v rámci dne
+  const rows = sets.map((s) => {
+    const key = `${s.date}|${s.exerciseId}`;
+    const number = (counters.get(key) ?? 0) + 1;
+    counters.set(key, number);
+    return [s.date, nameOf(s.exerciseId), s.exerciseId, number, s.reps,
+      String(s.weightKg).replace('.', ','), s.rir ?? ''];
+  });
+  return '\uFEFF' + [header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n') + '\r\n';
+}
+
+// Hodnotu se středníkem, uvozovkami nebo zalomením řádku obalí uvozovkami (pravidlo formátu CSV).
+function csvCell(value) {
+  const text = String(value);
+  return /[;"\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
 // Uloží text do souboru. Na mobilu nabídne systémové sdílení (Disk Google, e-mail…),
 // pokud prohlížeč daný typ souboru sdílet umí; jinak (a na PC) soubor stáhne.
 // Vrátí 'shared', 'downloaded', nebo 'cancelled' (uživatel sdílení zavřel).
