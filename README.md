@@ -37,7 +37,7 @@ Protože odkazy a uložené tréninky používají `id` cviků, je o to důleži
 
 Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Obsahuje:
 
-- **Motiv:** *Podle systému* / *Světlý* / *Tmavý* (modul `js/theme.js`, volba uložená v `localStorage` pod klíčem `hw.theme`).
+- **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý* (modul `js/theme.js`, volba uložená v `localStorage` pod klíčem `hw.theme`).
 - **Záloha dat** – viz níže.
 
 ## Záloha a obnova dat

@@ -1542,20 +1542,23 @@ a.button-secondary {
   letter-spacing: 0.02em;
 }
 
-/* Volba motivu: tři přepínače vedle sebe jako segmentové tlačítko */
+/* Volba motivu: tři přepínače vedle sebe jako segmentové tlačítko.
+   Volby se roztáhnou na celý řádek; na velmi úzkém displeji (pod ~340 px) se zalomí. */
 .theme-options {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--gap);
+  gap: 8px;
   margin-top: 12px;
 }
 
 .theme-option {
+  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: var(--tap);
-  padding: 0 14px;
+  padding: 0 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
