@@ -328,7 +328,7 @@ a {
   }
 
   /* Společná mřížka: schéma vlevo, obsah vpravo.
-     Historie a Nastavení schéma nemají, levý sloupec u nich zůstává prázdný – obsah je tak stejně
+     Historie má v levém sloupci místo schématu kalendář. Nastavení schéma nemá, levý sloupec zůstává prázdný – obsah je tak stejně
      široký a na stejném místě jako u tréninku a detailu.
      Řádky „auto“ zabírají jednotlivé prvky obsahu (prázdné mají výšku 0),
      poslední řádek 1fr pohltí výšku schématu, aby mezi prvky nevznikaly mezery. */
@@ -354,10 +354,12 @@ a {
     grid-column: 2;
   }
 
-  /* Schéma: celý levý sloupec, přilepené pod hlavičkou, obsah svisle na střed okna */
+  /* Schéma: celý levý sloupec, přilepené pod hlavičkou, obsah svisle na střed okna.
+     V Historii je na stejném místě a ve stejné velikosti kalendář. */
   .list-layout > .body-map,
   .detail > .body-map,
-  .plan > .plan-map {
+  .plan > .plan-map,
+  .history > .history-calendar {
     grid-column: 1;
     grid-row: 1 / -1;
     position: sticky;
@@ -374,14 +376,16 @@ a {
      (416 × 440 = poměr stran SVG). Popisky „Zepředu/Zezadu“ mají stejnou šířku. */
   .list-layout > .body-map,
   .detail > .body-map,
-  .plan > .plan-map {
+  .plan > .plan-map,
+  .history > .history-calendar {
     --map-size: min(100%, calc((100vh - var(--header-h) - 2 * var(--page-pad-y) - var(--map-chrome)) * 416 / 440));
   }
 
   .list-layout > .body-map .body-map-figure svg,
   .detail > .body-map .body-map-figure svg,
   .plan > .plan-map .body-map-figure svg,
-  .body-map .body-map-labels {
+  .body-map .body-map-labels,
+  .history > .history-calendar > * {
     width: var(--map-size);
     max-width: none;
   }
@@ -1484,6 +1488,143 @@ a.button-secondary {
 
 #history-more {
   margin-top: 20px;
+}
+
+/* Skok z kalendáře: nadpis dne nezajede pod přilepenou hlavičku */
+.history-day {
+  scroll-margin-top: 64px;
+}
+
+.history-day h2:focus {
+  outline: none;
+}
+
+/* ===== Kalendář v Historii =====
+   Mobil: pod úvodním textem, nad seznamem dnů, široký max. jako schéma svalů (340 px).
+   PC: levý sloupec místo schématu (viz „Rozložení na PC“), šířka = šířka schématu. */
+.history-calendar {
+  margin: 20px 0 0;
+}
+
+.history-calendar > * {
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.calendar-month {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.calendar-month::first-letter {
+  text-transform: uppercase; /* „říjen 2026“ → „Říjen 2026“ */
+}
+
+.calendar-nav .icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.calendar-grid {
+  width: 100%;
+  table-layout: fixed; /* všech 7 sloupců stejně širokých */
+  border-collapse: collapse;
+}
+
+.calendar-grid th {
+  padding: 0 0 6px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.calendar-grid td {
+  padding: 2px;
+  text-align: center;
+}
+
+/* Políčko dne. Klikací plocha (tlačítko) zabírá celou buňku, aby měla i na mobilu min. 44 px.
+   Viditelný čtverec je menší: kreslí ho pseudo-prvek ::before, odsazený od okrajů buňky (inset),
+   a číslo dne leží nad ním. */
+.calendar-day {
+  position: relative;
+  isolation: isolate; /* ::before s z-index -1 zůstane pod číslem, ale nad pozadím stránky */
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 64px;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar-day::before {
+  content: "";
+  position: absolute;
+  inset: 13%; /* velikost čtverce: čím větší číslo, tím menší čtverec */
+  z-index: -1;
+  border-radius: 6px; /* mírně zaoblené rohy */
+}
+
+.calendar-day.has-training {
+  min-height: var(--tap);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.calendar-day.has-training::before {
+  background: var(--map-active);
+}
+
+.calendar-day.has-training:hover {
+  color: var(--text);
+}
+
+.calendar-day.has-training:hover::before {
+  background: var(--map-hover);
+}
+
+.calendar-day.is-today {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.calendar-day.is-today::before {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+.calendar-day.has-training.is-today {
+  color: var(--accent-text);
+}
+
+.calendar-day.has-training.is-today::before {
+  box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 4px var(--surface);
+}
+
+.calendar-legend .legend-today::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--text);
 }
 
 /* Odkaz na zálohu dat v Nastavení (na konci historie) */

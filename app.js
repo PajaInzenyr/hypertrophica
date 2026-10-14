@@ -26,6 +26,9 @@ const state = {
   bodyMap: null, // hlavní klikací schéma svalů
   planMap: null, // schéma svalů zapojených v tréninku (jen pro čtení)
   historyDays: 0, // kolik dní se v historii zobrazuje (tlačítko „Zobrazit starší“ přidává)
+  historyDates: [], // dny se sériemi, nejnovější první ("2026-10-13", …)
+  historySetCounts: new Map(), // den → počet sérií (pro kalendář)
+  calendarMonth: null, // měsíc zobrazený v kalendáři historie: { year, month } (month 0–11)
 };
 
 // ===== Odkazy na prvky stránky =====
@@ -71,6 +74,11 @@ const ui = {
   historyIntro: $('history-intro'),
   historyList: $('history-list'),
   historyMore: $('history-more'),
+  calendarPrev: $('calendar-prev'),
+  calendarNext: $('calendar-next'),
+  calendarMonth: $('calendar-month'),
+  calendarWeekdays: $('calendar-weekdays'),
+  calendarDays: $('calendar-days'),
   settingsLink: $('settings-link'),
   settingsView: $('settings-view'),
   settingsBack: $('settings-back'),
@@ -147,6 +155,9 @@ async function init() {
   ui.historyLink.setAttribute('aria-label', t('history.headerLabel'));
   ui.historyLink.title = t('history.headerLabel');
   ui.historyLink.hidden = false;
+  ui.calendarPrev.setAttribute('aria-label', t('calendar.prev'));
+  ui.calendarNext.setAttribute('aria-label', t('calendar.next'));
+  renderCalendarWeekdays();
   ui.settingsBack.textContent = `← ${t('detail.back')}`;
   ui.settingsLink.setAttribute('aria-label', t('settings.headerLabel'));
   ui.settingsLink.title = t('settings.headerLabel');
@@ -236,6 +247,8 @@ function bindEvents() {
     state.historyDays += HISTORY_PAGE;
     renderHistory();
   });
+  ui.calendarPrev.addEventListener('click', () => shiftCalendarMonth(-1));
+  ui.calendarNext.addEventListener('click', () => shiftCalendarMonth(1));
   document.addEventListener('click', onDetailBackgroundClick);
   document.addEventListener('keydown', onDetailEscape);
   window.addEventListener('hashchange', route);
@@ -1311,8 +1324,9 @@ async function renderHistory() {
     ? t('history.summary', { sets: sets.length, days: dates.length })
     : t('history.empty');
   ui.historyList.replaceChildren(...dates.slice(0, state.historyDays).map((date) =>
-    el('section', { className: 'history-day' },
-      el('h2', { textContent: formatDate(date, true) }),
+    // id = cíl skoku z kalendáře; tabindex -1 = nadpis jde zaměřit skriptem (pro čtečky obrazovky)
+    el('section', { className: 'history-day', id: `den-${date}` },
+      el('h2', { textContent: formatDate(date, true), tabIndex: -1 }),
       listWithRole('ul', 'history-exercises', [...days.get(date)].map(([exerciseId, daySets]) =>
         el('li', {},
           el('a', {
@@ -1327,6 +1341,97 @@ async function renderHistory() {
     )
   ));
   ui.historyMore.hidden = dates.length <= state.historyDays;
+
+  state.historyDates = dates;
+  state.historySetCounts = new Map([...days].map(([date, exercises]) =>
+    [date, [...exercises.values()].reduce((sum, daySets) => sum + daySets.length, 0)]));
+  renderCalendar();
+}
+
+// ===== Kalendář v Historii =====
+// Měsíční mřížka (týden začíná pondělím). Dny s tréninkem jsou zvýrazněné tlačítko,
+// klik přeskočí na daný den v seznamu vpravo (na mobilu pod kalendářem).
+
+// Záhlaví sloupců: zkratky dnů „po út st čt pá so ne“ podle češtiny prohlížeče.
+function renderCalendarWeekdays() {
+  ui.calendarWeekdays.replaceChildren(...[...Array(7)].map((_, i) => {
+    const day = new Date(2024, 0, 1 + i); // 1. 1. 2024 bylo pondělí
+    return el('th', {
+      scope: 'col',
+      abbr: day.toLocaleDateString('cs', { weekday: 'long' }),
+      textContent: day.toLocaleDateString('cs', { weekday: 'short' }),
+    });
+  }));
+}
+
+function renderCalendar() {
+  const now = new Date();
+  // Výchozí měsíc = aktuální; zůstane zvolený, dokud se stránka znovu nenačte.
+  state.calendarMonth ??= { year: now.getFullYear(), month: now.getMonth() };
+  const { year, month } = state.calendarMonth;
+  const today = log.localDate();
+
+  const monthLabel = new Date(year, month, 1).toLocaleDateString('cs', { month: 'long', year: 'numeric' });
+  ui.calendarMonth.textContent = monthLabel;
+
+  // Dopředu nejdál na aktuální měsíc, dozadu nejdál na měsíc prvního tréninku.
+  const key = year * 12 + month;
+  const oldest = state.historyDates.at(-1);
+  const [oldestYear, oldestMonth] = oldest ? oldest.split('-').map(Number) : [now.getFullYear(), now.getMonth() + 1];
+  ui.calendarNext.disabled = key >= now.getFullYear() * 12 + now.getMonth();
+  ui.calendarPrev.disabled = key <= oldestYear * 12 + oldestMonth - 1;
+
+  // Kolik prázdných políček před 1. dnem: getDay() vrací 0 = neděle, převod na 0 = pondělí.
+  const offset = (new Date(year, month, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < offset; i++) cells.push(el('td'));
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = log.localDate(new Date(year, month, day));
+    const count = state.historySetCounts.get(date) ?? 0;
+    const content = count
+      ? el('button', {
+        type: 'button',
+        className: 'calendar-day has-training',
+        textContent: day,
+        onclick: () => jumpToHistoryDay(date),
+      })
+      : el('span', { className: 'calendar-day', textContent: day });
+    if (count) content.setAttribute('aria-label', t('calendar.dayLabel', { date: formatDate(date, true), sets: count }));
+    if (date === today) {
+      content.classList.add('is-today');
+      content.setAttribute('aria-current', 'date');
+    }
+    cells.push(el('td', {}, content));
+  }
+  // Vždy 6 řádků, aby kalendář neměnil výšku při přepínání měsíců.
+  while (cells.length < 42) cells.push(el('td'));
+
+  const rows = [];
+  for (let i = 0; i < cells.length; i += 7) rows.push(el('tr', {}, ...cells.slice(i, i + 7)));
+  ui.calendarDays.replaceChildren(...rows);
+}
+
+function shiftCalendarMonth(delta) {
+  const { year, month } = state.calendarMonth;
+  const next = new Date(year, month + delta, 1);
+  state.calendarMonth = { year: next.getFullYear(), month: next.getMonth() };
+  renderCalendar();
+}
+
+// Skok na den v seznamu. Když je den mezi staršími, které ještě nejsou zobrazené,
+// seznam se nejdřív rozšíří (jako opakované „Zobrazit starší“).
+async function jumpToHistoryDay(date) {
+  const index = state.historyDates.indexOf(date);
+  if (index < 0) return;
+  if (index >= state.historyDays) {
+    state.historyDays = Math.ceil((index + 1) / HISTORY_PAGE) * HISTORY_PAGE;
+    await renderHistory();
+  }
+  const heading = document.querySelector(`#den-${date} h2`);
+  if (!heading) return;
+  heading.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  heading.focus({ preventScroll: true });
 }
 
 // ===== Záloha dat (v pohledu Historie) =====
