@@ -4,6 +4,8 @@
 
 👉 **Otevřít aplikaci: <https://pajainzenyr.github.io/hypertrophica/>**
 
+![Seznam cviků na PC: vlevo schéma svalů se zvýrazněnými prsy, uprostřed filtrovaný seznam cviků, vpravo oblíbené](docs/screenshots/desktop-list.png)
+
 > Název *Hypertrophica* je latinsky „věci týkající se hypertrofie“ – po vzoru starých učebnic jako *Physica* nebo *Botanica*.
 
 ---
@@ -46,6 +48,15 @@ Zásady, na kterých aplikace stojí:
 | 📱 **Instalace (PWA)** | Přidání na plochu telefonu, běh bez internetu. |
 
 Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se rozšiřuje.
+
+<p>
+  <img src="docs/screenshots/mobile-plan.png" width="200" alt="Trénink 1 na mobilu: seřazený seznam cviků s počtem dnešních sérií">
+  <img src="docs/screenshots/mobile-week.png" width="200" alt="Souhrn týdne: schéma postavy se zapojenými partiemi a počty cviků">
+  <img src="docs/screenshots/mobile-log.png" width="200" alt="Detail cviku: formulář pro zápis série, dnešní série a předchozí tréninky">
+  <img src="docs/screenshots/mobile-history-dark.png" width="200" alt="Historie v tmavém režimu: kalendář tréninků a série po dnech">
+</p>
+
+*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu.*
 
 ---
 
@@ -162,6 +173,7 @@ assets/             # schéma svalů (SVG), ikony, font
 manifest.json       # popis PWA (název, ikony)
 sw.js               # service worker – offline režim
 tools/              # skripty pro generování SVG schématu a ikon
+docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
 ```
 
 - Data cviků: [`data/exercises.json`](data/exercises.json)
