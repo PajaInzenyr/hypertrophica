@@ -88,10 +88,10 @@
     "unspecified": "Nedefinováno"
   },
   "theme": {
-    "auto": "automaticky podle systému",
-    "light": "světlý",
-    "dark": "tmavý",
-    "toggle": "Motiv: {current}. Přepnout na: {next}"
+    "title": "Motiv",
+    "auto": "Podle systému",
+    "light": "Světlý",
+    "dark": "Tmavý"
   },
   "bodymap": {
     "front": "Zepředu",
@@ -172,7 +172,12 @@
     "title": "Historie",
     "empty": "Zatím nemáš zapsané žádné série. Sérii zapíšeš v detailu cviku v sekci Záznam.",
     "summary": "Počet sérií: {sets} · tréninkových dní: {days}",
-    "more": "Zobrazit starší"
+    "more": "Zobrazit starší",
+    "backupLink": "Záloha a obnova dat → Nastavení"
+  },
+  "settings": {
+    "headerLabel": "Nastavení",
+    "title": "Nastavení"
   },
   "backup": {
     "title": "Záloha dat",

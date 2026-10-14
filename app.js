@@ -6,7 +6,7 @@ import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.j
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, replaceFavorites, onExternalChange } from './js/favorites.js';
 import * as plan from './js/plan.js';
-import { initThemeToggle } from './js/theme.js';
+import { initTheme } from './js/theme.js';
 import * as log from './js/log.js';
 import * as backup from './js/backup.js';
 
@@ -16,7 +16,7 @@ const state = {
   byId: new Map(), // id cviku → objekt z exercises.json
   muscles: new Map(), // id svalu → objekt z muscles.json
   filters: { ...EMPTY_FILTERS },
-  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan' | 'history'
+  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan' | 'history' | 'settings'
   scrollY: { list: 0, plan: 0, history: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
   returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, trénink, nebo historie)
@@ -71,6 +71,10 @@ const ui = {
   historyIntro: $('history-intro'),
   historyList: $('history-list'),
   historyMore: $('history-more'),
+  settingsLink: $('settings-link'),
+  settingsView: $('settings-view'),
+  settingsBack: $('settings-back'),
+  settingsTitle: $('settings-title'),
   backupExport: $('backup-export'),
   backupExportCsv: $('backup-export-csv'),
   backupImport: $('backup-import'),
@@ -106,7 +110,7 @@ async function init() {
   try {
     await loadStrings('cs');
     applyStaticStrings();
-    initThemeToggle(document.getElementById('theme-toggle'));
+    initTheme(document.getElementById('theme-options'));
     ui.status.textContent = t('app.loading');
 
     const [muscles, exercises] = await Promise.all([
@@ -143,6 +147,10 @@ async function init() {
   ui.historyLink.setAttribute('aria-label', t('history.headerLabel'));
   ui.historyLink.title = t('history.headerLabel');
   ui.historyLink.hidden = false;
+  ui.settingsBack.textContent = `← ${t('detail.back')}`;
+  ui.settingsLink.setAttribute('aria-label', t('settings.headerLabel'));
+  ui.settingsLink.title = t('settings.headerLabel');
+  ui.settingsLink.hidden = false;
   createPlanTabs();
   ui.planLink.hidden = false;
   updatePlanLink();
@@ -857,7 +865,8 @@ function onClearPlan() {
 // #/ = seznam, #/cvik/<id> = detail cviku, #/trenink = trénink,
 // #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit),
 // #/tyden = souhrn tréninků 1–4 (stejný pohled jako trénink, jiná záložka),
-// #/historie = historie zapsaných sérií
+// #/historie = historie zapsaných sérií,
+// #/nastaveni = nastavení (motiv, záloha a obnova dat)
 function route() {
   const previous = state.view;
   // Zapamatuj si, kam se v seznamu / tréninku / historii odscrollovalo, ať se tam dá vrátit.
@@ -882,6 +891,8 @@ function route() {
     showPlan(previous);
   } else if (location.hash === '#/historie') {
     showHistory(previous);
+  } else if (location.hash === '#/nastaveni') {
+    showSettings();
   } else if (location.hash === '#/tyden') {
     state.planHash = location.hash;
     state.sharedPlan = null;
@@ -899,8 +910,9 @@ function setView(name) {
   ui.detailView.hidden = name !== 'detail';
   ui.planView.hidden = name !== 'plan';
   ui.historyView.hidden = name !== 'history';
-  // Zvýrazní ikonu tréninku / historie v hlavičce, když je pohled otevřený.
-  [[ui.planLink, 'plan'], [ui.historyLink, 'history']].forEach(([link, view]) => {
+  ui.settingsView.hidden = name !== 'settings';
+  // Zvýrazní ikonu tréninku / historie / nastavení v hlavičce, když je pohled otevřený.
+  [[ui.planLink, 'plan'], [ui.historyLink, 'history'], [ui.settingsLink, 'settings']].forEach(([link, view]) => {
     if (name === view) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   });
@@ -1251,6 +1263,17 @@ function logTodayItem(set, index) {
   );
 }
 
+// ===== Pohled Nastavení =====
+// Motiv (obsluhuje js/theme.js) a záloha dat. Při každém otevření začíná „načisto“:
+// bez staré hlášky a bez rozpracovaného náhledu importu.
+function showSettings() {
+  setView('settings');
+  ui.backupFeedback.textContent = '';
+  closeImportPreview();
+  window.scrollTo(0, 0);
+  ui.settingsTitle.focus();
+}
+
 // ===== Pohled Historie =====
 // Všechny zapsané série seskupené po dnech (nejnovější nahoře), v rámci dne po cvicích.
 // Zobrazuje se po HISTORY_PAGE dnech, starší přidá tlačítko „Zobrazit starší“.
@@ -1259,10 +1282,6 @@ let historyRenderId = 0;
 
 async function showHistory(previous) {
   setView('history');
-  if (previous !== 'detail') {
-    ui.backupFeedback.textContent = '';
-    closeImportPreview();
-  }
   state.historyDays = Math.max(state.historyDays, HISTORY_PAGE);
   await renderHistory();
   if (previous === 'detail') {
@@ -1424,6 +1443,6 @@ async function onImportChoice(parsed, mode) {
   renderList();
   renderFavorites();
   afterPlanChange();
-  await renderHistory();
+  // Historii není třeba překreslovat – při otevření se načte vždy znovu.
   ui.backupFeedback.textContent = t('backup.imported', result);
 }

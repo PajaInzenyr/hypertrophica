@@ -168,7 +168,7 @@ a {
   border-bottom: 1px solid var(--border);
 }
 
-/* Řádek hlavičky: název vlevo, odkaz na trénink a přepínač motivu vpravo. */
+/* Řádek hlavičky: název vlevo, ikony historie, tréninku a nastavení vpravo. */
 .app-header-inner {
   display: flex;
   align-items: center;
@@ -328,14 +328,15 @@ a {
   }
 
   /* Společná mřížka: schéma vlevo, obsah vpravo.
-     Historie schéma nemá, levý sloupec u ní zůstává prázdný – obsah je tak stejně
+     Historie a Nastavení schéma nemají, levý sloupec u nich zůstává prázdný – obsah je tak stejně
      široký a na stejném místě jako u tréninku a detailu.
      Řádky „auto“ zabírají jednotlivé prvky obsahu (prázdné mají výšku 0),
      poslední řádek 1fr pohltí výšku schématu, aby mezi prvky nevznikaly mezery. */
   .list-layout,
   .detail,
   .plan,
-  .history {
+  .history,
+  .settings {
     display: grid;
     grid-template-columns: var(--map-col) minmax(0, 1fr);
     grid-template-rows: repeat(9, auto) 1fr;
@@ -347,7 +348,8 @@ a {
   .list-layout > *,
   .detail > *,
   .plan > *,
-  .history > * {
+  .history > *,
+  .settings > * {
     grid-area: auto;
     grid-column: 2;
   }
@@ -459,7 +461,8 @@ a {
   .list-layout,
   .detail,
   .plan,
-  .history {
+  .history,
+  .settings {
     grid-template-columns: var(--map-col) minmax(0, 1fr) var(--side-col);
   }
 
@@ -1398,11 +1401,12 @@ a.button-secondary {
   .history > .history-intro { grid-row: 4; }
   .history > .history-list { grid-row: 5; }
   .history > #history-more { grid-row: 6; }
-  .history > .backup { grid-row: 7; }
+  .history > .history-backup-link { grid-row: 7; }
 
   /* Odkaz zpět a tlačítko „Zobrazit starší“ jen tak široké jako jejich text, ne přes celý sloupec */
   .history > .back-link,
-  .history > #history-more {
+  .history > #history-more,
+  .history > .history-backup-link {
     justify-self: start;
   }
 }
@@ -1482,15 +1486,92 @@ a.button-secondary {
   margin-top: 20px;
 }
 
-/* ===== Záloha dat (pod historií) ===== */
-.backup {
-  margin-top: 32px;
+/* Odkaz na zálohu dat v Nastavení (na konci historie) */
+.history-backup-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin-top: 24px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ===== Nastavení ===== */
+/* PC: stejné rozložení jako Historie – obsah ve sloupci uprostřed, svisle na střed okna. */
+@media (min-width: 900px) {
+  .settings {
+    grid-template-rows: 1fr repeat(4, auto) 1fr;
+    min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+  }
+
+  .settings > .back-link { grid-row: 2; justify-self: start; }
+  .settings > h1 { grid-row: 3; }
+  .settings > .settings-section:nth-of-type(1) { grid-row: 4; }
+  .settings > .settings-section:nth-of-type(2) { grid-row: 5; }
+}
+
+.settings h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.settings h1:focus {
+  outline: none;
+}
+
+/* Rámeček jedné části nastavení (Motiv, Záloha dat) */
+.settings-section {
+  margin-top: 24px;
   padding: 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
+.settings-section h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Volba motivu: tři přepínače vedle sebe jako segmentové tlačítko */
+.theme-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-top: 12px;
+}
+
+.theme-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.theme-option:has(input:checked) {
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.theme-option input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+/* ===== Záloha dat (v Nastavení) ===== */
 .backup h2 {
   margin: 0 0 6px;
   font-family: var(--font-display);

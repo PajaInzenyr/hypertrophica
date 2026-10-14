@@ -48,8 +48,14 @@
         </svg>
         <span id="plan-count" class="plan-count" aria-hidden="true"></span>
       </a>
-      <!-- Přepínač motivu; ikonu a popisek doplní js/theme.js -->
-      <button id="theme-toggle" class="header-button" type="button" hidden></button>
+      <!-- Odkaz na nastavení (motiv, záloha dat) -->
+      <a id="settings-link" class="header-button" href="#/nastaveni" hidden>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path d="M4 7h9M17 7h3M4 17h3M11 17h9"/>
+          <circle cx="15" cy="7" r="2"/>
+          <circle cx="9" cy="17" r="2"/>
+        </svg>
+      </a>
     </div>
   </header>
 
@@ -166,9 +172,23 @@
       <p id="history-intro" class="history-intro"></p>
       <div id="history-list" class="history-list"></div>
       <button id="history-more" class="button-secondary" type="button" data-i18n="history.more" hidden></button>
+      <!-- Záloha dat bývala tady; teď je v Nastavení -->
+      <a class="history-backup-link" href="#/nastaveni" data-i18n="history.backupLink"></a>
+    </section>
+
+    <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv a záloha dat -->
+    <section id="settings-view" class="settings" aria-labelledby="settings-title" hidden>
+      <a class="back-link" href="#/" id="settings-back"></a>
+      <h1 id="settings-title" tabindex="-1" data-i18n="settings.title"></h1>
+
+      <!-- Volba motivu (js/theme.js); přepínače typu radio = vždy právě jedna volba -->
+      <section class="settings-section" aria-labelledby="theme-title">
+        <h2 id="theme-title" data-i18n="theme.title"></h2>
+        <div id="theme-options" class="theme-options" role="radiogroup" aria-labelledby="theme-title"></div>
+      </section>
 
       <!-- Záloha všech dat do souboru a obnova ze zálohy (js/backup.js) -->
-      <section class="backup" aria-labelledby="backup-title">
+      <section class="backup settings-section" aria-labelledby="backup-title">
         <h2 id="backup-title" data-i18n="backup.title"></h2>
         <p class="backup-intro" data-i18n="backup.intro"></p>
         <div class="backup-actions">
