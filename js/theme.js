@@ -13,7 +13,7 @@ const STORAGE_KEY = 'hw.theme';
 const MODES = ['auto', 'light', 'dark'];
 
 // Barva lišty prohlížeče = barva hlavičky (--surface) v daném motivu.
-const THEME_COLORS = { light: '#ffffff', dark: '#1f1e1c' };
+const THEME_COLORS = { light: '#ffffff', dark: '#0d0d0c' };
 
 function currentMode() {
   const theme = document.documentElement.dataset.theme;
