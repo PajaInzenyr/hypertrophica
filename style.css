@@ -1556,8 +1556,12 @@ a.button-secondary {
   text-align: center;
 }
 
-/* Políčko dne: čtverec přes celou šířku buňky, min. 44 px výšky jen u tlačítek */
+/* Políčko dne. Klikací plocha (tlačítko) zabírá celou buňku, aby měla i na mobilu min. 44 px.
+   Viditelný čtverec je menší: kreslí ho pseudo-prvek ::before, odsazený od okrajů buňky (inset),
+   a číslo dne leží nad ním. */
 .calendar-day {
+  position: relative;
+  isolation: isolate; /* ::before s z-index -1 zůstane pod číslem, ale nad pozadím stránky */
   display: grid;
   place-items: center;
   width: 100%;
@@ -1566,7 +1570,6 @@ a.button-secondary {
   margin: 0 auto;
   padding: 0;
   border: 0;
-  border-radius: 8px; /* čtverec s mírně zaoblenými rohy */
   background: transparent;
   color: var(--text-muted);
   font: inherit;
@@ -1574,28 +1577,48 @@ a.button-secondary {
   font-variant-numeric: tabular-nums;
 }
 
+.calendar-day::before {
+  content: "";
+  position: absolute;
+  inset: 13%; /* velikost čtverce: čím větší číslo, tím menší čtverec */
+  z-index: -1;
+  border-radius: 6px; /* mírně zaoblené rohy */
+}
+
 .calendar-day.has-training {
   min-height: var(--tap);
-  background: var(--map-active);
   color: var(--accent-text);
   font-weight: 600;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
+.calendar-day.has-training::before {
+  background: var(--map-active);
+}
+
 .calendar-day.has-training:hover {
-  background: var(--map-hover);
   color: var(--text);
+}
+
+.calendar-day.has-training:hover::before {
+  background: var(--map-hover);
 }
 
 .calendar-day.is-today {
   color: var(--text);
   font-weight: 600;
+}
+
+.calendar-day.is-today::before {
   box-shadow: inset 0 0 0 2px var(--text);
 }
 
 .calendar-day.has-training.is-today {
   color: var(--accent-text);
+}
+
+.calendar-day.has-training.is-today::before {
   box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 4px var(--surface);
 }
 
