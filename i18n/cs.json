@@ -175,6 +175,14 @@
     "more": "Zobrazit starší",
     "backupLink": "Záloha a obnova dat → Nastavení"
   },
+  "calendar": {
+    "prev": "Předchozí měsíc",
+    "next": "Další měsíc",
+    "legendTraining": "trénink",
+    "legendToday": "dnes",
+    "hint": "Klepnutím na den s tréninkem přeskočíš na jeho záznam.",
+    "dayLabel": "{date}: počet sérií {sets}"
+  },
   "settings": {
     "headerLabel": "Nastavení",
     "title": "Nastavení"

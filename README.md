@@ -30,7 +30,7 @@ Protože odkazy a uložené tréninky používají `id` cviků, je o to důleži
 - **Předvyplnění:** při otevření detailu se formulář vyplní hodnotami poslední zapsané série cviku.
 - **V detailu** je vidět seznam dnešních sérií (× sérii smaže) a souhrn posledních 5 tréninků cviku, např. `80 kg × 8, 8, 7 · 85 kg × 6` (série se stejnou hmotností jdoucí po sobě se sloučí).
 - **Návrat z detailu cviku:** odkaz *← Zpět na …* nahoře, klávesa **Esc**, nebo na PC (šířka od 900 px) klik do prázdného místa vlevo či vpravo od obsahu. Když je kurzor v políčku formuláře *Záznam*, první Esc políčko jen opustí, druhý se vrátí zpět. Na mobilu jen odkazem (okraje jsou úzké a hrozilo by nechtěné zavření detailu).
-- **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*.
+- **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*. Kalendář (na PC vlevo místo schématu svalů, na mobilu nad seznamem) zvýrazní dny s tréninkem; klepnutí na den přeskočí na jeho záznam.
 - **Uložení:** v IndexedDB prohlížeče (databáze `hypertrophica`, modul `js/log.js`) – **jen v daném prohlížeči a zařízení**. Smazáním dat prohlížeče se záznamy ztratí, proto pravidelně zálohuj (viz níže). Aplikace při prvním zápisu požádá prohlížeč o trvalé úložiště (`navigator.storage.persist()`), aby data nemazal při nedostatku místa. Na iPhonu se doporučuje používat aplikaci přidanou na plochu – Safari jinak data webu, který se 7 dní neotevřel, maže.
 
 ## Nastavení

@@ -170,6 +170,29 @@
       <a class="back-link" href="#/" id="history-back"></a>
       <h1 id="history-title" tabindex="-1" data-i18n="history.title"></h1>
       <p id="history-intro" class="history-intro"></p>
+      <!-- Kalendář tréninků. Na PC v levém sloupci místo schématu svalů, na mobilu nad seznamem.
+           Mřížku dnů doplní app.js; dny s tréninkem jsou tlačítka, klik přeskočí na daný den v seznamu. -->
+      <section id="history-calendar" class="history-calendar" aria-labelledby="calendar-month">
+        <div class="calendar-nav">
+          <button id="calendar-prev" class="icon-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <!-- aria-live: čtečka obrazovky ohlásí nový měsíc po přepnutí -->
+          <h2 id="calendar-month" class="calendar-month" aria-live="polite"></h2>
+          <button id="calendar-next" class="icon-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <table class="calendar-grid">
+          <thead><tr id="calendar-weekdays"></tr></thead>
+          <tbody id="calendar-days"></tbody>
+        </table>
+        <ul class="legend calendar-legend" aria-hidden="true">
+          <li data-i18n="calendar.legendTraining"></li>
+          <li class="legend-today" data-i18n="calendar.legendToday"></li>
+        </ul>
+        <p class="body-map-hint" data-i18n="calendar.hint"></p>
+      </section>
       <div id="history-list" class="history-list"></div>
       <button id="history-more" class="button-secondary" type="button" data-i18n="history.more" hidden></button>
       <!-- Záloha dat bývala tady; teď je v Nastavení -->
