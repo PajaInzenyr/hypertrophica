@@ -33,9 +33,16 @@ Protože odkazy a uložené tréninky používají `id` cviků, je o to důleži
 - **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*.
 - **Uložení:** v IndexedDB prohlížeče (databáze `hypertrophica`, modul `js/log.js`) – **jen v daném prohlížeči a zařízení**. Smazáním dat prohlížeče se záznamy ztratí, proto pravidelně zálohuj (viz níže). Aplikace při prvním zápisu požádá prohlížeč o trvalé úložiště (`navigator.storage.persist()`), aby data nemazal při nedostatku místa. Na iPhonu se doporučuje používat aplikaci přidanou na plochu – Safari jinak data webu, který se 7 dní neotevřel, maže.
 
+## Nastavení
+
+Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Obsahuje:
+
+- **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý* (modul `js/theme.js`, volba uložená v `localStorage` pod klíčem `hw.theme`).
+- **Záloha dat** – viz níže.
+
 ## Záloha a obnova dat
 
-V pohledu *Historie* dole, sekce *Záloha dat* (modul `js/backup.js`):
+V pohledu *Nastavení*, sekce *Záloha dat* (modul `js/backup.js`). Z konce *Historie* vede na Nastavení odkaz *Záloha a obnova dat*.
 
 - **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Soubor si ulož na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
