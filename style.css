@@ -1566,7 +1566,7 @@ a.button-secondary {
   margin: 0 auto;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: 8px; /* čtverec s mírně zaoblenými rohy */
   background: transparent;
   color: var(--text-muted);
   font: inherit;
@@ -1602,11 +1602,6 @@ a.button-secondary {
 .calendar-legend .legend-today::before {
   background: transparent;
   box-shadow: inset 0 0 0 2px var(--text);
-  border-radius: 50%;
-}
-
-.calendar-legend li:first-child::before {
-  border-radius: 50%;
 }
 
 /* Odkaz na zálohu dat v Nastavení (na konci historie) */
