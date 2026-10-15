@@ -1,5 +1,7 @@
 # Hypertrophica
 
+[English](README.md) · **Čeština**
+
 **Hypertrophica – Exercise Wiki.** Osobní příručka cviků pro hypertrofický trénink (budování svalové hmoty): najdi cvik podle svalu, sestav si tréninky na týden, zapisuj série a sleduj, jak se zlepšuješ. Funguje v prohlížeči na PC i na mobilu, dá se nainstalovat jako aplikace a běží i bez internetu.
 
 👉 **Otevřít aplikaci: <https://pajainzenyr.github.io/hypertrophica/>**
@@ -177,7 +179,7 @@ assets/             # schéma svalů (SVG), ikony, font
 manifest.json       # popis PWA (název, ikony)
 sw.js               # service worker – offline režim
 tools/              # kontrola dat (validate.html), skripty pro generování SVG schématu a ikon
-docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
+docs/screenshots/   # snímky obrazovky pro README.md a README.cs.md (aplikace je nepoužívá)
 ```
 
 - Data cviků: [`data/exercises.json`](data/exercises.json)
