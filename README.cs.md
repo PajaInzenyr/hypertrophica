@@ -252,7 +252,7 @@ Nová svalová skupina vyžaduje změnu `data/muscles.json` i SVG schématu (`to
 | `bodyweight` | Vlastní váha | Zátěží je hlavně vlastní tělo. Uváděj vždy, i když cvik potřebuje ještě další vybavení (např. `["bodyweight", "pullup_bar"]`), aby ho našel filtr „Vlastní váha“. |
 | `unspecified` | Nedefinováno | Cvik potřebuje pomůcku, která není pevně daná (např. Australský shyb – jakákoli tyč ve výšce pasu; Nordic curl – cokoli na zafixování pat). Konkrétní možnosti popiš v `notes`. |
 
-**Nové vybavení** přidáš tak, že jeho ID a název doplníš do `i18n/cs.json` (česky) i `i18n/en.json` (anglicky) do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n` by se ve filtru zobrazilo technické ID místo názvu.
+**Nové vybavení** přidáš tak, že jeho ID a název doplníš do `i18n/cs.json` (česky) i `i18n/en.json` (anglicky) do sekce `"equipment"` a zapíšeš ho do tabulky výše (v obou README). Bez záznamu v `i18n` by se ve filtru zobrazilo technické ID místo názvu.
 
 #### Kontrola před uložením
 
