@@ -1777,6 +1777,25 @@ a.button-secondary {
 }
 
 /* ===== O aplikaci (Nastavení) ===== */
+/* Tip k instalaci na mobil: zvýrazněný rámeček s pruhem v barvě akcentu vlevo */
+.about-install {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-size: 0.875rem;
+}
+
+.about-install ul {
+  margin: 0;
+  padding-left: 1.25em;
+}
+
+.about-install li + li {
+  margin-top: 4px;
+}
+
 .about-facts {
   display: grid;
   gap: 10px;

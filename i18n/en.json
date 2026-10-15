@@ -226,6 +226,9 @@
     "author": "Author",
     "source": "Source code",
     "license": "Licence",
-    "font": "Heading font"
+    "font": "Heading font",
+    "install": "Tip: install this page as an app on your phone. It launches full-screen from the home screen, works offline and, on iPhone, Safari will not delete your data after 7 days without use.",
+    "installAndroid": "Android (Chrome): menu ⋮ → Install app / Add to Home screen.",
+    "installIos": "iPhone (Safari): Share button → Add to Home Screen."
   }
 }

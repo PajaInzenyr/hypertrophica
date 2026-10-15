@@ -226,6 +226,9 @@
     "author": "Autor",
     "source": "Zdrojový kód",
     "license": "Licence",
-    "font": "Písmo nadpisů"
+    "font": "Písmo nadpisů",
+    "install": "Tip: na mobilu si stránku nainstaluj jako aplikaci. Spustíš ji z plochy na celou obrazovku, funguje offline a na iPhonu ti Safari nesmaže data po 7 dnech nepoužívání.",
+    "installAndroid": "Android (Chrome): menu ⋮ → Instalovat aplikaci / Přidat na plochu.",
+    "installIos": "iPhone (Safari): tlačítko Sdílet → Přidat na plochu."
   }
 }
