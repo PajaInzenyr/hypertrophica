@@ -41,9 +41,18 @@ Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi z
 
 7. **Záznam sérií:** v detailu cviku formulář hmotnost (kg) / opakování / RIR (nepovinné), dnešní série a souhrn posledních tréninků. Pohled **Historie** (`#/historie`) seskupený po dnech.
 8. **Úložiště:** IndexedDB (databáze `hypertrophica`, tabulka `sets`, modul `js/log.js`), jeden záznam = jedna série. Při změně struktury zvyš `SCHEMA_VERSION` v `js/log.js` a doplň převod v `upgrade()`. Bez IndexedDB aplikace funguje se záznamy jen v paměti a upozorní na to.
-9. **Záloha:** v pohledu **Nastavení** (`#/nastaveni`, spolu s volbou motivu) export/import JSON se všemi daty (série, oblíbené, tréninky) a export sérií do CSV (`js/backup.js`). Import kontroluje data a nabízí *Sloučit* / *Nahradit vše*.
+9. **Záloha:** v pohledu **Nastavení** (`#/nastaveni`, spolu s volbou motivu a jazyka) export/import JSON se všemi daty (série, oblíbené, tréninky) a export sérií do CSV (`js/backup.js`). Import kontroluje data a nabízí *Sloučit* / *Nahradit vše*.
 
 Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zařízeními (přenos jen přes soubor zálohy), jednotky lb.
+
+## Jazyky
+
+10. **Čeština a angličtina.** Volba v **Nastavení** (sekce *Jazyk*): *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (`cs`, `sk` → čeština, jinak angličtina). Ukládá se do `localStorage` (klíč `hw.lang`, „Systém“ = klíč smazaný); po změně se stránka znovu načte. Logika je v `js/i18n.js`.
+- Texty UI v `i18n/cs.json` a `i18n/en.json`. **Oba soubory musí mít stejné klíče** – nový text vždy přidej do obou.
+- Formát data a čísel podle jazyka (`currentLocale()`: `cs` → `cs`, `en` → `en-GB`, tj. 13/10/2026 a týden od pondělí). Nikde nepiš pevně `'cs'` do `toLocaleDateString`, `Intl` ani `localeCompare`.
+- Vyhledávání hledá v názvech všech jazyků bez ohledu na zvolený jazyk.
+- Nový jazyk = nový soubor `i18n/<kód>.json`, kód do `LANGS` a `LOCALES` v `js/i18n.js` a soubor do `FILES` v `sw.js`.
+- `manifest.json` zůstává česky (`"lang": "cs"`).
 
 ## Struktura projektu
 
@@ -56,7 +65,8 @@ data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
 i18n/
-  cs.json           # texty UI
+  cs.json           # texty UI česky
+  en.json           # texty UI anglicky (stejné klíče jako cs.json)
 assets/
   body-map.svg      # schéma svalů, každý sval = element s id odpovídajícím muscles.json
   icons/            # PWA ikony 192 a 512 px
@@ -85,7 +95,7 @@ README.md
 - `id`: kebab-case, unikátní, nikdy se nemění (odkazují na něj oblíbené).
 - `type`: pouze `"compound"` nebo `"isolation"`.
 - `primary`/`secondary`: pouze ID existující v `muscles.json`.
-- Klíče a ID anglicky, texty vícejazyčné. Aktuálně se vyplňuje jen `cs`; při chybějícím překladu zobraz `cs`.
+- Klíče a ID anglicky, texty vícejazyčné. Vyplňuje se `cs` i `en` (u nového cviku oba jazyky); při chybějícím překladu se zobrazí `cs`.
 
 `data/muscles.json` – pole objektů:
 
@@ -101,7 +111,7 @@ README.md
 - `latin`: odborné názvy podle Terminologia Anatomica; pole, protože skupina může zahrnovat více svalů. Části svalu se zapisují jako `musculus deltoideus – pars clavicularis`.
 - `views`: `"front"`, `"back"` nebo obojí (např. lýtka) – na kterém pohledu SVG schématu se sval zobrazí.
 
-Při úpravě dat **validuj**: unikátní `id`, platné hodnoty `type`, existující ID svalů. Pro validaci vytvoř jednoduchý skript `tools/validate.html` (otevře se v prohlížeči a vypíše chyby), aby nebylo nutné instalovat Node.
+Při úpravě dat **validuj**: unikátní `id`, platné hodnoty `type`, existující ID svalů, vyplněné `en` všude, kde je vyplněné `cs`, a stejné klíče v `i18n/cs.json` a `i18n/en.json`. Pro validaci vytvoř jednoduchý skript `tools/validate.html` (otevře se v prohlížeči a vypíše chyby), aby nebylo nutné instalovat Node.
 
 Série (IndexedDB, tabulka `sets`, ne soubor v repozitáři) – objekt:
 
