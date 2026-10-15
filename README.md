@@ -55,9 +55,10 @@ Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se roz
   <img src="docs/screenshots/mobile-week.png" width="200" alt="Souhrn týdne: schéma postavy se zapojenými partiemi a počty cviků">
   <img src="docs/screenshots/mobile-log.png" width="200" alt="Detail cviku: formulář pro zápis série, dnešní série a předchozí tréninky">
   <img src="docs/screenshots/mobile-history-dark.png" width="200" alt="Historie v tmavém režimu: kalendář tréninků a série po dnech">
+  <img src="docs/screenshots/mobile-settings.png" width="200" alt="Nastavení: volba motivu a jazyka (Systém, Čeština, English) a záloha dat">
 </p>
 
-*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu.*
+*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu, nastavení s volbou motivu a jazyka.*
 
 ---
 
