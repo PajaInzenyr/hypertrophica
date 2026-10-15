@@ -72,7 +72,8 @@ assets/
   icons/            # PWA ikony 192 a 512 px
 manifest.json
 sw.js
-README.md
+README.md           # anglicky
+README.cs.md        # česky (stejný obsah jako README.md)
 ```
 
 ## Datový model
@@ -170,4 +171,4 @@ Jen pokud autor někdy bude mít lokální kopii: service worker a `fetch` nefun
    - **Po nasazení otestuj** – konkrétní checklist kroků, které má autor po merge provést na GitHub Pages, zvlášť pro **PC** a pro **mobil** (např. „Klepni na sval *biceps* → seznam ukáže jen cviky na biceps“).
    - Zda byl zvýšen `CACHE_VERSION` (pokud se měnil obsah nebo kód).
 6. PR slučuje (merge) výhradně autor. Po merge ověří checklist; případné opravy = nová větev a nový PR.
-7. `README.md` udržuj aktuální: jak přidat cvik, jak se nasazuje, jak testovat.
+7. README je ve dvou jazycích: `README.md` (angličtina, zobrazuje ho GitHub) a `README.cs.md` (čeština), nahoře odkazy na přepnutí jazyka. Udržuj **oba** aktuální a se stejným obsahem: jak přidat cvik, jak se nasazuje, jak testovat. Změnu v jednom vždy promítni i do druhého.

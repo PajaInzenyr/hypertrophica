@@ -1,192 +1,196 @@
 # Hypertrophica
 
-**Hypertrophica – Exercise Wiki.** Osobní příručka cviků pro hypertrofický trénink (budování svalové hmoty): najdi cvik podle svalu, sestav si tréninky na týden, zapisuj série a sleduj, jak se zlepšuješ. Funguje v prohlížeči na PC i na mobilu, dá se nainstalovat jako aplikace a běží i bez internetu.
+**English** · [Čeština](README.cs.md)
 
-👉 **Otevřít aplikaci: <https://pajainzenyr.github.io/hypertrophica/>**
+**Hypertrophica – Exercise Wiki.** A personal exercise handbook for hypertrophy training (building muscle): find exercises by muscle, plan your weekly workouts, log your sets and track your progress. It runs in the browser on desktop and mobile, can be installed as an app and works offline.
 
-![Seznam cviků na PC: vlevo schéma svalů se zvýrazněnými prsy, uprostřed filtrovaný seznam cviků, vpravo oblíbené](docs/screenshots/desktop-list.png)
+👉 **Open the app: <https://pajainzenyr.github.io/hypertrophica/>**
 
-> Název *Hypertrophica* je latinsky „věci týkající se hypertrofie“ – po vzoru starých učebnic jako *Physica* nebo *Botanica*.
+![Exercise list on desktop: muscle map with the chest highlighted on the left, filtered exercise list in the middle, favourites on the right](docs/screenshots/desktop-list.png)
 
----
+> The name *Hypertrophica* is Latin for "things concerning hypertrophy" – modelled on old textbook titles such as *Physica* or *Botanica*.
 
-## Myšlenka
-
-Při tréninku na objem se pořád řeší stejné otázky: *Čím procvičím zadní delty? Co můžu dělat jen s jednoručkami? Nevynechávám v týdnu nějakou partii? Kolik jsem minule zvedl na benchi?* Odpovědi bývají rozházené po videích, poznámkách v mobilu a v hlavě.
-
-Hypertrophica je dává na jedno místo:
-
-- **Wiki cviků** – každý cvik má popis provedení, primárně a sekundárně zapojené svaly, typ a potřebné vybavení.
-- **Pohled přes svaly** – klikací schéma postavy: klepneš na sval a vidíš cviky, které ho zapojují.
-- **Plán a kontrola týdne** – až 4 tréninky a souhrn, které partie týden pokrývá a které zůstávají stranou.
-- **Tréninkový deník** – zápis sérií přímo u cviku a historie s kalendářem.
-
-Zásady, na kterých aplikace stojí:
-
-- **Jednoduchost.** Žádné účty, registrace ani reklamy. Otevřeš a používáš.
-- **Soukromí.** Data (oblíbené, tréninky, série) zůstávají jen ve tvém zařízení. Nic se neodesílá na server; přenos mezi zařízeními jde přes soubor zálohy.
-- **Offline.** Po prvním načtení funguje i v posilovně bez signálu.
-- **Mobil na prvním místě.** Velká tlačítka pro ovládání palcem, světlý i tmavý režim.
+*The screenshots show the Czech interface; the app is also available in English (see [Settings](#settings-backup-and-restore)).*
 
 ---
 
-## Co aplikace umí
+## The idea
 
-| Funkce | Krátce |
+Training for size keeps raising the same questions: *What hits the rear delts? What can I do with just dumbbells? Am I skipping a muscle group this week? How much did I bench last time?* The answers tend to be scattered across videos, phone notes and memory.
+
+Hypertrophica puts them in one place:
+
+- **Exercise wiki** – every exercise has instructions, primary and secondary muscles, type and required equipment.
+- **Muscle-first view** – a clickable body map: tap a muscle to see the exercises that work it.
+- **Weekly plan and check** – up to 4 workouts and a summary of which muscle groups the week covers and which are left out.
+- **Training log** – log sets right in the exercise detail, with a history and calendar.
+
+Principles behind the app:
+
+- **Simplicity.** No accounts, sign-ups or ads. Open it and use it.
+- **Privacy.** Your data (favourites, workouts, sets) stays on your device only. Nothing is sent to a server; moving data between devices works through a backup file.
+- **Offline.** After the first load it works even in a gym with no signal.
+- **Mobile first.** Large thumb-friendly buttons, light and dark mode.
+
+---
+
+## Features
+
+| Feature | In short |
 |---|---|
-| 🔎 **Vyhledávání** | Hledání cviku podle názvu, nezáleží na diakritice ani velikosti písmen („drep“ najde „Dřep“). |
-| 🎛️ **Filtry** | Sval (primární / sekundární zapojení), typ (vícekloubový / izolovaný), vybavení, oblíbené. Filtry se kombinují. |
-| 🧍 **Schéma svalů** | Postava zepředu a zezadu. Klepnutí na sval = filtr podle svalu, aktivní sval je zvýrazněný. |
-| 📖 **Detail cviku** | Provedení, zapojené svaly (i na schématu), typ, vybavení, poznámky a tipy. |
-| ⭐ **Oblíbené** | Hvězdička u cviku, rychlý seznam oblíbených. |
-| 📋 **Tréninky 1–4** | Seřazené seznamy cviků, schéma zapojených partií, sdílení odkazem, zámek proti nechtěným úpravám. |
-| 📅 **Týden** | Souhrn všech tréninků: které partie jsou zapojené, nedostatečně zapojené nebo vynechané. |
-| 🏋️ **Záznam sérií** | Hmotnost, opakování a RIR přímo v detailu cviku, předvyplnění podle minula, souhrn posledních tréninků. |
-| 🕘 **Historie** | Všechny série po dnech a kalendář tréninků. |
-| 💾 **Záloha** | Export / import všech dat do souboru JSON, export sérií do CSV pro Excel. |
-| 🌗 **Motiv** | Světlý, tmavý nebo podle systému. |
-| 🌐 **Jazyk** | Čeština nebo angličtina, výchozí podle jazyka prohlížeče. |
-| 📱 **Instalace (PWA)** | Přidání na plochu telefonu, běh bez internetu. |
+| 🔎 **Search** | Find exercises by name, ignoring diacritics and letter case ("drep" finds "Dřep"). Searches both Czech and English names. |
+| 🎛️ **Filters** | Muscle (primary / secondary involvement), type (compound / isolation), equipment, favourites. Filters combine. |
+| 🧍 **Muscle map** | Front and back view of the body. Tapping a muscle filters by it; the active muscle is highlighted. |
+| 📖 **Exercise detail** | Execution, muscles involved (also shown on the map), type, equipment, notes and tips. |
+| ⭐ **Favourites** | Star an exercise, quick list of favourites. |
+| 📋 **Workouts 1–4** | Ordered exercise lists, map of muscles involved, sharing via link, lock against accidental edits. |
+| 📅 **Week** | Summary of all workouts: which muscle groups are trained, insufficiently trained or missed. |
+| 🏋️ **Set logging** | Weight, reps and RIR right in the exercise detail, prefilled from last time, summary of recent workouts. |
+| 🕘 **History** | All sets by day and a workout calendar. |
+| 💾 **Backup** | Export / import all data as a JSON file, export sets to CSV for Excel. |
+| 🌗 **Theme** | Light, dark or follow the system. |
+| 🌐 **Language** | Czech or English, defaulting to the browser language. |
+| 📱 **Install (PWA)** | Add to the phone home screen, works offline. |
 
-Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se rozšiřuje.
+The database contains dozens of exercises across 19 muscle groups and keeps growing.
 
 <p>
-  <img src="docs/screenshots/mobile-plan.png" width="200" alt="Trénink 1 na mobilu: seřazený seznam cviků s počtem dnešních sérií">
-  <img src="docs/screenshots/mobile-week.png" width="200" alt="Souhrn týdne: schéma postavy se zapojenými partiemi a počty cviků">
-  <img src="docs/screenshots/mobile-log.png" width="200" alt="Detail cviku: formulář pro zápis série, dnešní série a předchozí tréninky">
-  <img src="docs/screenshots/mobile-history-dark.png" width="200" alt="Historie v tmavém režimu: kalendář tréninků a série po dnech">
-  <img src="docs/screenshots/mobile-settings.png" width="200" alt="Nastavení: volba motivu a jazyka (Systém, Čeština, English) a záloha dat">
+  <img src="docs/screenshots/mobile-plan.png" width="200" alt="Workout 1 on mobile: ordered exercise list with the number of sets done today">
+  <img src="docs/screenshots/mobile-week.png" width="200" alt="Week summary: body map with trained muscle groups and exercise counts">
+  <img src="docs/screenshots/mobile-log.png" width="200" alt="Exercise detail: set logging form, today's sets and previous workouts">
+  <img src="docs/screenshots/mobile-history-dark.png" width="200" alt="History in dark mode: workout calendar and sets by day">
+  <img src="docs/screenshots/mobile-settings.png" width="200" alt="Settings: theme and language choice (System, Čeština, English) and data backup">
 </p>
 
-*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu, nastavení s volbou motivu a jazyka.*
+*From left: workout, week summary, set logging in the exercise detail, history in dark mode, settings with theme and language choice.*
 
 ---
 
-## Rychlý start
+## Quick start
 
-1. **Otevři** <https://pajainzenyr.github.io/hypertrophica/> v prohlížeči.
-2. **Nainstaluj na mobil** (doporučeno, aplikace pak funguje jako běžná appka i offline):
-   - **Android (Chrome):** menu ⋮ → *Přidat na plochu* / *Nainstalovat aplikaci*.
-   - **iPhone (Safari):** tlačítko Sdílet → *Přidat na plochu*.
-3. **Najdi cvik** – napiš název do vyhledávání, nebo klepni na sval ve schématu.
-4. **Sestav trénink** – tlačítkem ⊕ u cviku ho přidáš do aktivního tréninku. Tréninky otevřeš ikonou seznamu v hlavičce.
-5. **Při cvičení zapisuj série** – v detailu cviku sekce *Záznam*: hmotnost, opakování, *Přidat sérii*.
-6. **Občas zálohuj** – *Nastavení* → *Exportovat zálohu (JSON)*. Data jsou jen v tomto zařízení.
+1. **Open** <https://pajainzenyr.github.io/hypertrophica/> in a browser.
+2. **Install it on your phone** (recommended – it then behaves like a regular app and works offline):
+   - **Android (Chrome):** menu ⋮ → *Add to Home screen* / *Install app*.
+   - **iPhone (Safari):** Share button → *Add to Home Screen*.
+3. **Find an exercise** – type its name into the search box, or tap a muscle on the map.
+4. **Build a workout** – the ⊕ button next to an exercise adds it to the active workout. Open your workouts with the list icon in the header.
+5. **Log sets while training** – in the exercise detail, *Log* section: weight, reps, *Add set*.
+6. **Back up now and then** – *Settings* → *Export backup (JSON)*. Your data lives only on this device.
 
 ---
 
-## Průvodce funkcemi
+## Feature guide
 
-### Seznam cviků, filtry a schéma svalů
+### Exercise list, filters and muscle map
 
-- **Vyhledávání** podle názvu, bez ohledu na diakritiku a velká písmena.
-- **Filtry:** *Sval* (a u něj *Zapojení*: primární / sekundární / obojí), *Typ*, *Vybavení* a *Oblíbené*. Všechny platí současně. *Zrušit filtry* vše vrátí.
-- **Schéma svalů:** přepínání *Zepředu* / *Zezadu*, klepnutí na sval nastaví filtr, další klepnutí ho zruší. Filtr nastavený v seznamu se na schématu zvýrazní taky.
-- Filtr *Vybavení* nabízí jen vybavení, které má aspoň jeden cvik.
+- **Search** by name, ignoring diacritics and letter case. Both Czech and English names are searched regardless of the selected language.
+- **Filters:** *Muscle* (with *Involvement*: primary / secondary / both), *Type*, *Equipment* and *Favourites*. All apply at once. *Clear filters* resets everything.
+- **Muscle map:** switch between *Front* / *Back*; tapping a muscle sets the filter, tapping again clears it. A muscle filter set in the list is highlighted on the map as well.
+- The *Equipment* filter only offers equipment used by at least one exercise.
 
-### Detail cviku
+### Exercise detail
 
-Popis provedení, primární a sekundární svaly (i barevně na schématu), typ, vybavení a poznámky (varianty, tipy, bezpečnost). Hvězdička přidá cvik do oblíbených, ⊕ do aktivního tréninku. Pod tím je sekce *Záznam* pro zápis sérií.
+Execution, primary and secondary muscles (also colour-coded on the map), type, equipment and notes (variations, tips, safety). The star adds the exercise to favourites, ⊕ to the active workout. Below is the *Log* section for recording sets.
 
-**Návrat z detailu:** odkaz *← Zpět na …* nahoře, klávesa **Esc**, nebo na PC (šířka od 900 px) klik do prázdného místa vlevo či vpravo od obsahu. Když je kurzor v políčku formuláře *Záznam*, první Esc políčko jen opustí, druhý se vrátí zpět. Na mobilu jen odkazem (okraje jsou úzké a hrozilo by nechtěné zavření detailu).
+**Leaving the detail:** the *← Back to …* link at the top, the **Esc** key, or on desktop (width 900 px and up) a click into the empty space left or right of the content. When the cursor is in a *Log* form field, the first Esc only leaves the field, the second goes back. On mobile only via the link (the margins are narrow and the detail could close by accident).
 
-### Oblíbené
+### Favourites
 
-Hvězdička u cviku v seznamu nebo v detailu. Oblíbené cviky jsou v samostatném panelu a dají se použít jako filtr.
+The star next to an exercise in the list or in the detail. Favourite exercises have their own panel and can be used as a filter.
 
-### Tréninky 1–4 a Týden
+### Workouts 1–4 and Week
 
-Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je seřazený seznam cviků, bez sérií, opakování a vah. Záložka *Týden* ukazuje, které partie tréninky dohromady zapojily a které zůstaly vynechané.
+Simple workout plans: up to 4 workouts (*Workout 1–4*), each an ordered list of exercises, without sets, reps or weights. The *Week* tab shows which muscle groups the workouts cover together and which are left out.
 
-- **Přepínač:** v pohledu tréninku řada tlačítek *1 2 3 4 Týden*. Malé číslo u tlačítka = počet cviků v tréninku. Klepnutí na 1–4 udělá trénink **aktivním**.
-- **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu přidává do **aktivního** tréninku (✓ = cvik už v něm je). Nový cvik se přidá na konec. Stejný cvik může být ve více trénincích.
-- **Zobrazení:** ikona seznamu v hlavičce (odznak = počet cviků v aktivním tréninku), adresa `#/trenink`; souhrn týdne na adrese `#/tyden`.
-- **Odcvičeno dnes:** cvik, u kterého jsou dnes zapsané série, má v pravém horním rohu karty kroužek s počtem dnešních sérií. Další den kroužky zmizí.
-- **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže aktivní trénink.
-- **Zámek:** ikona zámku vedle nadpisu, platí pro všechny tréninky najednou. Zamčené tréninky skryjí šipky, křížky, *Vymazat trénink* i *Nový týden* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení.
-- **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Číslo na partii = počet cviků v tréninku, které ji zapojují.
-- **Týden:** sečte cviky ze všech 4 tréninků (cvik ve dvou trénincích se počítá dvakrát). Partie je
-  - **zapojená**, když ji zapojuje aspoň 1 cvik primárně **nebo** aspoň 2 cviky sekundárně (plná barva),
-  - **nedostatečně zapojená**, když ji zapojuje jen 1 cvik sekundárně (světlejší barva),
-  - **vynechaná**, když ji nezapojuje žádný cvik (bez barvy).
+- **Switcher:** in the workout view, a row of buttons *1 2 3 4 Week*. The small number on a button = number of exercises in that workout. Tapping 1–4 makes that workout **active**.
+- **Add / remove:** the ⊕ button next to an exercise in the list or detail adds it to the **active** workout (✓ = already in it). New exercises go to the end. The same exercise can be in several workouts.
+- **Opening:** the list icon in the header (badge = number of exercises in the active workout), URL `#/trenink`; week summary at `#/tyden`.
+- **Done today:** an exercise with sets logged today shows a circle with today's set count in the top-right corner of its card. The circles disappear the next day.
+- **Order:** arrows ↑ ↓ next to an exercise, × removes it, *Clear workout* empties the active workout.
+- **Lock:** the lock icon next to the heading, applies to all workouts at once. Locked workouts hide the arrows, ×, *Clear workout* and *New week*, and exercises cannot be removed even via ✓ in the list or detail – protection against accidental taps during training.
+- **Muscles in workout:** below the exercise list is a body map. Solid colour = muscles that are primary for some exercise, lighter colour = muscles involved only as secondary. The number on a muscle group = number of exercises in the workout that work it.
+- **Week:** adds up exercises from all 4 workouts (an exercise in two workouts counts twice). A muscle group is
+  - **trained** when at least 1 exercise works it as primary **or** at least 2 exercises as secondary (solid colour),
+  - **insufficiently trained** when only 1 exercise works it, as secondary (lighter colour),
+  - **missed** when no exercise works it (no colour).
 
-  Pod schématem jsou vynechané a nedostatečně zapojené partie jako tlačítka – klepnutí otevře cviky, které partii zapojují primárně. *Nový týden* vymaže všechny 4 tréninky.
-- **Sdílení:** *Kopírovat odkaz* (na mobilu i *Sdílet*) vytvoří adresu `…/hypertrophica/#/trenink?cviky=id1,id2,…` s aktivním tréninkem. Kdo ji otevře, uvidí náhled tréninku a tlačítkem *Uložit jako můj trénink N* ho může převzít (nahradí jeho aktivní trénink). Odkaz obsahuje jen ID cviků, nic se neukládá na server.
+  Below the map, missed and insufficiently trained muscle groups are listed as buttons – tapping one shows the exercises that work it as primary. *New week* clears all 4 workouts.
+- **Sharing:** *Copy link* (on mobile also *Share*) creates the URL `…/hypertrophica/#/trenink?cviky=id1,id2,…` with the active workout. Whoever opens it sees a preview of the workout and can adopt it with *Save as my workout N* (replaces their active workout). The link contains only exercise IDs; nothing is stored on a server.
 
-### Záznam sérií a historie
+### Set logging and history
 
-- **Zápis:** v detailu cviku sekce *Záznam*: hmotnost v kg (desetinná čárka i tečka, `0` = vlastní váha), počet opakování a nepovinně **RIR** (*reps in reserve* – kolik opakování zbývalo do selhání, 0–10). Tlačítka − a + mění hodnotu bez psaní (hmotnost po 2,5 kg). *Přidat sérii* sérii uloží; hodnoty ve formuláři zůstanou, takže další stejnou sérii zapíšeš jedním klepnutím.
-- **Předvyplnění:** při otevření detailu se formulář vyplní hodnotami poslední zapsané série cviku.
-- **V detailu** je seznam dnešních sérií (× sérii smaže) a souhrn posledních 5 tréninků cviku, např. `80 kg × 8, 8, 7 · 85 kg × 6` (po sobě jdoucí série se stejnou hmotností se sloučí).
-- **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*. Kalendář (na PC vlevo, na mobilu nad seznamem) zvýrazní dny s tréninkem; klepnutí na den přeskočí na jeho záznam.
+- **Logging:** in the exercise detail, *Log* section: weight in kg (decimal comma or point, `0` = bodyweight), reps and optionally **RIR** (*reps in reserve* – how many reps were left before failure, 0–10). The − and + buttons change values without typing (weight in 2.5 kg steps). *Add set* saves the set; the form keeps its values, so the next identical set is a single tap.
+- **Prefill:** when the detail opens, the form is filled with the values of the exercise's last logged set.
+- **In the detail** there is a list of today's sets (× deletes a set) and a summary of the exercise's last 5 workouts, e.g. `80 kg × 8, 8, 7 · 85 kg × 6` (consecutive sets with the same weight are merged).
+- **History:** the clock icon in the header, URL `#/historie`. All sets by day (newest first), grouped by exercise within a day. 20 days are shown; *Show older* loads more. The calendar (left on desktop, above the list on mobile) highlights training days; tapping a day jumps to its entry.
 
-### Nastavení, záloha a obnova dat
+### Settings, backup and restore
 
-Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede odkaz *Záloha a obnova dat*.
+The sliders icon in the header, URL `#/nastaveni`. The end of *History* also links here (*Backup and restore → Settings*).
 
-- **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
-- **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
-- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
-- **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
-  - **Sloučit s daty v zařízení** – přidá série, které v zařízení chybí (stejná série se nezdvojí), sjednotí oblíbené a doplní jen prázdné tréninky.
-  - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
-  - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
-- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
-- **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
+- **Theme:** *System* (follows the device setting) / *Light* / *Dark*.
+- **Language:** *System* / *Čeština* / *English*. *System* = based on the browser language (Czech and Slovak → Czech, otherwise English). The page reloads automatically after a change.
+- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites and workouts 1–4. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
+- **Import backup:** pick a backup file. The app checks it and shows what it contains. Then choose:
+  - **Merge with data on this device** – adds sets missing on the device (the same set is never duplicated), combines favourites and fills only empty workouts.
+  - **Replace all** – after confirmation deletes the data on the device and restores it from the backup.
+  - Invalid sets and sets of exercises no longer in the data are skipped (the preview shows how many).
+- **Export sets (CSV):** a table for Excel / Google Sheets. In English the file is `hypertrophica-sets-YYYY-MM-DD.csv` with columns `date;exercise;exercise_id;set;reps;weight_kg;rir` and English exercise names; in Czech `hypertrophica-serie-…csv` with Czech column and exercise names. Both use a semicolon separator and decimal comma. Meant for viewing and charts – **it cannot be imported back**; use the JSON backup for that.
+- **Moving to another device:** export JSON on the old device → transfer the file → import on the new one.
 
-### Kde jsou tvoje data
+### Where your data lives
 
-Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodchází na server:
+Everything is stored **only in the browser of the given device**; nothing goes to a server:
 
-| Data | Úložiště |
+| Data | Storage |
 |---|---|
-| Oblíbené | `localStorage`, klíč `hw.favorites` |
-| Tréninky 1–4 | `localStorage`, klíč `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
-| Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
-| Motiv | `localStorage`, klíč `hw.theme` |
-| Jazyk | `localStorage`, klíč `hw.lang` (bez klíče = podle prohlížeče) |
-| Série | IndexedDB, databáze `hypertrophica` (modul `js/log.js`) |
+| Favourites | `localStorage`, key `hw.favorites` |
+| Workouts 1–4 | `localStorage`, key `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
+| Workout lock | `localStorage`, key `hw.planLocked` |
+| Theme | `localStorage`, key `hw.theme` |
+| Language | `localStorage`, key `hw.lang` (no key = follow the browser) |
+| Sets | IndexedDB, database `hypertrophica` (module `js/log.js`) |
 
-- Smazáním dat prohlížeče se data ztratí – proto **pravidelně zálohuj**.
-- Aplikace při prvním zápisu série požádá prohlížeč o trvalé úložiště (`navigator.storage.persist()`), aby data nemazal při nedostatku místa.
-- **iPhone:** používej aplikaci přidanou na plochu – Safari jinak data webu, který se 7 dní neotevřel, maže.
-- Trénink uložený starší verzí aplikace (klíč `hw.plan`) se při prvním spuštění automaticky přesune do *Tréninku 1*.
+- Clearing browser data deletes your data – so **back up regularly**.
+- On the first logged set the app asks the browser for persistent storage (`navigator.storage.persist()`) so that data is not evicted when space runs low.
+- **iPhone:** use the app added to the home screen – otherwise Safari deletes the data of websites not opened for 7 days.
+- A workout saved by an older app version (key `hw.plan`) is moved to *Workout 1* automatically on first start.
 
 ---
 
-## Pro správce obsahu
+## For maintainers
 
-Tato část je pro toho, kdo aplikaci upravuje – přidává cviky nebo mění kód.
+This part is for whoever edits the app – adds exercises or changes the code.
 
-### Jak aplikace funguje technicky
+### How the app works technically
 
-- Statická webová aplikace: **vanilla HTML, CSS a JavaScript** (ES moduly), bez frameworku, bez build kroku a bez externích knihoven, fontů či trackerů.
-- Hostovaná na **GitHub Pages** přímo z větve `main`.
-- Obsah je v souborech JSON, aplikace je načítá při spuštění.
+- Static web app: **vanilla HTML, CSS and JavaScript** (ES modules), no framework, no build step, no external libraries, fonts or trackers.
+- Hosted on **GitHub Pages** directly from the `main` branch.
+- Content lives in JSON files, which the app loads on start.
 
 ```
-index.html          # stránka
-style.css           # vzhled
-app.js              # vstupní bod, stav aplikace, vykreslování
-js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam sérií, záloha, motiv, texty
+index.html          # page
+style.css           # styles
+app.js              # entry point, app state, rendering
+js/                 # modules: filters, favourites, body map, workouts, set log, backup, theme, texts
 data/
-  exercises.json    # databáze cviků (hlavní editovaný soubor)
-  muscles.json      # svalové skupiny
-i18n/              # texty rozhraní: cs.json (čeština), en.json (angličtina)
-assets/             # schéma svalů (SVG), ikony, font
-manifest.json       # popis PWA (název, ikony)
-sw.js               # service worker – offline režim
-tools/              # kontrola dat (validate.html), skripty pro generování SVG schématu a ikon
-docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
+  exercises.json    # exercise database (the main edited file)
+  muscles.json      # muscle groups
+i18n/               # UI texts: cs.json (Czech), en.json (English)
+assets/             # muscle map (SVG), icons, font
+manifest.json       # PWA description (name, icons)
+sw.js               # service worker – offline mode
+tools/              # data check (validate.html), scripts generating the SVG map and icons
+docs/screenshots/   # screenshots for README.md and README.cs.md (not used by the app)
 ```
 
-- Data cviků: [`data/exercises.json`](data/exercises.json)
-- Svalové skupiny: [`data/muscles.json`](data/muscles.json)
-- Texty rozhraní: [`i18n/cs.json`](i18n/cs.json), [`i18n/en.json`](i18n/en.json) – oba soubory musí mít stejné klíče; nový text přidej do obou.
+- Exercise data: [`data/exercises.json`](data/exercises.json)
+- Muscle groups: [`data/muscles.json`](data/muscles.json)
+- UI texts: [`i18n/cs.json`](i18n/cs.json), [`i18n/en.json`](i18n/en.json) – both files must have the same keys; add every new text to both.
 
-### Jak přidat cvik
+### Adding an exercise
 
-Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů oddělených čárkou; nový cvik vlož k ostatním cvikům na stejnou partii.
+Exercises are in `data/exercises.json`. It is a list (array) of objects separated by commas; put a new exercise next to the others for the same muscle group.
 
 ```json
 {
@@ -201,90 +205,90 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
 }
 ```
 
-| Pole | Co do něj patří |
+| Field | What goes in it |
 |---|---|
-| `id` | Unikátní identifikátor v kebab-case (malá písmena, slova oddělená pomlčkou). **Po přidání ho už neměň** – odkazují na něj uložené oblíbené, tréninky, série i sdílené odkazy. |
-| `name` | Název česky (`cs`) a anglicky (`en`). |
-| `type` | Pouze `"compound"` (vícekloubový) nebo `"isolation"` (izolovaný). |
-| `primary` | Hlavní zapojené svaly – ID z tabulky níže. |
-| `secondary` | Pomocné svaly – ID z tabulky níže, může být prázdné `[]`. Stejný sval nedávej do `primary` i `secondary`. |
-| `equipment` | Potřebné vybavení – ID z tabulky níže. Uveď **vše, co je potřeba současně** (např. `["dumbbell", "bench"]`). |
-| `description` | Popis provedení česky (`cs`) a anglicky (`en`). |
-| `notes` | Poznámky (varianty, tipy) česky a anglicky. Může zůstat `""`. |
+| `id` | Unique identifier in kebab-case (lower case, words separated by hyphens). **Never change it once added** – saved favourites, workouts, sets and shared links refer to it. |
+| `name` | Name in Czech (`cs`) and English (`en`). |
+| `type` | Only `"compound"` or `"isolation"`. |
+| `primary` | Main muscles worked – IDs from the table below. |
+| `secondary` | Assisting muscles – IDs from the table below, may be empty `[]`. Do not put the same muscle in both `primary` and `secondary`. |
+| `equipment` | Required equipment – IDs from the table below. List **everything needed at the same time** (e.g. `["dumbbell", "bench"]`). |
+| `description` | Execution in Czech (`cs`) and English (`en`). |
+| `notes` | Notes (variations, tips) in Czech and English. May stay `""`. |
 
-Chybí-li anglický text, aplikace v angličtině zobrazí český – nový cvik proto ideálně vyplň v obou jazycích. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
+If an English text is missing, the English UI shows the Czech one – so ideally fill in both languages for a new exercise. Exercises no longer in the data are silently skipped in workouts and shared links.
 
-#### Svalové skupiny (`primary`, `secondary`)
+#### Muscle groups (`primary`, `secondary`)
 
-| ID | Název | | ID | Název |
+| ID | Name | | ID | Name |
 |---|---|---|---|---|
-| `chest` | Prsa | | `rear_delts` | Zadní delty |
-| `front_delts` | Přední delty | | `traps` | Trapézy |
-| `side_delts` | Boční delty | | `lats` | Široké zádové svaly |
-| `biceps` | Biceps | | `upper_back` | Horní záda |
-| `forearms` | Předloktí | | `lower_back` | Spodní záda |
-| `abs` | Břišní svaly | | `triceps` | Triceps |
-| `obliques` | Šikmé břišní svaly | | `glutes` | Hýžďové svaly |
-| `quads` | Kvadricepsy | | `hamstrings` | Hamstringy |
-| `adductors` | Přitahovače stehen | | `abductors` | Odtahovače stehen |
-| `calves` | Lýtka | | | |
+| `chest` | Chest | | `rear_delts` | Rear delts |
+| `front_delts` | Front delts | | `traps` | Traps |
+| `side_delts` | Side delts | | `lats` | Lats |
+| `biceps` | Biceps | | `upper_back` | Upper back |
+| `forearms` | Forearms | | `lower_back` | Lower back |
+| `abs` | Abs | | `triceps` | Triceps |
+| `obliques` | Obliques | | `glutes` | Glutes |
+| `quads` | Quads | | `hamstrings` | Hamstrings |
+| `adductors` | Adductors | | `abductors` | Abductors |
+| `calves` | Calves | | | |
 
-Nová svalová skupina vyžaduje změnu `data/muscles.json` i SVG schématu (`tools/generate-body-map.py`) – to už není běžná úprava dat.
+A new muscle group requires changing `data/muscles.json` and the SVG map (`tools/generate-body-map.py`) – that is no longer a routine data edit.
 
-#### Vybavení (`equipment`)
+#### Equipment (`equipment`)
 
-| ID | Název ve filtru | Kdy použít |
+| ID | Name in filter | When to use |
 |---|---|---|
-| `barbell` | Osa | Olympijská nebo rovná osa |
-| `ez_bar` | EZ osa | Lomená osa |
-| `dumbbell` | Jednoručky | |
-| `cable` | Kladka | |
-| `machine` | Stroj | Posilovací stroj s vlastní dráhou pohybu |
-| `smith_machine` | Smithův stroj | Osa vedená v pevných kolejnicích; lavici uveď zvlášť (`bench`) |
-| `bench` | Lavice | Rovná, šikmá i Scottova lavice |
-| `squat_rack` | Klec / stojany | |
-| `pullup_bar` | Hrazda | |
-| `back_extension_bench` | Lavice na hyperextenze | |
-| `dip_bars` | Bradla | |
-| `rings` | Kruhy | Gymnastické kruhy |
-| `bodyweight` | Vlastní váha | Zátěží je hlavně vlastní tělo. Uváděj vždy, i když cvik potřebuje ještě další vybavení (např. `["bodyweight", "pullup_bar"]`), aby ho našel filtr „Vlastní váha“. |
-| `unspecified` | Nedefinováno | Cvik potřebuje pomůcku, která není pevně daná (např. Australský shyb – jakákoli tyč ve výšce pasu; Nordic curl – cokoli na zafixování pat). Konkrétní možnosti popiš v `notes`. |
+| `barbell` | Barbell | Olympic or straight bar |
+| `ez_bar` | EZ bar | Cambered bar |
+| `dumbbell` | Dumbbells | |
+| `cable` | Cable | |
+| `machine` | Machine | Weight machine with its own movement path |
+| `smith_machine` | Smith machine | Bar guided on fixed rails; list the bench separately (`bench`) |
+| `bench` | Bench | Flat, incline and preacher bench |
+| `squat_rack` | Rack | |
+| `pullup_bar` | Pull-up bar | |
+| `back_extension_bench` | Back extension bench | |
+| `dip_bars` | Dip bars | |
+| `rings` | Rings | Gymnastic rings |
+| `bodyweight` | Bodyweight | The load is mainly your own body. Always include it, even when the exercise needs other equipment too (e.g. `["bodyweight", "pullup_bar"]`), so the "Bodyweight" filter finds it. |
+| `unspecified` | Unspecified | The exercise needs an aid that is not fixed (e.g. inverted row – any bar at waist height; Nordic curl – anything to anchor the heels). Describe the specific options in `notes`. |
 
-**Nové vybavení** přidáš tak, že jeho ID a název doplníš do `i18n/cs.json` (česky) i `i18n/en.json` (anglicky) do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n` by se ve filtru zobrazilo technické ID místo názvu.
+**To add new equipment**, add its ID and name to `i18n/cs.json` (Czech) and `i18n/en.json` (English) in the `"equipment"` section and list it in the table above (in both READMEs). Without an `i18n` entry the filter would show the technical ID instead of a name.
 
-#### Kontrola před uložením
+#### Check before saving
 
-Data zkontroluje stránka **[`tools/validate.html`](tools/validate.html)** – otevři ji v prohlížeči na <https://pajainzenyr.github.io/hypertrophica/tools/validate.html> (nebo lokálně `http://localhost:8000/tools/validate.html`). Vypíše chyby červeně a upozornění žlutě; když je vše v pořádku, ukáže zelené *✓ Vše v pořádku*. Kontroluje:
+The data is checked by the page **[`tools/validate.html`](tools/validate.html)** – open it in the browser at <https://pajainzenyr.github.io/hypertrophica/tools/validate.html> (or locally at `http://localhost:8000/tools/validate.html`). It lists errors in red and warnings in yellow; when everything is fine it shows a green *✓ Vše v pořádku* ("all OK"). It checks:
 
-- cviky: unikátní `id` v kebab-case, `type`, existující svaly a vybavení, sval ne zároveň v `primary` i `secondary`, vyplněné `en` všude, kde je vyplněné `cs`;
-- svalové skupiny: unikátní `id`, názvy, latinské názvy, pohledy `front`/`back`;
-- texty rozhraní: `i18n/cs.json` a `i18n/en.json` mají stejné klíče a stejné proměnné `{…}`;
-- schéma svalů: každý sval z `muscles.json` je ve SVG a SVG nemá duplicitní `id`.
+- exercises: unique kebab-case `id`, `type`, existing muscles and equipment, no muscle in both `primary` and `secondary`, `en` filled in wherever `cs` is;
+- muscle groups: unique `id`, names, Latin names, `front`/`back` views;
+- UI texts: `i18n/cs.json` and `i18n/en.json` have the same keys and the same `{…}` placeholders;
+- muscle map: every muscle from `muscles.json` is in the SVG and the SVG has no duplicate `id`.
 
-Validátor čte vždy aktuální soubory ze serveru (obchází cache service workeru), takže po merge stačí počkat na nasazení a stránku otevřít. Navíc hlídej:
+The validator always reads the current files from the server (bypassing the service worker cache), so after a merge just wait for the deployment and open the page. Also make sure that:
 
-- JSON je platný (jinak validátor ohlásí „neplatný JSON“): řetězce v uvozovkách `"`, mezi objekty čárka, za posledním objektem čárka **není**.
-- V `sw.js` je zvýšený `CACHE_VERSION` (viz *Offline režim*).
+- The JSON is valid (otherwise the validator reports "invalid JSON"): strings in double quotes `"`, commas between objects, **no** comma after the last object.
+- `CACHE_VERSION` in `sw.js` has been increased (see *Offline mode*).
 
-### Nasazení
+### Deployment
 
-GitHub Pages servíruje soubory přímo z větve `main` (kořenový adresář), bez build kroku. Každá změna jde přes samostatnou větev a Pull Request; po sloučení (merge) do `main` je web obvykle do 1–2 minut aktualizovaný.
+GitHub Pages serves the files directly from the `main` branch (root directory), with no build step. Every change goes through its own branch and Pull Request; after the merge into `main` the site is usually updated within 1–2 minutes.
 
-### Offline režim (PWA)
+### Offline mode (PWA)
 
-`manifest.json` popisuje název a ikony, service worker `sw.js` ukládá všechny soubory do cache prohlížeče, takže po prvním načtení aplikace funguje i bez internetu.
+`manifest.json` describes the name and icons; the service worker `sw.js` stores all files in the browser cache, so after the first load the app works without internet.
 
-- **Při každé změně obsahu nebo kódu zvyš `CACHE_VERSION` v `sw.js`** (např. `1` → `2`). Service worker servíruje soubory z cache; novou verzi prohlížeč pozná jen podle změny `sw.js`. Po nasazení se nová verze stáhne při otevření aplikace a zobrazí se po dalším obnovení stránky (u nainstalované aplikace ji zavři a znovu otevři).
-- Přidáš-li nový soubor (JS modul, obrázek…), doplň ho i do seznamu `FILES` v `sw.js`, jinak nebude dostupný offline.
-- Ikony v `assets/icons/` generuje skript `python3 tools/generate-icons.py` (vyžaduje Pillow) – ručně je neupravuj. Schéma `assets/body-map.svg` generuje `python3 tools/generate-body-map.py`.
+- **Increase `CACHE_VERSION` in `sw.js` with every content or code change** (e.g. `1` → `2`). The service worker serves files from the cache; the browser detects a new version only through a change in `sw.js`. After deployment the new version is downloaded when the app is opened and shown after the next page reload (close and reopen an installed app).
+- If you add a new file (JS module, image…), add it to the `FILES` list in `sw.js` as well, otherwise it will not be available offline.
+- The icons in `assets/icons/` are generated by `python3 tools/generate-icons.py` (requires Pillow) – do not edit them by hand. The map `assets/body-map.svg` is generated by `python3 tools/generate-body-map.py`.
 
-### Testování
+### Testing
 
-- **Po merge** otestuj změnu na <https://pajainzenyr.github.io/hypertrophica/> na PC i na mobilu podle checklistu v popisu PR.
-- **Před PR** se změna ověřuje v cloudovém prostředí: lokální server `python3 -m http.server 8000` v kořeni projektu a kontrola v headless prohlížeči (načtení bez chyb, filtry, trénink, záznam sérií, záloha a import, mobilní šířka ~375 px).
-- Pokud se změna na webu neprojeví, je to téměř vždy cache service workeru: zkontroluj, že byl zvýšen `CACHE_VERSION`, a stránku obnov dvakrát (nainstalovanou aplikaci zavři a znovu otevři).
-- Spuštění z disku (`file://`) nefunguje, protože prohlížeč tak nenačte data přes `fetch` – vždy použij lokální server a otevři `http://localhost:8000`.
+- **After the merge**, test the change at <https://pajainzenyr.github.io/hypertrophica/> on desktop and mobile using the checklist in the PR description.
+- **Before the PR**, the change is verified in the cloud environment: local server `python3 -m http.server 8000` in the project root and a check in a headless browser (loads without errors, filters, workouts, set logging, backup and import, mobile width ~375 px).
+- If a change does not show up on the site, it is almost always the service worker cache: check that `CACHE_VERSION` was increased and reload the page twice (close and reopen an installed app).
+- Opening from disk (`file://`) does not work, because the browser cannot load data via `fetch` that way – always use a local server and open `http://localhost:8000`.
 
-## Licence
+## License
 
-Kód i data projektu jsou pod licencí [MIT](LICENSE): kdokoli je smí používat, upravovat a šířit, pokud zachová upozornění na autorská práva. Font Barlow Condensed v `assets/fonts/` má vlastní licenci [SIL Open Font License 1.1](assets/fonts/OFL.txt).
+The project's code and data are under the [MIT](LICENSE) license: anyone may use, modify and distribute them as long as the copyright notice is kept. The Barlow Condensed font in `assets/fonts/` has its own license, [SIL Open Font License 1.1](assets/fonts/OFL.txt).
