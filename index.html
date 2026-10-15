@@ -60,7 +60,7 @@
   </header>
 
   <main>
-    <!-- Hláška o načítání / chybě. Texty doplní app.js ze souboru i18n/cs.json. -->
+    <!-- Hláška o načítání / chybě. Texty doplní app.js ze souboru i18n/<jazyk>.json. -->
     <p id="status" class="status" role="status">Načítám…</p>
     <noscript><p class="status">Hypertrophica potřebuje zapnutý JavaScript.</p></noscript>
 
@@ -199,7 +199,7 @@
       <a class="history-backup-link" href="#/nastaveni" data-i18n="history.backupLink"></a>
     </section>
 
-    <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv a záloha dat -->
+    <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv, jazyk a záloha dat -->
     <section id="settings-view" class="settings" aria-labelledby="settings-title" hidden>
       <a class="back-link" href="#/" id="settings-back"></a>
       <h1 id="settings-title" tabindex="-1" data-i18n="settings.title"></h1>
@@ -208,6 +208,12 @@
       <section class="settings-section" aria-labelledby="theme-title">
         <h2 id="theme-title" data-i18n="theme.title"></h2>
         <div id="theme-options" class="theme-options" role="radiogroup" aria-labelledby="theme-title"></div>
+      </section>
+
+      <!-- Volba jazyka (js/i18n.js); po změně se stránka znovu načte -->
+      <section class="settings-section" aria-labelledby="language-title">
+        <h2 id="language-title" data-i18n="language.title"></h2>
+        <div id="language-options" class="theme-options" role="radiogroup" aria-labelledby="language-title"></div>
       </section>
 
       <!-- Záloha všech dat do souboru a obnova ze zálohy (js/backup.js) -->

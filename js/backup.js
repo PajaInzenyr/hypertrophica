@@ -69,9 +69,9 @@ export function parseBackup(text, knownIds) {
 // Tabulka sérií pro Excel / Tabulky Google (jen export, zpět importovat nejde).
 // Česká podoba: oddělovač středník, desetinná čárka. Na začátku je znak BOM,
 // podle kterého Excel pozná kódování UTF-8 (jinak by rozbil diakritiku).
-// sets = série seřazené chronologicky, nameOf(id) = název cviku.
-export function createCsv(sets, nameOf) {
-  const header = ['datum', 'cvik', 'id_cviku', 'série', 'opakování', 'hmotnost_kg', 'rir'];
+// sets = série seřazené chronologicky, nameOf(id) = název cviku,
+// header = názvy 7 sloupců v jazyce rozhraní (backup.csvHeader v i18n).
+export function createCsv(sets, nameOf, header) {
   const counters = new Map(); // "datum|cvik" → pořadí série v rámci dne
   const rows = sets.map((s) => {
     const key = `${s.date}|${s.exerciseId}`;

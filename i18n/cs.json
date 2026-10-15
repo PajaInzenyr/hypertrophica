@@ -93,6 +93,10 @@
     "light": "Světlý",
     "dark": "Tmavý"
   },
+  "language": {
+    "title": "Jazyk",
+    "auto": "Systém"
+  },
   "bodymap": {
     "front": "Zepředu",
     "back": "Zezadu",
@@ -212,6 +216,8 @@
     "cancelled": "Import zrušen.",
     "imported": "Import dokončen. Série: přidáno {added}, aktualizováno {updated}, beze změny {unchanged}.",
     "unknownDate": "neznámého data",
-    "csvEmpty": "Zatím nejsou zapsané žádné série k exportu."
+    "csvEmpty": "Zatím nejsou zapsané žádné série k exportu.",
+    "csvHeader": "datum,cvik,id_cviku,série,opakování,hmotnost_kg,rir",
+    "csvFile": "serie"
   }
 }
