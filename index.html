@@ -199,7 +199,7 @@
       <a class="history-backup-link" href="#/nastaveni" data-i18n="history.backupLink"></a>
     </section>
 
-    <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv, jazyk a záloha dat -->
+    <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv, jazyk, záloha dat a O aplikaci -->
     <section id="settings-view" class="settings" aria-labelledby="settings-title" hidden>
       <a class="back-link" href="#/" id="settings-back"></a>
       <h1 id="settings-title" tabindex="-1" data-i18n="settings.title"></h1>
@@ -230,6 +230,31 @@
         <!-- Náhled importu s volbou Sloučit / Nahradit; obsah doplní app.js -->
         <div id="backup-confirm" class="backup-confirm" hidden></div>
         <p id="backup-feedback" class="backup-feedback" role="status"></p>
+      </section>
+
+      <!-- O aplikaci: autor, zdrojový kód, licence. Odkazy na GitHub se otevírají v nové kartě
+           (rel="noopener" = nová karta nemá přístup k této stránce). Offline nefungují, zbytek ano. -->
+      <section class="about settings-section" aria-labelledby="about-title">
+        <h2 id="about-title" data-i18n="about.title"></h2>
+        <p class="about-intro" data-i18n="about.intro"></p>
+        <dl class="about-facts">
+          <div>
+            <dt data-i18n="about.author"></dt>
+            <dd>Pavel Mazánek</dd>
+          </div>
+          <div>
+            <dt data-i18n="about.source"></dt>
+            <dd><a href="https://github.com/PajaInzenyr/hypertrophica" target="_blank" rel="noopener">github.com/PajaInzenyr/hypertrophica</a></dd>
+          </div>
+          <div>
+            <dt data-i18n="about.license"></dt>
+            <dd><a href="https://github.com/PajaInzenyr/hypertrophica/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a></dd>
+          </div>
+          <div>
+            <dt data-i18n="about.font"></dt>
+            <dd>Barlow Condensed (SIL Open Font License 1.1)</dd>
+          </div>
+        </dl>
       </section>
     </section>
   </main>

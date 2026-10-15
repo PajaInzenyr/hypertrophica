@@ -219,5 +219,13 @@
     "csvEmpty": "There are no logged sets to export yet.",
     "csvHeader": "date,exercise,exercise_id,set,reps,weight_kg,rir",
     "csvFile": "sets"
+  },
+  "about": {
+    "title": "About",
+    "intro": "Hypertrophica – a personal exercise wiki for hypertrophy training. Works offline; your data stays on this device only.",
+    "author": "Author",
+    "source": "Source code",
+    "license": "Licence",
+    "font": "Heading font"
   }
 }

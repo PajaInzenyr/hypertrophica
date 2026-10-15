@@ -1742,12 +1742,14 @@ a.button-secondary {
   letter-spacing: 0.02em;
 }
 
-.backup p {
+.backup p,
+.about p {
   margin: 0 0 8px;
 }
 
 .backup-intro,
-.backup-hint {
+.backup-hint,
+.about-intro {
   color: var(--text-muted);
   font-size: 0.875rem;
 }
@@ -1772,4 +1774,35 @@ a.button-secondary {
   margin: 12px 0 0;
   color: var(--text-muted);
   font-size: 0.875rem;
+}
+
+/* ===== O aplikaci (Nastavení) ===== */
+.about-facts {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+}
+
+.about-facts dt {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.about-facts dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere; /* dlouhá adresa se na úzkém mobilu zalomí místo přetečení */
+}
+
+/* Odkaz má výšku dotykového cíle (44 px), i když vypadá jako běžný text. */
+.about-facts a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.about-facts a:hover {
+  text-decoration: underline;
 }
