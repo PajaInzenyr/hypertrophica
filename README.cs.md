@@ -135,6 +135,7 @@ Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede
   - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
 - **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
+- **O aplikaci:** úplně dole – autor, odkaz na zdrojový kód na GitHubu, licence (MIT) a licence písma nadpisů.
 
 ### Kde jsou tvoje data
 

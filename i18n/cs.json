@@ -219,5 +219,13 @@
     "csvEmpty": "Zatím nejsou zapsané žádné série k exportu.",
     "csvHeader": "datum,cvik,id_cviku,série,opakování,hmotnost_kg,rir",
     "csvFile": "serie"
+  },
+  "about": {
+    "title": "O aplikaci",
+    "intro": "Hypertrophica – osobní wiki cviků pro hypertrofický trénink. Funguje offline, data zůstávají jen v tomto zařízení.",
+    "author": "Autor",
+    "source": "Zdrojový kód",
+    "license": "Licence",
+    "font": "Písmo nadpisů"
   }
 }
