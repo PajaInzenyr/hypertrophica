@@ -137,7 +137,7 @@ The sliders icon in the header, URL `#/nastaveni`. The end of *History* also lin
   - Invalid sets and sets of exercises no longer in the data are skipped (the preview shows how many).
 - **Export sets (CSV):** a table for Excel / Google Sheets. In English the file is `hypertrophica-sets-YYYY-MM-DD.csv` with columns `date;exercise;exercise_id;set;reps;weight_kg;rir` and English exercise names; in Czech `hypertrophica-serie-…csv` with Czech column and exercise names. Both use a semicolon separator and decimal comma. Meant for viewing and charts – **it cannot be imported back**; use the JSON backup for that.
 - **Moving to another device:** export JSON on the old device → transfer the file → import on the new one.
-- **About:** at the bottom – author, link to the source code on GitHub, licence (MIT) and the heading font licence.
+- **About:** at the bottom – a short tip on installing the app on a phone, author, link to the source code on GitHub, licence (MIT) and the heading font licence.
 
 ### Where your data lives
 
