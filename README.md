@@ -274,3 +274,7 @@ GitHub Pages servíruje soubory přímo z větve `main` (kořenový adresář), 
 - **Před PR** se změna ověřuje v cloudovém prostředí: lokální server `python3 -m http.server 8000` v kořeni projektu a kontrola v headless prohlížeči (načtení bez chyb, filtry, trénink, záznam sérií, záloha a import, mobilní šířka ~375 px).
 - Pokud se změna na webu neprojeví, je to téměř vždy cache service workeru: zkontroluj, že byl zvýšen `CACHE_VERSION`, a stránku obnov dvakrát (nainstalovanou aplikaci zavři a znovu otevři).
 - Spuštění z disku (`file://`) nefunguje, protože prohlížeč tak nenačte data přes `fetch` – vždy použij lokální server a otevři `http://localhost:8000`.
+
+## Licence
+
+Kód i data projektu jsou pod licencí [MIT](LICENSE): kdokoli je smí používat, upravovat a šířit, pokud zachová upozornění na autorská práva. Font Barlow Condensed v `assets/fonts/` má vlastní licenci [SIL Open Font License 1.1](assets/fonts/OFL.txt).
