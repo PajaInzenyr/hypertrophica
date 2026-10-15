@@ -175,7 +175,7 @@ i18n/              # texty rozhraní: cs.json (čeština), en.json (angličtina)
 assets/             # schéma svalů (SVG), ikony, font
 manifest.json       # popis PWA (název, ikony)
 sw.js               # service worker – offline režim
-tools/              # skripty pro generování SVG schématu a ikon
+tools/              # kontrola dat (validate.html), skripty pro generování SVG schématu a ikon
 docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
 ```
 
@@ -249,14 +249,20 @@ Nová svalová skupina vyžaduje změnu `data/muscles.json` i SVG schématu (`to
 | `bodyweight` | Vlastní váha | Zátěží je hlavně vlastní tělo. Uváděj vždy, i když cvik potřebuje ještě další vybavení (např. `["bodyweight", "pullup_bar"]`), aby ho našel filtr „Vlastní váha“. |
 | `unspecified` | Nedefinováno | Cvik potřebuje pomůcku, která není pevně daná (např. Australský shyb – jakákoli tyč ve výšce pasu; Nordic curl – cokoli na zafixování pat). Konkrétní možnosti popiš v `notes`. |
 
-**Nové vybavení** přidáš tak, že jeho ID a český název doplníš do `i18n/cs.json` do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n/cs.json` by se ve filtru zobrazilo technické ID místo názvu.
+**Nové vybavení** přidáš tak, že jeho ID a název doplníš do `i18n/cs.json` (česky) i `i18n/en.json` (anglicky) do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n` by se ve filtru zobrazilo technické ID místo názvu.
 
 #### Kontrola před uložením
 
-- `id` je unikátní a v kebab-case.
-- `type` je `compound` nebo `isolation`.
-- Všechna ID svalů a vybavení jsou z tabulek výše.
-- JSON je platný: řetězce v uvozovkách `"`, mezi objekty čárka, za posledním objektem čárka **není**.
+Data zkontroluje stránka **[`tools/validate.html`](tools/validate.html)** – otevři ji v prohlížeči na <https://pajainzenyr.github.io/hypertrophica/tools/validate.html> (nebo lokálně `http://localhost:8000/tools/validate.html`). Vypíše chyby červeně a upozornění žlutě; když je vše v pořádku, ukáže zelené *✓ Vše v pořádku*. Kontroluje:
+
+- cviky: unikátní `id` v kebab-case, `type`, existující svaly a vybavení, sval ne zároveň v `primary` i `secondary`, vyplněné `en` všude, kde je vyplněné `cs`;
+- svalové skupiny: unikátní `id`, názvy, latinské názvy, pohledy `front`/`back`;
+- texty rozhraní: `i18n/cs.json` a `i18n/en.json` mají stejné klíče a stejné proměnné `{…}`;
+- schéma svalů: každý sval z `muscles.json` je ve SVG a SVG nemá duplicitní `id`.
+
+Validátor čte vždy aktuální soubory ze serveru (obchází cache service workeru), takže po merge stačí počkat na nasazení a stránku otevřít. Navíc hlídej:
+
+- JSON je platný (jinak validátor ohlásí „neplatný JSON“): řetězce v uvozovkách `"`, mezi objekty čárka, za posledním objektem čárka **není**.
 - V `sw.js` je zvýšený `CACHE_VERSION` (viz *Offline režim*).
 
 ### Nasazení

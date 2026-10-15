@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex">
+  <title>Hypertrophica – kontrola dat</title>
+  <!--
+    Kontrola dat aplikace. Otevři v prohlížeči:
+      - na GitHub Pages: https://<user>.github.io/hypertrophica/tools/validate.html
+      - lokálně přes server (python3 -m http.server 8000): http://localhost:8000/tools/validate.html
+    Přes file:// nefunguje (prohlížeč nedovolí načíst soubory JSON).
+    Stránka nic nemění, jen čte data a vypíše chyby (červeně) a upozornění (žlutě).
+  -->
+  <style>
+    :root {
+      --bg: #f6f5f2; --surface: #fff; --text: #1b1b1a; --muted: #5f5e5a; --border: #dddbd5;
+      --ok: #1f7a3a; --error: #b3261e; --warn: #8a5a00;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #000; --surface: #161615; --text: #ecebe8; --muted: #a3a29d; --border: #33322f;
+              --ok: #6fcf8a; --error: #ff8a80; --warn: #f2c35b; }
+    }
+    body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; }
+    main { max-width: 860px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 1.5rem; margin: 8px 0 4px; }
+    h2 { font-size: 1.1rem; margin: 0 0 8px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+              padding: 12px 16px; margin: 12px 0; }
+    ul { margin: 0; padding-left: 20px; }
+    li { margin: 4px 0; overflow-wrap: anywhere; }
+    .summary { font-weight: 600; font-size: 1.1rem; }
+    .ok { color: var(--ok); }
+    .error { color: var(--error); }
+    .warn { color: var(--warn); }
+    code { font-size: 0.9em; }
+    button { min-height: 44px; padding: 0 16px; font: inherit; border-radius: 8px;
+             border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Kontrola dat</h1>
+    <p>Kontroluje <code>data/exercises.json</code>, <code>data/muscles.json</code>,
+       <code>i18n/*.json</code> a <code>assets/body-map.svg</code>.</p>
+    <p id="summary" class="summary" role="status">Kontroluji…</p>
+    <button id="rerun" type="button">Zkontrolovat znovu</button>
+    <div id="results"></div>
+  </main>
+
+  <script type="module">
+    // Jazyky aplikace; první je hlavní (vždy vyplněný), ostatní se kontrolují proti němu.
+    const LANGS = ['cs', 'en'];
+    const TYPES = ['compound', 'isolation'];
+    const VIEWS = ['front', 'back'];
+    // kebab-case: malá písmena a číslice, slova oddělená pomlčkou
+    const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+    // ?t=… obejde cache service workeru (ten vrací uložené soubory podle přesné adresy),
+    // takže se vždy kontroluje aktuální verze ze serveru.
+    async function load(path, asText = false) {
+      const response = await fetch(`../${path}?t=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+      const text = await response.text();
+      if (asText) return text;
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        throw new Error(`${path}: neplatný JSON – ${error.message}`);
+      }
+    }
+
+    // Výsledky po skupinách: { title, errors: [], warnings: [] }
+    function group(title) {
+      return { title, errors: [], warnings: [] };
+    }
+
+    const isText = (value) => typeof value === 'string' && value.trim() !== '';
+
+    // Vícejazyčný text { cs, en }: cs povinné (pokud required), en vyplněné, kdykoli je vyplněné cs.
+    function checkTexts(g, where, field, obj, required) {
+      if (!obj || typeof obj !== 'object') {
+        g.errors.push(`${where}: chybí pole „${field}“ ({ "cs": …, "en": … }).`);
+        return;
+      }
+      LANGS.forEach((lang) => {
+        if (typeof obj[lang] !== 'string') g.errors.push(`${where}: ${field}.${lang} chybí nebo není text.`);
+      });
+      if (required && !isText(obj.cs)) g.errors.push(`${where}: ${field}.cs je prázdné.`);
+      LANGS.slice(1).forEach((lang) => {
+        if (isText(obj.cs) && !isText(obj[lang])) g.errors.push(`${where}: ${field}.${lang} chybí překlad (cs je vyplněné).`);
+        if (!isText(obj.cs) && isText(obj[lang])) g.warnings.push(`${where}: ${field}.${lang} je vyplněné, ale cs je prázdné.`);
+      });
+    }
+
+    // Všechny klíče JSON objektu jako cesty „backup.title“.
+    function flatten(obj, prefix = '', out = new Map()) {
+      Object.entries(obj).forEach(([key, value]) => {
+        const path = prefix + key;
+        if (value && typeof value === 'object') flatten(value, `${path}.`, out);
+        else out.set(path, value);
+      });
+      return out;
+    }
+
+    const placeholders = (text) => [...String(text).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
+
+    function checkMuscles(muscles) {
+      const g = group('Svalové skupiny (data/muscles.json)');
+      const ids = new Set();
+      if (!Array.isArray(muscles)) {
+        g.errors.push('Soubor musí obsahovat pole (seznam) objektů.');
+        return { g, ids };
+      }
+      muscles.forEach((m, i) => {
+        const where = `#${i + 1} ${m?.id ?? '(bez id)'}`;
+        if (!isText(m?.id)) g.errors.push(`${where}: chybí id.`);
+        else if (ids.has(m.id)) g.errors.push(`${where}: duplicitní id.`);
+        else ids.add(m.id);
+        checkTexts(g, where, 'name', m?.name, true);
+        if (!Array.isArray(m?.latin) || m.latin.length === 0 || !m.latin.every(isText)) {
+          g.errors.push(`${where}: latin musí být neprázdné pole textů.`);
+        }
+        if (!Array.isArray(m?.views) || m.views.length === 0) g.errors.push(`${where}: views musí být neprázdné pole.`);
+        else m.views.filter((v) => !VIEWS.includes(v)).forEach((v) => g.errors.push(`${where}: neplatný pohled „${v}“ (jen front/back).`));
+      });
+      return { g, ids };
+    }
+
+    function checkExercises(exercises, muscleIds, equipmentIds) {
+      const g = group('Cviky (data/exercises.json)');
+      if (!Array.isArray(exercises)) {
+        g.errors.push('Soubor musí obsahovat pole (seznam) objektů.');
+        return g;
+      }
+      const ids = new Set();
+      const names = new Map(); // název (cs) → id, kvůli duplicitním názvům
+      exercises.forEach((ex, i) => {
+        const where = `#${i + 1} ${ex?.id ?? '(bez id)'}`;
+        if (!isText(ex?.id)) g.errors.push(`${where}: chybí id.`);
+        else {
+          if (ids.has(ex.id)) g.errors.push(`${where}: duplicitní id.`);
+          if (!KEBAB.test(ex.id)) g.errors.push(`${where}: id není kebab-case (malá písmena, pomlčky).`);
+          ids.add(ex.id);
+        }
+        checkTexts(g, where, 'name', ex?.name, true);
+        const csName = ex?.name?.cs?.trim().toLowerCase();
+        if (csName) {
+          if (names.has(csName)) g.warnings.push(`${where}: stejný název jako ${names.get(csName)}.`);
+          else names.set(csName, ex.id);
+        }
+        checkTexts(g, where, 'description', ex?.description, true);
+        checkTexts(g, where, 'notes', ex?.notes, false);
+        if (!TYPES.includes(ex?.type)) g.errors.push(`${where}: neplatný type „${ex?.type}“ (jen compound/isolation).`);
+
+        ['primary', 'secondary'].forEach((field) => {
+          const list = ex?.[field];
+          if (!Array.isArray(list)) {
+            g.errors.push(`${where}: ${field} musí být pole.`);
+            return;
+          }
+          list.filter((id) => !muscleIds.has(id)).forEach((id) => g.errors.push(`${where}: ${field} – neznámý sval „${id}“.`));
+          if (new Set(list).size !== list.length) g.errors.push(`${where}: ${field} obsahuje sval dvakrát.`);
+        });
+        if (Array.isArray(ex?.primary) && ex.primary.length === 0) g.errors.push(`${where}: primary je prázdné.`);
+        if (Array.isArray(ex?.primary) && Array.isArray(ex?.secondary)) {
+          ex.primary.filter((id) => ex.secondary.includes(id))
+            .forEach((id) => g.errors.push(`${where}: sval „${id}“ je v primary i secondary.`));
+        }
+
+        if (!Array.isArray(ex?.equipment) || ex.equipment.length === 0) g.errors.push(`${where}: equipment musí být neprázdné pole.`);
+        else ex.equipment.filter((id) => !equipmentIds.has(id))
+          .forEach((id) => g.errors.push(`${where}: neznámé vybavení „${id}“ (chybí v i18n/cs.json → equipment).`));
+      });
+      return g;
+    }
+
+    // Texty rozhraní: stejné klíče ve všech jazycích, neprázdné hodnoty, stejné {proměnné}.
+    function checkStrings(stringsByLang) {
+      const g = group('Texty rozhraní (i18n/*.json)');
+      const [main, ...others] = LANGS;
+      const mainKeys = flatten(stringsByLang[main]);
+      LANGS.forEach((lang) => {
+        flatten(stringsByLang[lang]).forEach((value, key) => {
+          if (!isText(value)) g.errors.push(`${lang}.json: „${key}“ je prázdné nebo není text.`);
+        });
+      });
+      others.forEach((lang) => {
+        const keys = flatten(stringsByLang[lang]);
+        mainKeys.forEach((value, key) => {
+          if (!keys.has(key)) g.errors.push(`${lang}.json: chybí klíč „${key}“ (je v ${main}.json).`);
+          else if (placeholders(value) !== placeholders(keys.get(key))) {
+            g.errors.push(`${lang}.json: „${key}“ má jiné proměnné {…} než ${main}.json.`);
+          }
+        });
+        keys.forEach((value, key) => {
+          if (!mainKeys.has(key)) g.errors.push(`${lang}.json: navíc klíč „${key}“ (chybí v ${main}.json).`);
+        });
+      });
+      return g;
+    }
+
+    // Schéma svalů: každý sval z muscles.json je ve SVG a SVG nemá svaly navíc ani duplicitní id.
+    function checkBodyMap(svgText, muscles) {
+      const g = group('Schéma svalů (assets/body-map.svg)');
+      const svg = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+      if (svg.querySelector('parsererror')) {
+        g.errors.push('SVG nejde přečíst (chyba ve formátu).');
+        return g;
+      }
+      const elements = [...svg.querySelectorAll('.muscle')];
+      const inSvg = new Set(elements.map((el) => el.getAttribute('data-muscle')));
+      const known = new Set(muscles.map((m) => m.id));
+      known.forEach((id) => { if (!inSvg.has(id)) g.errors.push(`Sval „${id}“ ve SVG chybí.`); });
+      inSvg.forEach((id) => { if (!known.has(id)) g.errors.push(`SVG obsahuje neznámý sval „${id}“ (data-muscle).`); });
+      const seen = new Set();
+      svg.querySelectorAll('[id]').forEach((el) => {
+        if (seen.has(el.id)) g.errors.push(`Duplicitní id „${el.id}“.`);
+        seen.add(el.id);
+      });
+      return g;
+    }
+
+    function render(groups, stats) {
+      const results = document.getElementById('results');
+      results.replaceChildren();
+      let errors = 0;
+      let warnings = 0;
+      groups.forEach((g) => {
+        errors += g.errors.length;
+        warnings += g.warnings.length;
+        const section = document.createElement('section');
+        const h2 = document.createElement('h2');
+        h2.textContent = g.title;
+        section.append(h2);
+        if (g.errors.length === 0 && g.warnings.length === 0) {
+          const ok = document.createElement('p');
+          ok.className = 'ok';
+          ok.textContent = '✓ Bez chyb.';
+          section.append(ok);
+        } else {
+          const ul = document.createElement('ul');
+          [...g.errors.map((t) => ['error', `Chyba: ${t}`]), ...g.warnings.map((t) => ['warn', `Upozornění: ${t}`])]
+            .forEach(([cls, text]) => {
+              const li = document.createElement('li');
+              li.className = cls;
+              li.textContent = text;
+              ul.append(li);
+            });
+          section.append(ul);
+        }
+        results.append(section);
+      });
+      const summary = document.getElementById('summary');
+      summary.className = `summary ${errors ? 'error' : warnings ? 'warn' : 'ok'}`;
+      summary.textContent = (errors ? `✗ Chyby: ${errors}, upozornění: ${warnings}.` : warnings
+        ? `✓ Bez chyb, upozornění: ${warnings}.`
+        : '✓ Vše v pořádku.') + ` Cviků: ${stats.exercises}, svalových skupin: ${stats.muscles}.`;
+    }
+
+    async function run() {
+      const summary = document.getElementById('summary');
+      summary.className = 'summary';
+      summary.textContent = 'Kontroluji…';
+      try {
+        const [exercises, muscles, svgText, ...stringFiles] = await Promise.all([
+          load('data/exercises.json'),
+          load('data/muscles.json'),
+          load('assets/body-map.svg', true),
+          ...LANGS.map((lang) => load(`i18n/${lang}.json`)),
+        ]);
+        const strings = Object.fromEntries(LANGS.map((lang, i) => [lang, stringFiles[i]]));
+        const { g: muscleGroup, ids: muscleIds } = checkMuscles(muscles);
+        const equipmentIds = new Set(Object.keys(strings.cs.equipment ?? {}));
+        render([
+          checkExercises(exercises, muscleIds, equipmentIds),
+          muscleGroup,
+          checkStrings(strings),
+          checkBodyMap(svgText, Array.isArray(muscles) ? muscles : []),
+        ], { exercises: exercises.length ?? 0, muscles: muscles.length ?? 0 });
+      } catch (error) {
+        console.error(error);
+        summary.className = 'summary error';
+        summary.textContent = location.protocol === 'file:'
+          ? 'Stránku otevři přes server (GitHub Pages nebo python3 -m http.server), ne jako soubor.'
+          : `Data se nepodařilo načíst: ${error.message}`;
+      }
+    }
+
+    document.getElementById('rerun').addEventListener('click', run);
+    run();
+  </script>
+</body>
+</html>
