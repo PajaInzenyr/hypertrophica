@@ -45,6 +45,7 @@ Zásady, na kterých aplikace stojí:
 | 🕘 **Historie** | Všechny série po dnech a kalendář tréninků. |
 | 💾 **Záloha** | Export / import všech dat do souboru JSON, export sérií do CSV pro Excel. |
 | 🌗 **Motiv** | Světlý, tmavý nebo podle systému. |
+| 🌐 **Jazyk** | Čeština nebo angličtina, výchozí podle jazyka prohlížeče. |
 | 📱 **Instalace (PWA)** | Přidání na plochu telefonu, běh bez internetu. |
 
 Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se rozšiřuje.
@@ -123,12 +124,13 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede odkaz *Záloha a obnova dat*.
 
 - **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
+- **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
 - **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
   - **Sloučit s daty v zařízení** – přidá série, které v zařízení chybí (stejná série se nezdvojí), sjednotí oblíbené a doplní jen prázdné tréninky.
   - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
   - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
-- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
+- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
 
 ### Kde jsou tvoje data
@@ -141,6 +143,7 @@ Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodcház�
 | Tréninky 1–4 | `localStorage`, klíč `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
 | Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
 | Motiv | `localStorage`, klíč `hw.theme` |
+| Jazyk | `localStorage`, klíč `hw.lang` (bez klíče = podle prohlížeče) |
 | Série | IndexedDB, databáze `hypertrophica` (modul `js/log.js`) |
 
 - Smazáním dat prohlížeče se data ztratí – proto **pravidelně zálohuj**.
@@ -168,7 +171,7 @@ js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam s�
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # svalové skupiny
-i18n/cs.json        # texty rozhraní
+i18n/              # texty rozhraní: cs.json (čeština), en.json (angličtina)
 assets/             # schéma svalů (SVG), ikony, font
 manifest.json       # popis PWA (název, ikony)
 sw.js               # service worker – offline režim
@@ -178,7 +181,7 @@ docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
 
 - Data cviků: [`data/exercises.json`](data/exercises.json)
 - Svalové skupiny: [`data/muscles.json`](data/muscles.json)
-- Texty rozhraní: [`i18n/cs.json`](i18n/cs.json)
+- Texty rozhraní: [`i18n/cs.json`](i18n/cs.json), [`i18n/en.json`](i18n/en.json) – oba soubory musí mít stejné klíče; nový text přidej do obou.
 
 ### Jak přidat cvik
 
@@ -192,8 +195,8 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
   "primary": ["biceps"],
   "secondary": [],
   "equipment": ["dumbbell", "bench"],
-  "description": { "cs": "Popis provedení…", "en": "" },
-  "notes": { "cs": "Tipy, varianty, bezpečnost…", "en": "" }
+  "description": { "cs": "Popis provedení…", "en": "How to perform…" },
+  "notes": { "cs": "Tipy, varianty, bezpečnost…", "en": "Tips, variations, safety…" }
 }
 ```
 
@@ -205,10 +208,10 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
 | `primary` | Hlavní zapojené svaly – ID z tabulky níže. |
 | `secondary` | Pomocné svaly – ID z tabulky níže, může být prázdné `[]`. Stejný sval nedávej do `primary` i `secondary`. |
 | `equipment` | Potřebné vybavení – ID z tabulky níže. Uveď **vše, co je potřeba současně** (např. `["dumbbell", "bench"]`). |
-| `description` | Popis provedení. Vyplňuje se `cs`, `en` může zůstat `""`. |
-| `notes` | Poznámky (varianty, tipy). Může zůstat `""`. |
+| `description` | Popis provedení česky (`cs`) a anglicky (`en`). |
+| `notes` | Poznámky (varianty, tipy) česky a anglicky. Může zůstat `""`. |
 
-Chybí-li anglický text, aplikace zobrazí český. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
+Chybí-li anglický text, aplikace v angličtině zobrazí český – nový cvik proto ideálně vyplň v obou jazycích. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
 
 #### Svalové skupiny (`primary`, `secondary`)
 
