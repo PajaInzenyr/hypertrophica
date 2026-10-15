@@ -1,7 +1,7 @@
 // Vstupní bod aplikace: načte data, drží stav (vyhledávání + filtry)
 // a vykresluje seznam cviků, detail cviku, tréninky 1–4 a týdenní souhrn.
 
-import { loadStrings, t, localized, applyStaticStrings } from './js/i18n.js';
+import { loadStrings, t, localized, applyStaticStrings, currentLocale, preferredLang, initLanguage } from './js/i18n.js';
 import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.js';
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, replaceFavorites, onExternalChange } from './js/favorites.js';
@@ -101,7 +101,7 @@ function el(tag, props = {}, ...children) {
 }
 
 const muscleName = (id) => localized(state.muscles.get(id)?.name) || id;
-const byCzechName = (a, b) => a.label.localeCompare(b.label, 'cs');
+const byName = (a, b) => a.label.localeCompare(b.label, currentLocale());
 
 // ===== Start =====
 init();
@@ -116,9 +116,12 @@ function registerServiceWorker() {
 
 async function init() {
   try {
-    await loadStrings('cs');
+    // Jazyk podle volby v Nastavení, jinak podle prohlížeče. Když se soubor
+    // s překladem nepodaří načíst, zkusí se čeština.
+    await loadStrings(preferredLang()).catch(() => loadStrings('cs'));
     applyStaticStrings();
     initTheme(document.getElementById('theme-options'));
+    initLanguage(document.getElementById('language-options'));
     ui.status.textContent = t('app.loading');
 
     const [muscles, exercises] = await Promise.all([
@@ -128,7 +131,7 @@ async function init() {
     ]);
     muscles.forEach((m) => state.muscles.set(m.id, m));
     state.exercises = exercises.sort((a, b) =>
-      localized(a.name).localeCompare(localized(b.name), 'cs')
+      localized(a.name).localeCompare(localized(b.name), currentLocale())
     );
     exercises.forEach((ex) => state.byId.set(ex.id, ex));
     plan.retainOnly(new Set(state.byId.keys()));
@@ -186,7 +189,7 @@ function fillSelect(select, options, anyLabel) {
 function fillFilterOptions() {
   const muscles = [...state.muscles.values()]
     .map((m) => ({ value: m.id, label: localized(m.name) }))
-    .sort(byCzechName);
+    .sort(byName);
   fillSelect(ui.muscle, muscles, t('filters.any'));
 
   fillSelect(ui.role, ['any', 'primary', 'secondary'].map((r) => ({ value: r, label: t(`role.${r}`) })));
@@ -196,7 +199,7 @@ function fillFilterOptions() {
   // Nabídne jen vybavení, které se v datech opravdu vyskytuje.
   const equipment = [...new Set(state.exercises.flatMap((ex) => ex.equipment))]
     .map((v) => ({ value: v, label: t(`equipment.${v}`) }))
-    .sort(byCzechName);
+    .sort(byName);
   fillSelect(ui.equipment, equipment, t('filters.any'));
 }
 
@@ -539,7 +542,7 @@ const totals = (counts) => new Map([...counts].map(([id, c]) => [id, c.primary +
 function muscleListText(ids, total) {
   return ids
     .map((id) => ({ label: muscleName(id), count: total.get(id) ?? 0 }))
-    .sort(byCzechName)
+    .sort(byName)
     .map(({ label, count }) => `${label} (${count})`)
     .join(', ');
 }
@@ -680,7 +683,7 @@ function renderWeek() {
 // Nadpis + vysvětlivka + klikací chipy svalů. Prázdná skupina se nezobrazí.
 function muscleGroup(heading, hint, ids) {
   if (ids.length === 0) return [];
-  const sorted = ids.map((id) => ({ id, label: muscleName(id) })).sort(byCzechName);
+  const sorted = ids.map((id) => ({ id, label: muscleName(id) })).sort(byName);
   return [
     el('h2', { textContent: heading }),
     el('p', { className: 'week-hint', textContent: hint }),
@@ -1062,9 +1065,13 @@ function engagementMap(ex) {
 // Kolik předchozích tréninků cviku ukázat v detailu (všechny jsou v Historii).
 const LOG_HISTORY_DAYS = 5;
 
-// Čísla v české podobě: 82,5 (desetinná čárka).
-const numberFormat = new Intl.NumberFormat('cs', { maximumFractionDigits: 2, useGrouping: false });
-const formatNumber = (value) => numberFormat.format(value);
+// Čísla podle jazyka: česky 82,5 (desetinná čárka), anglicky 82.5.
+// Formát se vytvoří až při prvním použití – jazyk je známý až po startu aplikace.
+let numberFormat;
+function formatNumber(value) {
+  numberFormat ??= new Intl.NumberFormat(currentLocale(), { maximumFractionDigits: 2, useGrouping: false });
+  return numberFormat.format(value);
+}
 
 // "80 kg × 8" nebo "80 kg × 8 · RIR 2"
 function formatSet(set) {
@@ -1084,10 +1091,10 @@ function summarizeSets(sets) {
   return groups.map((g) => `${formatNumber(g.weightKg)} kg × ${g.reps.join(', ')}`).join(' | ');
 }
 
-// "2026-10-13" → "13. 10. 2026" (s dlouhým: "pondělí 13. 10. 2026")
+// "2026-10-13" → "13. 10. 2026" (s dlouhým: "pondělí 13. 10. 2026"), anglicky "13/10/2026"
 function formatDate(isoDate, withWeekday = false) {
   const [y, m, d] = isoDate.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('cs', {
+  return new Date(y, m - 1, d).toLocaleDateString(currentLocale(), {
     ...(withWeekday ? { weekday: 'long' } : {}),
     day: 'numeric', month: 'numeric', year: 'numeric',
   });
@@ -1358,8 +1365,8 @@ function renderCalendarWeekdays() {
     const day = new Date(2024, 0, 1 + i); // 1. 1. 2024 bylo pondělí
     return el('th', {
       scope: 'col',
-      abbr: day.toLocaleDateString('cs', { weekday: 'long' }),
-      textContent: day.toLocaleDateString('cs', { weekday: 'short' }),
+      abbr: day.toLocaleDateString(currentLocale(), { weekday: 'long' }),
+      textContent: day.toLocaleDateString(currentLocale(), { weekday: 'short' }),
     });
   }));
 }
@@ -1371,7 +1378,7 @@ function renderCalendar() {
   const { year, month } = state.calendarMonth;
   const today = log.localDate();
 
-  const monthLabel = new Date(year, month, 1).toLocaleDateString('cs', { month: 'long', year: 'numeric' });
+  const monthLabel = new Date(year, month, 1).toLocaleDateString(currentLocale(), { month: 'long', year: 'numeric' });
   ui.calendarMonth.textContent = monthLabel;
 
   // Dopředu nejdál na aktuální měsíc, dozadu nejdál na měsíc prvního tréninku.
@@ -1456,14 +1463,14 @@ async function onExportBackup() {
 
 // Tabulka sérií pro Excel; na rozdíl od zálohy JSON nejde importovat zpět.
 async function onExportCsv() {
-  const filename = `hypertrophica-serie-${log.localDate()}.csv`;
+  const filename = `hypertrophica-${t('backup.csvFile')}-${log.localDate()}.csv`;
   try {
     const sets = await log.getAllSets();
     if (sets.length === 0) {
       ui.backupFeedback.textContent = t('backup.csvEmpty');
       return;
     }
-    const csv = backup.createCsv(sets, (id) => localized(state.byId.get(id)?.name) || id);
+    const csv = backup.createCsv(sets, (id) => localized(state.byId.get(id)?.name) || id, t('backup.csvHeader').split(','));
     const result = await backup.saveFile(filename, csv, 'text/csv');
     if (result !== 'cancelled') {
       ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedCsv', { file: filename });
@@ -1496,7 +1503,7 @@ function showImportPreview(parsed) {
     ? parsed.week.slots.filter(Array.isArray).reduce((sum, ids) => sum + ids.length, 0)
     : 0;
   const date = parsed.exportedAt
-    ? new Date(parsed.exportedAt).toLocaleString('cs', { dateStyle: 'medium', timeStyle: 'short' })
+    ? new Date(parsed.exportedAt).toLocaleString(currentLocale(), { dateStyle: 'medium', timeStyle: 'short' })
     : t('backup.unknownDate');
   const choice = (className, key, mode) => actionButton(className, t(key), () => onImportChoice(parsed, mode));
   ui.backupConfirm.replaceChildren(

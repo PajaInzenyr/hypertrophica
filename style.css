@@ -1683,17 +1683,32 @@ a.button-secondary {
   letter-spacing: 0.02em;
 }
 
-/* Volba motivu: tři přepínače vedle sebe jako segmentové tlačítko.
-   Volby se roztáhnou na celý řádek; na velmi úzkém displeji (pod ~340 px) se zalomí. */
+/* Volba motivu a jazyka jako segmentové tlačítko (mřížka = grid).
+   Na mobilu dva řádky: nahoře přes celou šířku „Systém“, pod ním dvě volby vedle sebe
+   (Světlý / Tmavý, Čeština / English). Od šířky 640 px všechny tři v jednom řádku. */
 .theme-options {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 12px;
 }
 
+/* První volba („Systém“) zabere oba sloupce (1 / -1 = od prvního po poslední). */
+.theme-option:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+  .theme-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .theme-option:first-child {
+    grid-column: auto;
+  }
+}
+
 .theme-option {
-  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;

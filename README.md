@@ -45,6 +45,7 @@ Zásady, na kterých aplikace stojí:
 | 🕘 **Historie** | Všechny série po dnech a kalendář tréninků. |
 | 💾 **Záloha** | Export / import všech dat do souboru JSON, export sérií do CSV pro Excel. |
 | 🌗 **Motiv** | Světlý, tmavý nebo podle systému. |
+| 🌐 **Jazyk** | Čeština nebo angličtina, výchozí podle jazyka prohlížeče. |
 | 📱 **Instalace (PWA)** | Přidání na plochu telefonu, běh bez internetu. |
 
 Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se rozšiřuje.
@@ -54,9 +55,10 @@ Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se roz
   <img src="docs/screenshots/mobile-week.png" width="200" alt="Souhrn týdne: schéma postavy se zapojenými partiemi a počty cviků">
   <img src="docs/screenshots/mobile-log.png" width="200" alt="Detail cviku: formulář pro zápis série, dnešní série a předchozí tréninky">
   <img src="docs/screenshots/mobile-history-dark.png" width="200" alt="Historie v tmavém režimu: kalendář tréninků a série po dnech">
+  <img src="docs/screenshots/mobile-settings.png" width="200" alt="Nastavení: volba motivu a jazyka (Systém, Čeština, English) a záloha dat">
 </p>
 
-*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu.*
+*Zleva: trénink, souhrn týdne, záznam sérií v detailu cviku, historie v tmavém režimu, nastavení s volbou motivu a jazyka.*
 
 ---
 
@@ -123,12 +125,13 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede odkaz *Záloha a obnova dat*.
 
 - **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
+- **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
 - **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
   - **Sloučit s daty v zařízení** – přidá série, které v zařízení chybí (stejná série se nezdvojí), sjednotí oblíbené a doplní jen prázdné tréninky.
   - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
   - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
-- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
+- **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
 
 ### Kde jsou tvoje data
@@ -141,6 +144,7 @@ Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodcház�
 | Tréninky 1–4 | `localStorage`, klíč `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
 | Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
 | Motiv | `localStorage`, klíč `hw.theme` |
+| Jazyk | `localStorage`, klíč `hw.lang` (bez klíče = podle prohlížeče) |
 | Série | IndexedDB, databáze `hypertrophica` (modul `js/log.js`) |
 
 - Smazáním dat prohlížeče se data ztratí – proto **pravidelně zálohuj**.
@@ -168,17 +172,17 @@ js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam s�
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # svalové skupiny
-i18n/cs.json        # texty rozhraní
+i18n/              # texty rozhraní: cs.json (čeština), en.json (angličtina)
 assets/             # schéma svalů (SVG), ikony, font
 manifest.json       # popis PWA (název, ikony)
 sw.js               # service worker – offline režim
-tools/              # skripty pro generování SVG schématu a ikon
+tools/              # kontrola dat (validate.html), skripty pro generování SVG schématu a ikon
 docs/screenshots/   # snímky obrazovky pro README (aplikace je nepoužívá)
 ```
 
 - Data cviků: [`data/exercises.json`](data/exercises.json)
 - Svalové skupiny: [`data/muscles.json`](data/muscles.json)
-- Texty rozhraní: [`i18n/cs.json`](i18n/cs.json)
+- Texty rozhraní: [`i18n/cs.json`](i18n/cs.json), [`i18n/en.json`](i18n/en.json) – oba soubory musí mít stejné klíče; nový text přidej do obou.
 
 ### Jak přidat cvik
 
@@ -192,8 +196,8 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
   "primary": ["biceps"],
   "secondary": [],
   "equipment": ["dumbbell", "bench"],
-  "description": { "cs": "Popis provedení…", "en": "" },
-  "notes": { "cs": "Tipy, varianty, bezpečnost…", "en": "" }
+  "description": { "cs": "Popis provedení…", "en": "How to perform…" },
+  "notes": { "cs": "Tipy, varianty, bezpečnost…", "en": "Tips, variations, safety…" }
 }
 ```
 
@@ -205,10 +209,10 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
 | `primary` | Hlavní zapojené svaly – ID z tabulky níže. |
 | `secondary` | Pomocné svaly – ID z tabulky níže, může být prázdné `[]`. Stejný sval nedávej do `primary` i `secondary`. |
 | `equipment` | Potřebné vybavení – ID z tabulky níže. Uveď **vše, co je potřeba současně** (např. `["dumbbell", "bench"]`). |
-| `description` | Popis provedení. Vyplňuje se `cs`, `en` může zůstat `""`. |
-| `notes` | Poznámky (varianty, tipy). Může zůstat `""`. |
+| `description` | Popis provedení česky (`cs`) a anglicky (`en`). |
+| `notes` | Poznámky (varianty, tipy) česky a anglicky. Může zůstat `""`. |
 
-Chybí-li anglický text, aplikace zobrazí český. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
+Chybí-li anglický text, aplikace v angličtině zobrazí český – nový cvik proto ideálně vyplň v obou jazycích. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
 
 #### Svalové skupiny (`primary`, `secondary`)
 
@@ -246,14 +250,20 @@ Nová svalová skupina vyžaduje změnu `data/muscles.json` i SVG schématu (`to
 | `bodyweight` | Vlastní váha | Zátěží je hlavně vlastní tělo. Uváděj vždy, i když cvik potřebuje ještě další vybavení (např. `["bodyweight", "pullup_bar"]`), aby ho našel filtr „Vlastní váha“. |
 | `unspecified` | Nedefinováno | Cvik potřebuje pomůcku, která není pevně daná (např. Australský shyb – jakákoli tyč ve výšce pasu; Nordic curl – cokoli na zafixování pat). Konkrétní možnosti popiš v `notes`. |
 
-**Nové vybavení** přidáš tak, že jeho ID a český název doplníš do `i18n/cs.json` do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n/cs.json` by se ve filtru zobrazilo technické ID místo názvu.
+**Nové vybavení** přidáš tak, že jeho ID a název doplníš do `i18n/cs.json` (česky) i `i18n/en.json` (anglicky) do sekce `"equipment"` a zapíšeš ho do tabulky výše. Bez záznamu v `i18n` by se ve filtru zobrazilo technické ID místo názvu.
 
 #### Kontrola před uložením
 
-- `id` je unikátní a v kebab-case.
-- `type` je `compound` nebo `isolation`.
-- Všechna ID svalů a vybavení jsou z tabulek výše.
-- JSON je platný: řetězce v uvozovkách `"`, mezi objekty čárka, za posledním objektem čárka **není**.
+Data zkontroluje stránka **[`tools/validate.html`](tools/validate.html)** – otevři ji v prohlížeči na <https://pajainzenyr.github.io/hypertrophica/tools/validate.html> (nebo lokálně `http://localhost:8000/tools/validate.html`). Vypíše chyby červeně a upozornění žlutě; když je vše v pořádku, ukáže zelené *✓ Vše v pořádku*. Kontroluje:
+
+- cviky: unikátní `id` v kebab-case, `type`, existující svaly a vybavení, sval ne zároveň v `primary` i `secondary`, vyplněné `en` všude, kde je vyplněné `cs`;
+- svalové skupiny: unikátní `id`, názvy, latinské názvy, pohledy `front`/`back`;
+- texty rozhraní: `i18n/cs.json` a `i18n/en.json` mají stejné klíče a stejné proměnné `{…}`;
+- schéma svalů: každý sval z `muscles.json` je ve SVG a SVG nemá duplicitní `id`.
+
+Validátor čte vždy aktuální soubory ze serveru (obchází cache service workeru), takže po merge stačí počkat na nasazení a stránku otevřít. Navíc hlídej:
+
+- JSON je platný (jinak validátor ohlásí „neplatný JSON“): řetězce v uvozovkách `"`, mezi objekty čárka, za posledním objektem čárka **není**.
 - V `sw.js` je zvýšený `CACHE_VERSION` (viz *Offline režim*).
 
 ### Nasazení

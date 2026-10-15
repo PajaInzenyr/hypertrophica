@@ -8,7 +8,7 @@
 // DŮLEŽITÉ: Při každé změně obsahu nebo kódu zvyš CACHE_VERSION. Prohlížeč pozná novou
 // verzi jen podle toho, že se změnil tento soubor – jinak mobil dál ukazuje starou verzi.
 // Nová verze se stáhne při otevření aplikace a zobrazí se po dalším obnovení stránky.
-const CACHE_VERSION = 35;
+const CACHE_VERSION = 37;
 const CACHE_NAME = `hypertrophica-v${CACHE_VERSION}`;
 
 // Všechny soubory, které aplikace potřebuje. Nový soubor (modul, ikona, data) sem přidej.
@@ -29,6 +29,7 @@ const FILES = [
   './data/exercises.json',
   './data/muscles.json',
   './i18n/cs.json',
+  './i18n/en.json',
   './assets/body-map.svg',
   './assets/fonts/barlow-condensed-latin-600-normal.woff2',
   './assets/fonts/barlow-condensed-latin-ext-600-normal.woff2',

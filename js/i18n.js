@@ -3,8 +3,46 @@
 
 const FALLBACK_LANG = 'cs';
 
+// Dostupné jazyky; nový jazyk = nový soubor i18n/<kód>.json + kód sem (a do sw.js).
+// Názvy jazyků se vždy píšou v daném jazyce, aby je člověk našel i v cizím rozhraní.
+const LANGS = { cs: 'Čeština', en: 'English' };
+
+// Formát data a čísel pro daný jazyk. Angličtina = britská podoba:
+// datum 13/10/2026 (den před měsícem) a týden od pondělí, stejně jako česky.
+const LOCALES = { cs: 'cs', en: 'en-GB' };
+
+// Volba jazyka v Nastavení se ukládá do localStorage (klíč hw.lang);
+// „Systém“ = klíč smazaný, jazyk se pak řídí jazykem prohlížeče.
+const STORAGE_KEY = 'hw.lang';
+
 let lang = FALLBACK_LANG;
 let strings = {};
+
+// Kód formátu pro Intl / toLocaleDateString / localeCompare podle aktuálního jazyka.
+export function currentLocale() {
+  return LOCALES[lang];
+}
+
+function savedLang() {
+  try {
+    const value = localStorage.getItem(STORAGE_KEY);
+    return value in LANGS ? value : null;
+  } catch {
+    return null; // localStorage nedostupné → řídí se prohlížečem
+  }
+}
+
+// Jazyk podle prohlížeče: čeština a slovenština → čeština, cokoli jiného → angličtina.
+// navigator.languages = jazyky seřazené podle priority (např. ["cs-CZ", "en-US"]).
+function browserLang() {
+  const first = (navigator.languages?.[0] || navigator.language || '').toLowerCase();
+  return /^(cs|sk)\b/.test(first) ? 'cs' : 'en';
+}
+
+// Jazyk, ve kterém se má aplikace spustit: uložená volba, jinak podle prohlížeče.
+export function preferredLang() {
+  return savedLang() ?? browserLang();
+}
 
 export async function loadStrings(newLang = FALLBACK_LANG) {
   const response = await fetch(`./i18n/${newLang}.json`);
@@ -44,4 +82,36 @@ export function applyStaticStrings(root = document) {
     el.setAttribute('aria-label', t(el.dataset.i18nAriaLabel));
   });
   document.documentElement.lang = lang;
+}
+
+// Vytvoří v Nastavení přepínače jazyka: Systém / Čeština / English.
+// Po změně se volba uloží a stránka se znovu načte – celá aplikace se tak
+// vykreslí v novém jazyce bez nutnosti překreslovat každý pohled zvlášť.
+export function initLanguage(container) {
+  if (!container) return;
+  const selected = savedLang() ?? 'auto';
+  ['auto', ...Object.keys(LANGS)].forEach((value) => {
+    const input = Object.assign(document.createElement('input'), {
+      type: 'radio',
+      name: 'language',
+      value,
+      checked: value === selected,
+    });
+    input.addEventListener('change', () => {
+      try {
+        if (value === 'auto') localStorage.removeItem(STORAGE_KEY);
+        else localStorage.setItem(STORAGE_KEY, value);
+      } catch {
+        // Uložit nejde (např. zakázané úložiště) – po obnovení by se volba ztratila.
+        return;
+      }
+      location.reload();
+    });
+    const label = document.createElement('label');
+    label.className = 'theme-option';
+    label.append(input, value === 'auto' ? t('language.auto') : LANGS[value]);
+    // lang u názvu jazyka: čtečka obrazovky ho přečte správnou výslovností.
+    if (value !== 'auto') label.lang = value;
+    container.append(label);
+  });
 }
