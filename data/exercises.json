@@ -530,6 +530,16 @@
     "notes": { "cs": "Jako vyvýšení poslouží kotouč, step nebo nášlapný blok – podložka musí stát pevně a neklouzat. Pauza v dolní pozici omezí odraz od šlach.", "en": "A weight plate, step or block works as the platform – it must be stable and must not slip. A pause at the bottom reduces the bounce from the tendons." }
   },
   {
+    "id": "standing-calf-raise-hack",
+    "name": { "cs": "Výpony ve stoje v Hack stroji", "en": "Hack Machine Standing Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Opři se zády o opěradlo stroje, ramena pod polštáři, a postav se špičkami na spodní hranu plošiny tak, aby paty přesahovaly. Uvolni pojistky. S téměř propnutými koleny spusť paty co nejníž do protažení, krátce zastav a pak se zvedni na špičky co nejvýš.", "en": "Rest your back against the machine's backrest, shoulders under the pads, and place the balls of your feet on the bottom edge of the platform so your heels hang off. Release the safety catches. With your knees almost straight, lower your heels as far as possible into a stretch, pause briefly, then rise onto your toes as high as you can." },
+    "notes": { "cs": "Opěradlo drží trup stabilně, takže se lze soustředit jen na lýtka. Kolena v průběhu série neohýbej – pohyb jde pouze z kotníků. Pauza v dolní pozici omezí odraz od šlach.", "en": "The backrest keeps your torso stable, so you can focus on your calves alone. Do not bend your knees during the set – the movement comes only from the ankles. A pause at the bottom reduces the bounce from the tendons." }
+  },
+  {
     "id": "hack-squat",
     "name": { "cs": "Hack dřep", "en": "Hack Squat" },
     "type": "compound",
