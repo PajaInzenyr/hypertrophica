@@ -1737,22 +1737,14 @@ a.button-secondary {
   max-width: none;
 }
 
-/* Rozbalovací „Míry (cm)“ */
-.measures-more {
+/* Část „Míry (cm)“: oddělená čárou, nadpis stejný jako „Dnes“ v záznamu sérií */
+.measures-cm {
   margin-top: var(--gap);
   border-top: 1px solid var(--border);
 }
 
-.measures-more summary {
-  display: flex;
-  align-items: center;
-  min-height: var(--tap);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.measures-more[open] summary {
-  margin-bottom: 4px;
+.measures-cm h3 {
+  margin: 12px 0 8px;
 }
 
 .measures-entry .log-feedback {

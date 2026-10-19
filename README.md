@@ -128,7 +128,7 @@ Simple workout plans: up to 4 workouts (*Workout 1–4*), each an ordered list o
 ### Body weight and measurements
 
 - **Where:** the tape-measure icon in the header, URL `#/telo`.
-- **New measurement:** date (today by default), body weight (kg), body fat (%) and – under *Measurements (cm)* – neck, chest, waist, hips, arm (flexed), thigh and calf. All fields are optional; fill in at least one. The − and + buttons change values without typing; + on an empty field starts from the last recorded value.
+- **New measurement:** date (today by default), body weight (kg), body fat (%) and, in the *Measurements (cm)* section, neck, chest, waist, hips, arm (flexed), thigh and calf. All fields are optional; fill in at least one. The − and + buttons change values without typing; + on an empty field starts from the last recorded value.
 - **One measurement per day:** when you pick a day that already has a measurement, the form is filled with it and saving updates it.
 - **Current:** a tile for every recorded measurement with the latest value and the change since the previous measurement (e.g. `−0.6 since 12/10`). Tapping a tile shows that measurement in the chart.
 - **Chart:** progress of the selected measurement over time (*3 months* / *Year* / *All*); hovering or tapping shows the value of the nearest measurement. On desktop the chart is in the left column.
