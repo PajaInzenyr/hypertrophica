@@ -1494,14 +1494,13 @@ async function jumpToHistoryDay(date) {
 // hodnot, graf vývoje vybrané míry a seznam všech měření s úpravou a smazáním.
 const BODY_PAGE = 20;
 const BODY_METRIC = new Map(body.METRICS.map((m) => [m.key, m]));
-// Míry v rozbalovací části formuláře „Míry (cm)“; hmotnost a tuk jsou vidět vždy.
+// Míry v části formuláře „Míry (cm)“ (pod hmotností a tukem).
 const BODY_CM_KEYS = body.METRICS.filter((m) => m.unit === 'cm').map((m) => m.key);
 let bodyRenderId = 0;
 const bodyForm = {
   date: null, // <input type="date">
   dateHint: null, // poznámka pod datem („pro tento den už je měření uložené“)
   inputs: new Map(), // klíč míry → <input>
-  more: null, // <details> s mírami v cm
   prefilled: false, // true = políčka obsahují uložený záznam (ne rozepsané hodnoty)
 };
 
@@ -1537,10 +1536,6 @@ function createBodyForm() {
     bodyForm.inputs.set(m.key, input);
     return [m.key, field];
   }));
-  bodyForm.more = el('details', { className: 'measures-more' },
-    el('summary', { textContent: t('body.moreMeasures') }),
-    el('div', { className: 'log-fields measures-fields' }, ...BODY_CM_KEYS.map((key) => fields.get(key)))
-  );
   ui.bodyForm.replaceChildren(
     el('div', { className: 'log-field measures-date-field' },
       el('label', { htmlFor: 'body-date', textContent: t('body.date') }),
@@ -1548,7 +1543,11 @@ function createBodyForm() {
       bodyForm.dateHint
     ),
     el('div', { className: 'log-fields measures-fields' }, fields.get('weightKg'), fields.get('bodyFat')),
-    bodyForm.more,
+    // Míry v cm jsou vidět hned, bez rozbalování.
+    el('div', { className: 'measures-cm' },
+      el('h3', { textContent: t('body.moreMeasures') }),
+      el('div', { className: 'log-fields measures-fields' }, ...BODY_CM_KEYS.map((key) => fields.get(key)))
+    ),
     el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('body.save') })
   );
 }
@@ -1566,7 +1565,6 @@ function fillBodyForm() {
   bodyForm.prefilled = Boolean(record);
   bodyForm.date.removeAttribute('aria-invalid');
   bodyForm.dateHint.textContent = record ? t('body.existingHint') : '';
-  if (record && BODY_CM_KEYS.some((key) => record[key] !== null)) bodyForm.more.open = true;
 }
 
 async function showBody() {
@@ -1702,7 +1700,6 @@ function readBodyForm() {
   const fail = (input, message) => {
     input.setAttribute('aria-invalid', 'true');
     ui.bodyFeedback.textContent = message;
-    if (input.closest('details')) bodyForm.more.open = true; // chybné políčko musí být vidět
     input.focus();
     return null;
   };

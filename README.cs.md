@@ -126,7 +126,7 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 ### Hmotnost a tělesné míry
 
 - **Kde:** ikona krejčovského metru v hlavičce, adresa `#/telo`.
-- **Nové měření:** datum (výchozí dnešek), hmotnost (kg), tělesný tuk (%) a v rozbalovací části *Míry (cm)* krk, hrudník, pas, boky, paže (zatnutá), stehno a lýtko. Všechna pole jsou nepovinná, vyplň aspoň jedno. Tlačítka − a + mění hodnotu bez psaní; + u prázdného políčka začne od poslední zapsané hodnoty.
+- **Nové měření:** datum (výchozí dnešek), hmotnost (kg), tělesný tuk (%) a v části *Míry (cm)* krk, hrudník, pas, boky, paže (zatnutá), stehno a lýtko. Všechna pole jsou nepovinná, vyplň aspoň jedno. Tlačítka − a + mění hodnotu bez psaní; + u prázdného políčka začne od poslední zapsané hodnoty.
 - **Jedno měření na den:** když zvolíš den, pro který už je měření uložené, formulář se jím vyplní a uložení ho upraví.
 - **Aktuální stav:** dlaždice pro každou zapsanou míru s poslední hodnotou a změnou oproti předchozímu měření (např. `−0,6 od 12. 10.`). Klepnutí na dlaždici zobrazí míru v grafu.
 - **Graf:** vývoj vybrané míry v čase (*3 měsíce* / *Rok* / *Vše*); najetí myší nebo klepnutí ukáže hodnotu nejbližšího měření. Na PC je graf v levém sloupci.
