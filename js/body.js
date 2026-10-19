@@ -66,7 +66,7 @@ export async function save(date, values) {
   const existing = (await getAll()).find((r) => r.id === date);
   const now = new Date().toISOString();
   const record = { id: date, date };
-  METRIC_KEYS.forEach((key) => { record[key] = values[key] ?? null; });
+  METRIC_KEYS.forEach((key) => { record[key] = cleanValue(key, values[key]) ?? null; });
   record.createdAt = existing?.createdAt ?? now;
   record.updatedAt = now;
   await putAll([record]);

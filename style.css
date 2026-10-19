@@ -1869,6 +1869,100 @@ a.button-secondary {
   margin-top: 16px;
 }
 
+/* Graf vývoje míry. Na PC v levém sloupci, přilepený pod hlavičkou a svisle na střed okna
+   (stejně jako kalendář v Historii). */
+.measures-chart {
+  margin-top: 24px;
+}
+
+@media (min-width: 900px) {
+  .measures > .measures-chart {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--header-h) + var(--page-pad-y));
+    height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+.measures-range {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: var(--gap);
+}
+
+.measures-chart-figure {
+  position: relative; /* bublina s hodnotou se umisťuje vůči grafu */
+}
+
+.measures-svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  touch-action: pan-y; /* svislé posouvání stránky prstem zůstává, vodorovný tah ukazuje hodnoty */
+}
+
+.measures-svg .chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.measures-svg .chart-label {
+  fill: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.measures-svg .chart-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Kolečko bodu s obrysem v barvě pozadí, aby se odlišilo od čáry */
+.measures-svg .chart-point {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.measures-svg .chart-guide {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.measures-svg .chart-hit {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.measures-tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.measures-chart .body-map-hint:empty {
+  display: none;
+}
+
 /* ===== Nastavení ===== */
 /* PC: stejné rozložení jako Historie – obsah ve sloupci uprostřed, svisle na střed okna. */
 @media (min-width: 900px) {

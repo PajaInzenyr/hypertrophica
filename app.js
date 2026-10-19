@@ -192,6 +192,7 @@ async function init() {
   ui.bodyLink.title = t('body.headerLabel');
   ui.bodyLink.hidden = false;
   createBodyForm();
+  createBodyRange();
   createPlanTabs();
   ui.planLink.hidden = false;
   updatePlanLink();
@@ -285,6 +286,10 @@ function bindEvents() {
   ui.bodyMore.addEventListener('click', () => {
     state.bodyItems += BODY_PAGE;
     renderBodyList();
+  });
+  // Graf se kreslí v pixelech podle šířky prvku – po změně velikosti okna (otočení mobilu) se překreslí.
+  window.addEventListener('resize', () => {
+    if (state.view === 'body') requestAnimationFrame(renderBodyChart);
   });
   document.addEventListener('click', onDetailBackgroundClick);
   document.addEventListener('keydown', onDetailEscape);
@@ -1591,6 +1596,7 @@ async function renderBody() {
     ...(persistent ? [] : [el('p', { className: 'log-warning', textContent: t('body.memoryOnly') })])
   );
   renderBodyLatest();
+  renderBodyChart();
   renderBodyList();
 }
 
@@ -1630,6 +1636,7 @@ function onBodyTileClick(event) {
   ui.bodyLatest.querySelectorAll('.measure-tile').forEach((b) => {
     b.setAttribute('aria-pressed', String(b === tile));
   });
+  renderBodyChart();
 }
 
 // Seznam měření od nejnovějšího: datum, hodnoty, tlačítka Upravit a Smazat.
@@ -1737,6 +1744,159 @@ async function onBodySubmit(event) {
   await renderBody();
   fillBodyForm(); // přepíše políčka uloženými (zaokrouhlenými) hodnotami a ukáže poznámku u data
   ui.bodyFeedback.textContent = t('body.saved', { date: formatDate(entry.date) });
+}
+
+// ===== Graf vývoje míry (pohled Tělo) =====
+// Čárový graf jedné míry v čase, kreslený jako SVG přímo v kódu (bez knihovny, funguje offline).
+// Osa x = skutečný čas (mezery mezi měřeními odpovídají počtu dní), osa y = hodnota.
+// Kreslí se v pixelech podle šířky prvku, aby text v grafu měl na mobilu i PC stejnou velikost.
+const BODY_RANGES = { '3m': 3, '1y': 12, all: null }; // období grafu → počet měsíců (null = vše)
+const SVG_NS = 'http://www.w3.org/2000/svg';
+// Nad tento počet bodů se kreslí jen čára (kolečka by splynula), zvýrazněný zůstane poslední bod.
+const CHART_MAX_MARKERS = 60;
+
+function svgEl(tag, attrs = {}) {
+  const node = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([name, value]) => node.setAttribute(name, value));
+  return node;
+}
+
+// Přepínač období grafu (3 měsíce / rok / vše); vytvoří se jednou při startu.
+function createBodyRange() {
+  ui.bodyRange.replaceChildren(...Object.keys(BODY_RANGES).map((range) => {
+    const button = el('button', {
+      type: 'button', className: 'button-secondary button-toggle', textContent: t(`body.range.${range}`),
+    });
+    button.dataset.range = range;
+    button.setAttribute('aria-pressed', String(range === state.bodyRange));
+    button.addEventListener('click', () => {
+      state.bodyRange = range;
+      ui.bodyRange.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      renderBodyChart();
+    });
+    return button;
+  }));
+}
+
+// "Hezké" hodnoty pro vodorovné čáry mřížky: 80, 82, 84… místo 80,37, 82,11…
+function niceTicks(min, max, count = 4) {
+  if (min === max) {
+    min -= 1;
+    max += 1;
+  }
+  const raw = (max - min) / count;
+  const magnitude = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map((f) => f * magnitude).find((s) => s >= raw);
+  const ticks = [];
+  for (let v = Math.floor(min / step) * step; v <= Math.ceil(max / step) * step + step / 2; v += step) {
+    ticks.push(Math.round(v * 1e6) / 1e6); // bez chyb zaokrouhlení typu 82.00000001
+  }
+  return ticks;
+}
+
+// "2026-10-19" → časové razítko v ms (poledne místního času, aby nevadil přechod na letní čas)
+const dateToTime = (isoDate) => {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return new Date(y, m - 1, d, 12).getTime();
+};
+
+function renderBodyChart() {
+  const key = state.bodyMetric;
+  const all = state.bodyRecords.filter((r) => r[key] !== null);
+  ui.bodyChart.hidden = all.length === 0;
+  if (!all.length) return;
+  ui.bodyChartTitle.textContent = t(`body.field.${key}`) + (BODY_METRIC.get(key).unit === 'cm' ? ' (cm)' : '');
+
+  const months = BODY_RANGES[state.bodyRange];
+  const now = new Date();
+  const from = months ? log.localDate(new Date(now.getFullYear(), now.getMonth() - months, now.getDate())) : '';
+  const points = all.filter((r) => r.date >= from).map((r) => ({ date: r.date, value: r[key], time: dateToTime(r.date) }));
+  if (points.length < 2) {
+    ui.bodyChartFigure.replaceChildren();
+    ui.bodyChartNote.textContent = t('body.chartTooFew');
+    return;
+  }
+  ui.bodyChartNote.textContent = '';
+
+  // Rozměry v pixelech; okraje = místo pro popisky os.
+  const width = Math.max(ui.bodyChartFigure.clientWidth, 280);
+  const height = Math.round(Math.min(Math.max(width * 0.6, 200), 360));
+  const pad = { top: 12, right: 14, bottom: 28, left: 48 };
+  const values = points.map((p) => p.value);
+  const ticks = niceTicks(Math.min(...values), Math.max(...values));
+  const [low, high] = [ticks[0], ticks[ticks.length - 1]];
+  const [start, end] = [points[0].time, points[points.length - 1].time];
+  const x = (time) => pad.left + ((time - start) / (end - start)) * (width - pad.left - pad.right);
+  const y = (value) => pad.top + ((high - value) / (high - low)) * (height - pad.top - pad.bottom);
+
+  const first = points[0];
+  const last = points[points.length - 1];
+  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, width, height, class: 'measures-svg', role: 'img' });
+  // Popis pro čtečky obrazovky; jednotlivé hodnoty jsou v seznamu měření.
+  svg.setAttribute('aria-label', t('body.chartLabel', {
+    metric: t(`body.metric.${key}`), count: points.length,
+    from: formatDate(first.date), first: formatMetric(key, first.value),
+    to: formatDate(last.date), last: formatMetric(key, last.value),
+  }));
+
+  // Mřížka a popisky osy y
+  ticks.forEach((tick) => {
+    svg.append(
+      svgEl('line', { class: 'chart-grid', x1: pad.left, x2: width - pad.right, y1: y(tick), y2: y(tick) }),
+      Object.assign(svgEl('text', { class: 'chart-label', x: pad.left - 8, y: y(tick), 'text-anchor': 'end', 'dominant-baseline': 'middle' }),
+        { textContent: formatNumber(tick) })
+    );
+  });
+  // Popisky osy x: první a poslední den (a prostřední, když je místo)
+  const xLabels = [[first, 'start'], [last, 'end']];
+  if (width >= 480) xLabels.push([{ time: (start + end) / 2, date: log.localDate(new Date((start + end) / 2)) }, 'middle']);
+  xLabels.forEach(([point, anchor]) => {
+    svg.append(Object.assign(svgEl('text', { class: 'chart-label', x: x(point.time), y: height - 8, 'text-anchor': anchor }),
+      { textContent: formatShortDate(point.date) }));
+  });
+
+  // Čára a body
+  svg.append(svgEl('polyline', {
+    class: 'chart-line', points: points.map((p) => `${x(p.time)},${y(p.value)}`).join(' '),
+  }));
+  const markers = points.length <= CHART_MAX_MARKERS ? points : [last];
+  markers.forEach((p) => svg.append(svgEl('circle', { class: 'chart-point', cx: x(p.time), cy: y(p.value), r: 4 })));
+
+  // Najetí myší / dotyk: svislá čára a bublina s hodnotou nejbližšího měření.
+  const guide = svgEl('line', { class: 'chart-guide', y1: pad.top, y2: height - pad.bottom, visibility: 'hidden' });
+  const focus = svgEl('circle', { class: 'chart-point chart-focus', r: 6, visibility: 'hidden' });
+  const hit = svgEl('rect', { class: 'chart-hit', x: pad.left, y: 0, width: width - pad.left - pad.right, height });
+  svg.append(guide, focus, hit);
+  const tooltip = el('div', { className: 'measures-tooltip', hidden: true });
+  tooltip.setAttribute('aria-hidden', 'true'); // čtečky mají popis grafu a seznam měření
+  const show = (event) => {
+    const box = svg.getBoundingClientRect();
+    const pointerX = event.clientX - box.left;
+    const nearest = points.reduce((best, p) => (Math.abs(x(p.time) - pointerX) < Math.abs(x(best.time) - pointerX) ? p : best));
+    const [px, py] = [x(nearest.time), y(nearest.value)];
+    guide.setAttribute('x1', px);
+    guide.setAttribute('x2', px);
+    focus.setAttribute('cx', px);
+    focus.setAttribute('cy', py);
+    guide.setAttribute('visibility', 'visible');
+    focus.setAttribute('visibility', 'visible');
+    tooltip.textContent = `${formatShortDate(nearest.date)} · ${formatMetric(key, nearest.value)}`;
+    tooltip.hidden = false;
+    // Bublina nad bodem, ale vždy celá uvnitř grafu.
+    const left = Math.min(Math.max(px - tooltip.offsetWidth / 2, 0), width - tooltip.offsetWidth);
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${Math.max(py - tooltip.offsetHeight - 12, 0)}px`;
+  };
+  const hide = () => {
+    guide.setAttribute('visibility', 'hidden');
+    focus.setAttribute('visibility', 'hidden');
+    tooltip.hidden = true;
+  };
+  hit.addEventListener('pointermove', show);
+  hit.addEventListener('pointerdown', show);
+  // Myš: bublina zmizí po odjetí z grafu. Dotyk: zůstane, dokud se neklepne jinam do grafu.
+  hit.addEventListener('pointerleave', (event) => { if (event.pointerType === 'mouse') hide(); });
+  ui.bodyChartFigure.replaceChildren(svg, tooltip);
 }
 
 // ===== Záloha dat (v pohledu Historie) =====

@@ -279,6 +279,14 @@
       "arm": "Paže",
       "thigh": "Stehno",
       "calf": "Lýtko"
-    }
+    },
+    "range": {
+      "3m": "3 měsíce",
+      "1y": "Rok",
+      "all": "Vše"
+    },
+    "rangeLabel": "Období grafu",
+    "chartTooFew": "Graf potřebuje aspoň 2 měření ve zvoleném období.",
+    "chartLabel": "Graf – {metric}: {count} měření od {from} ({first}) do {to} ({last})."
   }
 }
