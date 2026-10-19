@@ -45,6 +45,12 @@ Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi z
 
 Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zařízeními (přenos jen přes soubor zálohy), jednotky lb.
 
+## Rozsah v3: hmotnost a tělesné míry
+
+- **Pohled Tělo** (`#/telo`, ikona krejčovského metru v hlavičce): formulář (datum, hmotnost, tělesný tuk, rozbalovací *Míry (cm)*), dlaždice *Aktuální stav* s poslední hodnotou a změnou oproti předchozímu měření, graf vývoje vybrané míry (vlastní inline SVG, období 3 měsíce / rok / vše) a seznam měření s úpravou a smazáním.
+- **Úložiště:** IndexedDB, stejná databáze `hypertrophica`, tabulka `body` (od `SCHEMA_VERSION` 2), modul `js/body.js`. Jeden záznam na den (`id` = datum). Seznam měr, jednotky a rozsahy jsou v `METRICS` v `js/body.js`; nová míra = položka v `METRICS`, texty `body.field.<klíč>` a `body.metric.<klíč>` v obou i18n souborech a sloupec v `backup.bodyCsvHeader`.
+- **Záloha:** pole `body` v JSON záloze (`schemaVersion` 2; zálohy verze 1 jdou importovat bez měření), export měření do CSV.
+
 ## Jazyky
 
 10. **Čeština a angličtina.** Volba v **Nastavení** (sekce *Jazyk*): *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (`cs`, `sk` → čeština, jinak angličtina). Ukládá se do `localStorage` (klíč `hw.lang`, „Systém“ = klíč smazaný); po změně se stránka znovu načte. Logika je v `js/i18n.js`.
@@ -60,7 +66,7 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 index.html
 style.css
 app.js              # vstupní bod, stav aplikace, render
-js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, theme.js, log.js, backup.js
+js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, theme.js, log.js, body.js, backup.js
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
@@ -131,7 +137,25 @@ Série (IndexedDB, tabulka `sets`, ne soubor v repozitáři) – objekt:
 
 - `id`: UUID, podle něj se při importu zálohy párují stejné série.
 - `date`: den tréninku v místním čase; `reps` 1–100; `weightKg` 0–1000 (0 = vlastní váha); `rir` 0–10 nebo `null`.
-- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 1, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] } }`.
+- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] }, "body": […] }`.
+
+Měření těla (IndexedDB, tabulka `body`) – objekt:
+
+```json
+{
+  "id": "2026-10-19",
+  "date": "2026-10-19",
+  "weightKg": 82.4,
+  "bodyFat": null,
+  "neck": null, "chest": 104, "waist": 84.5, "hips": null,
+  "arm": 38, "thigh": null, "calf": null,
+  "createdAt": "2026-10-19T07:12:00.000Z",
+  "updatedAt": "2026-10-19T07:12:00.000Z"
+}
+```
+
+- `id` = `date` (jeden záznam na den); nevyplněná míra = `null`, aspoň jedna míra musí být vyplněná.
+- Rozsahy: `weightKg` 20–400, `bodyFat` 2–70 (%), míry v cm podle `METRICS` v `js/body.js`; hodnoty na 1 desetinné místo.
 
 ## Svalové skupiny (výchozí granularita)
 

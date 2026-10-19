@@ -47,7 +47,8 @@ Principles behind the app:
 | 📅 **Week** | Summary of all workouts: which muscle groups are trained, insufficiently trained or missed. |
 | 🏋️ **Set logging** | Weight, reps and RIR right in the exercise detail, prefilled from last time, summary of recent workouts. |
 | 🕘 **History** | All sets by day and a workout calendar. |
-| 💾 **Backup** | Export / import all data as a JSON file, export sets to CSV for Excel. |
+| 📏 **Body** | Body weight, body fat and body measurements (waist, arm, …) with a progress chart. |
+| 💾 **Backup** | Export / import all data as a JSON file, export sets and body measurements to CSV for Excel. |
 | 🌗 **Theme** | Light, dark or follow the system. |
 | 🌐 **Language** | Czech or English, defaulting to the browser language. |
 | 📱 **Install (PWA)** | Add to the phone home screen, works offline. |
@@ -124,18 +125,29 @@ Simple workout plans: up to 4 workouts (*Workout 1–4*), each an ordered list o
 - **In the detail** there is a list of today's sets (× deletes a set) and a summary of the exercise's last 5 workouts, e.g. `80 kg × 8, 8, 7 · 85 kg × 6` (consecutive sets with the same weight are merged).
 - **History:** the clock icon in the header, URL `#/historie`. All sets by day (newest first), grouped by exercise within a day. 20 days are shown; *Show older* loads more. The calendar (left on desktop, above the list on mobile) highlights training days; tapping a day jumps to its entry.
 
+### Body weight and measurements
+
+- **Where:** the tape-measure icon in the header, URL `#/telo`.
+- **New measurement:** date (today by default), body weight (kg), body fat (%) and – under *Measurements (cm)* – neck, chest, waist, hips, arm (flexed), thigh and calf. All fields are optional; fill in at least one. The − and + buttons change values without typing; + on an empty field starts from the last recorded value.
+- **One measurement per day:** when you pick a day that already has a measurement, the form is filled with it and saving updates it.
+- **Current:** a tile for every recorded measurement with the latest value and the change since the previous measurement (e.g. `−0.6 since 12/10`). Tapping a tile shows that measurement in the chart.
+- **Chart:** progress of the selected measurement over time (*3 months* / *Year* / *All*); hovering or tapping shows the value of the nearest measurement. On desktop the chart is in the left column.
+- **Measurements list:** newest first, the pencil loads the day into the form, × deletes it.
+
 ### Settings, backup and restore
 
 The sliders icon in the header, URL `#/nastaveni`. The end of *History* also links here (*Backup and restore → Settings*).
 
 - **Theme:** *System* (follows the device setting) / *Light* / *Dark*.
 - **Language:** *System* / *Čeština* / *English*. *System* = based on the browser language (Czech and Slovak → Czech, otherwise English). The page reloads automatically after a change.
-- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites and workouts 1–4. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
+- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites, workouts 1–4 and body measurements. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
 - **Import backup:** pick a backup file. The app checks it and shows what it contains. Then choose:
-  - **Merge with data on this device** – adds sets missing on the device (the same set is never duplicated), combines favourites and fills only empty workouts.
+  - **Merge with data on this device** – adds sets and measurements missing on the device (the same set is never duplicated; for a day measured on both, the more recently edited one wins), combines favourites and fills only empty workouts.
   - **Replace all** – after confirmation deletes the data on the device and restores it from the backup.
-  - Invalid sets and sets of exercises no longer in the data are skipped (the preview shows how many).
+  - Invalid sets and measurements and sets of exercises no longer in the data are skipped (the preview shows how many).
+  - Backups from older versions (without body measurements) can still be imported.
 - **Export sets (CSV):** a table for Excel / Google Sheets. In English the file is `hypertrophica-sets-YYYY-MM-DD.csv` with columns `date;exercise;exercise_id;set;reps;weight_kg;rir` and English exercise names; in Czech `hypertrophica-serie-…csv` with Czech column and exercise names. Both use a semicolon separator and decimal comma. Meant for viewing and charts – **it cannot be imported back**; use the JSON backup for that.
+- **Export body measurements (CSV):** `hypertrophica-measurements-YYYY-MM-DD.csv` (Czech: `hypertrophica-mereni-…csv`), one row per day, columns `date;body_weight_kg;body_fat_pct;neck_cm;chest_cm;waist_cm;hips_cm;arm_cm;thigh_cm;calf_cm`; an empty cell = not measured. Export only, like the sets CSV.
 - **Moving to another device:** export JSON on the old device → transfer the file → import on the new one.
 - **About:** at the bottom – a short tip on installing the app on a phone, author, link to the source code on GitHub, licence (MIT) and the heading font licence.
 
@@ -150,7 +162,8 @@ Everything is stored **only in the browser of the given device**; nothing goes t
 | Workout lock | `localStorage`, key `hw.planLocked` |
 | Theme | `localStorage`, key `hw.theme` |
 | Language | `localStorage`, key `hw.lang` (no key = follow the browser) |
-| Sets | IndexedDB, database `hypertrophica` (module `js/log.js`) |
+| Sets | IndexedDB, database `hypertrophica`, table `sets` (module `js/log.js`) |
+| Body weight and measurements | IndexedDB, database `hypertrophica`, table `body` (module `js/body.js`) |
 
 - Clearing browser data deletes your data – so **back up regularly**.
 - On the first logged set the app asks the browser for persistent storage (`navigator.storage.persist()`) so that data is not evicted when space runs low.
@@ -173,7 +186,7 @@ This part is for whoever edits the app – adds exercises or changes the code.
 index.html          # page
 style.css           # styles
 app.js              # entry point, app state, rendering
-js/                 # modules: filters, favourites, body map, workouts, set log, backup, theme, texts
+js/                 # modules: filters, favourites, body map, workouts, set log, body measurements, backup, theme, texts
 data/
   exercises.json    # exercise database (the main edited file)
   muscles.json      # muscle groups

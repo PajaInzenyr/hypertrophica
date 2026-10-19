@@ -45,7 +45,8 @@ Zásady, na kterých aplikace stojí:
 | 📅 **Týden** | Souhrn všech tréninků: které partie jsou zapojené, nedostatečně zapojené nebo vynechané. |
 | 🏋️ **Záznam sérií** | Hmotnost, opakování a RIR přímo v detailu cviku, předvyplnění podle minula, souhrn posledních tréninků. |
 | 🕘 **Historie** | Všechny série po dnech a kalendář tréninků. |
-| 💾 **Záloha** | Export / import všech dat do souboru JSON, export sérií do CSV pro Excel. |
+| 📏 **Tělo** | Hmotnost, tělesný tuk a tělesné míry (pas, paže…) s grafem vývoje. |
+| 💾 **Záloha** | Export / import všech dat do souboru JSON, export sérií a měření těla do CSV pro Excel. |
 | 🌗 **Motiv** | Světlý, tmavý nebo podle systému. |
 | 🌐 **Jazyk** | Čeština nebo angličtina, výchozí podle jazyka prohlížeče. |
 | 📱 **Instalace (PWA)** | Přidání na plochu telefonu, běh bez internetu. |
@@ -122,18 +123,29 @@ Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je se
 - **V detailu** je seznam dnešních sérií (× sérii smaže) a souhrn posledních 5 tréninků cviku, např. `80 kg × 8, 8, 7 · 85 kg × 6` (po sobě jdoucí série se stejnou hmotností se sloučí).
 - **Historie:** ikona hodin v hlavičce, adresa `#/historie`. Všechny série po dnech (nejnovější nahoře), v rámci dne po cvicích. Zobrazuje se 20 dní, starší přidá *Zobrazit starší*. Kalendář (na PC vlevo, na mobilu nad seznamem) zvýrazní dny s tréninkem; klepnutí na den přeskočí na jeho záznam.
 
+### Hmotnost a tělesné míry
+
+- **Kde:** ikona krejčovského metru v hlavičce, adresa `#/telo`.
+- **Nové měření:** datum (výchozí dnešek), hmotnost (kg), tělesný tuk (%) a v rozbalovací části *Míry (cm)* krk, hrudník, pas, boky, paže (zatnutá), stehno a lýtko. Všechna pole jsou nepovinná, vyplň aspoň jedno. Tlačítka − a + mění hodnotu bez psaní; + u prázdného políčka začne od poslední zapsané hodnoty.
+- **Jedno měření na den:** když zvolíš den, pro který už je měření uložené, formulář se jím vyplní a uložení ho upraví.
+- **Aktuální stav:** dlaždice pro každou zapsanou míru s poslední hodnotou a změnou oproti předchozímu měření (např. `−0,6 od 12. 10.`). Klepnutí na dlaždici zobrazí míru v grafu.
+- **Graf:** vývoj vybrané míry v čase (*3 měsíce* / *Rok* / *Vše*); najetí myší nebo klepnutí ukáže hodnotu nejbližšího měření. Na PC je graf v levém sloupci.
+- **Seznam měření:** od nejnovějšího, tužka načte den do formuláře, × ho smaže.
+
 ### Nastavení, záloha a obnova dat
 
 Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede odkaz *Záloha a obnova dat*.
 
 - **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
 - **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
-- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené i tréninky 1–4. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
+- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené, tréninky 1–4 i měření těla. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
-  - **Sloučit s daty v zařízení** – přidá série, které v zařízení chybí (stejná série se nezdvojí), sjednotí oblíbené a doplní jen prázdné tréninky.
+  - **Sloučit s daty v zařízení** – přidá série a měření, které v zařízení chybí (stejná série se nezdvojí; u dne změřeného v obou se ponechá naposledy upravené měření), sjednotí oblíbené a doplní jen prázdné tréninky.
   - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
-  - Neplatné série a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
+  - Neplatné série a měření a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
+  - Zálohy ze starších verzí (bez měření těla) jdou importovat i nadále.
 - **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
+- **Exportovat měření těla (CSV):** `hypertrophica-mereni-RRRR-MM-DD.csv` (v angličtině `hypertrophica-measurements-…csv`), jeden řádek = jeden den, sloupce `datum;hmotnost_kg;tuk_procent;krk_cm;hrudnik_cm;pas_cm;boky_cm;paze_cm;stehno_cm;lytko_cm`; prázdná buňka = neměřeno. Stejně jako CSV sérií jen pro export.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
 - **O aplikaci:** úplně dole – krátký tip k instalaci aplikace na mobil, autor, odkaz na zdrojový kód na GitHubu, licence (MIT) a licence písma nadpisů.
 
@@ -148,7 +160,8 @@ Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodcház�
 | Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
 | Motiv | `localStorage`, klíč `hw.theme` |
 | Jazyk | `localStorage`, klíč `hw.lang` (bez klíče = podle prohlížeče) |
-| Série | IndexedDB, databáze `hypertrophica` (modul `js/log.js`) |
+| Série | IndexedDB, databáze `hypertrophica`, tabulka `sets` (modul `js/log.js`) |
+| Hmotnost a míry | IndexedDB, databáze `hypertrophica`, tabulka `body` (modul `js/body.js`) |
 
 - Smazáním dat prohlížeče se data ztratí – proto **pravidelně zálohuj**.
 - Aplikace při prvním zápisu série požádá prohlížeč o trvalé úložiště (`navigator.storage.persist()`), aby data nemazal při nedostatku místa.
@@ -171,7 +184,7 @@ Tato část je pro toho, kdo aplikaci upravuje – přidává cviky nebo mění 
 index.html          # stránka
 style.css           # vzhled
 app.js              # vstupní bod, stav aplikace, vykreslování
-js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam sérií, záloha, motiv, texty
+js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam sérií, míry těla, záloha, motiv, texty
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # svalové skupiny
