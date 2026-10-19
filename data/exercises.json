@@ -760,6 +760,16 @@
     "notes": { "cs": "Pohyb vychází z páteře, ne z kyčlí – nesedej si na paty.", "en": "The movement comes from the spine, not the hips – don't sit back onto your heels." }
   },
   {
+    "id": "weighted-decline-crunch",
+    "name": { "cs": "Zkracovačky na negativní lavici se zátěží", "en": "Weighted Decline Crunch" },
+    "type": "isolation",
+    "primary": ["abs"],
+    "secondary": ["obliques"],
+    "equipment": ["bench", "dumbbell"],
+    "description": { "cs": "Lehni si na negativní lavici, nohy zaháknuté pod válci. Jednoručku nebo kotouč drž na hrudi. Stáčej trup nahoru, hrudník k pánvi, dokud se bedra nezačnou zvedat z lavice. Pomalu se vrať do protažení, hlavu nepokládej.", "en": "Lie on a decline bench with your feet hooked under the pads. Hold a dumbbell or plate on your chest. Curl your torso up, bringing your chest towards your pelvis until your lower back starts to lift off the bench. Slowly return to the stretch without resting your head." },
+    "notes": { "cs": "Nesedej celou cestu nahoru – zbytek pohybu dělají ohybače kyčle. Těžší varianta: zátěž držená za hlavou.", "en": "Don't sit all the way up – the rest of the movement is done by the hip flexors. Harder variation: hold the weight behind your head." }
+  },
+  {
     "id": "hanging-leg-raise",
     "name": { "cs": "Zvedání nohou ve visu", "en": "Hanging Leg Raise" },
     "type": "isolation",
