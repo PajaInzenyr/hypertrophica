@@ -81,7 +81,7 @@
   },
   {
     "id": "dip-chest",
-    "name": { "cs": "Dipy s důrazem na hrudník", "en": "Chest Dip" },
+    "name": { "cs": "Kliky na bradlech", "en": "Dips" },
     "type": "compound",
     "primary": ["chest", "triceps"],
     "secondary": ["front_delts"],
