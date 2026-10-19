@@ -15,8 +15,11 @@
 
 const DB_NAME = 'hypertrophica';
 // Verze struktury databáze. Při změně struktury ji zvyš a doplň převod v upgrade().
-export const SCHEMA_VERSION = 1;
+// Stejné číslo se zapisuje do zálohy (schemaVersion), viz js/backup.js.
+// 1 = tabulka sets (série), 2 = navíc tabulka body (hmotnost a míry, js/body.js).
+export const SCHEMA_VERSION = 2;
 const STORE = 'sets';
+export const BODY_STORE = 'body';
 
 // Povolené rozsahy hodnot (kontrola formuláře i importu).
 export const LIMITS = {
@@ -29,13 +32,22 @@ let dbPromise = null;
 let memory = null; // náhradní úložiště v paměti (Map id → záznam), když IndexedDB nejde použít
 
 // Otevře databázi (jen poprvé, pak vrací stejné spojení). Vrátí null, když IndexedDB nejde použít.
-function openDb() {
+// Sdílí ji i js/body.js (stejná databáze, jiná tabulka).
+export function openDb() {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
-    // Spustí se při prvním otevření nebo po zvýšení SCHEMA_VERSION: vytvoří tabulku a indexy.
+    // Spustí se při prvním otevření nebo po zvýšení SCHEMA_VERSION: vytvoří tabulky a indexy.
     request.onupgradeneeded = (event) => upgrade(request.result, event.oldVersion);
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const db = request.result;
+      // Novější verze aplikace v jiné záložce chce databázi převést – uvolni ji,
+      // jinak by převod čekal, dokud se tato záložka nezavře.
+      db.onversionchange = () => db.close();
+      resolve(db);
+    };
+    // Převod čeká na zavření starší verze aplikace v jiné záložce; dokončí se sám.
+    request.onblocked = () => console.warn('IndexedDB: čeká se na zavření jiné záložky s aplikací.');
     request.onerror = () => reject(request.error);
   }).catch((error) => {
     console.warn('IndexedDB není dostupná, záznamy zůstanou jen v paměti:', error);
@@ -52,11 +64,15 @@ function upgrade(db, oldVersion) {
     store.createIndex('exerciseId', 'exerciseId');
     store.createIndex('date', 'date');
   }
-  // Budoucí verze: if (oldVersion < 2) { … převod dat … }
+  if (oldVersion < 2) {
+    // Hmotnost a míry: jeden záznam na den, klíčem je datum ("2026-10-19").
+    db.createObjectStore(BODY_STORE, { keyPath: 'id' });
+  }
+  // Budoucí verze: if (oldVersion < 3) { … převod dat … }
 }
 
 // Převede požadavek IndexedDB (callback API) na Promise, aby šel použít s await.
-function done(request) {
+export function done(request) {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
@@ -64,7 +80,7 @@ function done(request) {
 }
 
 // Promise, který se splní, až se zápis (transakce) opravdu dokončí.
-function committed(tx) {
+export function committed(tx) {
   return new Promise((resolve, reject) => {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
@@ -182,7 +198,7 @@ async function putAll(records, clearFirst = false) {
 
 // Požádá prohlížeč, aby data webu nemazal ani při nedostatku místa.
 // Chrome u nainstalované aplikace obvykle vyhoví bez dotazu; když nevyhoví, nic se neděje.
-function requestPersistence() {
+export function requestPersistence() {
   navigator.storage?.persist?.().catch(() => {});
 }
 
