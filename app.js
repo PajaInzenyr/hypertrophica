@@ -90,6 +90,7 @@ const ui = {
   settingsTitle: $('settings-title'),
   backupExport: $('backup-export'),
   backupExportCsv: $('backup-export-csv'),
+  backupExportBodyCsv: $('backup-export-body-csv'),
   backupImport: $('backup-import'),
   backupFile: $('backup-file'),
   backupConfirm: $('backup-confirm'),
@@ -272,6 +273,7 @@ function bindEvents() {
   });
   ui.backupExport.addEventListener('click', onExportBackup);
   ui.backupExportCsv.addEventListener('click', onExportCsv);
+  ui.backupExportBodyCsv.addEventListener('click', onExportBodyCsv);
   ui.backupImport.addEventListener('click', () => ui.backupFile.click());
   ui.backupFile.addEventListener('change', onBackupFileChosen);
   ui.historyMore.addEventListener('click', () => {
@@ -1907,6 +1909,7 @@ async function onExportBackup() {
       sets: await log.getAllSets(),
       favorites: [...getFavorites()],
       week: plan.getWeek(),
+      body: await body.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -1932,6 +1935,26 @@ async function onExportCsv() {
     const result = await backup.saveFile(filename, csv, 'text/csv');
     if (result !== 'cancelled') {
       ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedCsv', { file: filename });
+    }
+  } catch (error) {
+    console.error(error);
+    ui.backupFeedback.textContent = t('backup.errorExport');
+  }
+}
+
+// Tabulka měření (hmotnost a míry) pro Excel.
+async function onExportBodyCsv() {
+  const filename = `hypertrophica-${t('backup.bodyCsvFile')}-${log.localDate()}.csv`;
+  try {
+    const records = await body.getAll();
+    if (records.length === 0) {
+      ui.backupFeedback.textContent = t('backup.bodyCsvEmpty');
+      return;
+    }
+    const csv = backup.createBodyCsv(records, t('backup.bodyCsvHeader').split(','));
+    const result = await backup.saveFile(filename, csv, 'text/csv');
+    if (result !== 'cancelled') {
+      ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedBodyCsv', { file: filename });
     }
   } catch (error) {
     console.error(error);
@@ -1966,9 +1989,10 @@ function showImportPreview(parsed) {
   const choice = (className, key, mode) => actionButton(className, t(key), () => onImportChoice(parsed, mode));
   ui.backupConfirm.replaceChildren(
     el('p', { textContent: t('backup.preview', {
-      date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts,
+      date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts, body: parsed.body.length,
     }) }),
     ...(parsed.skipped ? [el('p', { textContent: t('backup.previewSkipped', { count: parsed.skipped }) })] : []),
+    ...(parsed.bodySkipped ? [el('p', { textContent: t('backup.previewBodySkipped', { count: parsed.bodySkipped }) })] : []),
     el('p', { className: 'backup-hint', textContent: t('backup.modeHint') }),
     el('div', { className: 'backup-actions' },
       choice('button-primary', 'backup.merge', 'merge'),
@@ -1995,9 +2019,12 @@ async function onImportChoice(parsed, mode) {
     return;
   }
   let result;
+  let bodyResult;
   try {
-    // Série první: kdyby zápis do IndexedDB selhal, oblíbené a tréninky zůstanou beze změny.
+    // Série a měření první: kdyby zápis do IndexedDB selhal, oblíbené a tréninky zůstanou beze změny.
+    // (Každá tabulka se zapisuje samostatně – když selže až měření, série už zůstanou importované.)
     result = await log.importSets(parsed.sets, mode);
+    bodyResult = await body.importRecords(parsed.body, mode);
   } catch (error) {
     console.error(error);
     ui.backupFeedback.textContent = t('backup.errorImport');
@@ -2013,6 +2040,6 @@ async function onImportChoice(parsed, mode) {
   renderList();
   renderFavorites();
   afterPlanChange();
-  // Historii není třeba překreslovat – při otevření se načte vždy znovu.
-  ui.backupFeedback.textContent = t('backup.imported', result);
+  // Historii a Tělo není třeba překreslovat – při otevření se načtou vždy znovu.
+  ui.backupFeedback.textContent = `${t('backup.imported', result)} ${t('backup.importedBody', bodyResult)}`;
 }
