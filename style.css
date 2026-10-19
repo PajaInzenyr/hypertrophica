@@ -263,6 +263,13 @@ a {
   text-overflow: ellipsis;
 }
 
+/* Mobil: vedle čtyř ikon v hlavičce by z podtitulu zbylo jen „E…“ – raději se skryje. */
+@media (max-width: 419px) {
+  .app-subtitle {
+    display: none;
+  }
+}
+
 .status {
   color: var(--text-muted);
 }
@@ -336,7 +343,8 @@ a {
   .detail,
   .plan,
   .history,
-  .settings {
+  .settings,
+  .measures {
     display: grid;
     grid-template-columns: var(--map-col) minmax(0, 1fr);
     grid-template-rows: repeat(9, auto) 1fr;
@@ -349,7 +357,8 @@ a {
   .detail > *,
   .plan > *,
   .history > *,
-  .settings > * {
+  .settings > *,
+  .measures > * {
     grid-area: auto;
     grid-column: 2;
   }
@@ -1636,6 +1645,322 @@ a.button-secondary {
   color: var(--accent);
   font-weight: 600;
   text-decoration: none;
+}
+
+/* ===== Tělo (hmotnost a míry) ===== */
+/* PC: stejné rozložení jako Historie – vlevo graf (místo kalendáře), vpravo obsah. */
+@media (min-width: 900px) {
+  .measures {
+    grid-template-rows: 1fr repeat(6, auto) 1fr;
+    min-height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+  }
+
+  .measures > .back-link { grid-row: 2; justify-self: start; }
+  .measures > h1 { grid-row: 3; }
+  .measures > .measures-intro { grid-row: 4; }
+  .measures > .measures-entry { grid-row: 5; }
+  .measures > .measures-latest-section { grid-row: 6; }
+  .measures > .measures-list-section { grid-row: 7; }
+}
+
+.measures h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.measures h1:focus {
+  outline: none;
+}
+
+.measures-intro p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+}
+
+.measures-intro .log-warning {
+  padding: 8px 10px;
+  background: var(--chip-primary-bg);
+  border-radius: var(--radius);
+  color: var(--chip-primary-text);
+  font-size: 0.875rem;
+}
+
+.measures h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.measures-latest-section,
+.measures-list-section {
+  margin-top: 24px;
+}
+
+/* Datum: políčko jen tak široké jako jedno políčko s − a + */
+.measures-date-field {
+  margin-bottom: var(--gap);
+}
+
+.measures-date {
+  display: block;
+  width: calc(50% - var(--gap) / 2);
+  min-width: 10.5em;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+.measures-date[aria-invalid="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.measures-entry .log-hint:empty {
+  display: none;
+}
+
+/* V pohledu Tělo jsou všechna políčka stejně široká (2 vedle sebe), i to poslední –
+   pravidlo pro RIR v detailu cviku (.log-field:last-child) tu neplatí. */
+.measures-fields .log-field:last-child {
+  grid-column: auto;
+}
+
+.measures-fields .log-field:last-child .log-stepper {
+  max-width: none;
+}
+
+/* Rozbalovací „Míry (cm)“ */
+.measures-more {
+  margin-top: var(--gap);
+  border-top: 1px solid var(--border);
+}
+
+.measures-more summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.measures-more[open] summary {
+  margin-bottom: 4px;
+}
+
+.measures-entry .log-feedback {
+  min-height: 1.5em;
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Dlaždice „Aktuální stav“: 2 vedle sebe na mobilu, 3 od 640 px */
+.measures-latest {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .measures-latest {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.measure-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.measure-tile:hover {
+  background: var(--chip-bg);
+}
+
+/* Míra právě zobrazená v grafu */
+.measure-tile[aria-pressed="true"] {
+  border: 2px solid var(--accent);
+  padding: 7px 11px;
+}
+
+.measure-tile-label {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.measure-tile-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.measure-tile-change {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Seznam měření */
+.measures-list {
+  margin: 0;
+  padding: 0 4px 0 14px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.measures-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+
+.measures-item:first-child {
+  border-top: 0;
+}
+
+.measures-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.measures-item-date {
+  display: block;
+  font-weight: 600;
+}
+
+.measures-item-date::first-letter {
+  text-transform: uppercase; /* „pondělí“ → „Pondělí“ */
+}
+
+.measures-item-values {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+#body-more {
+  margin-top: 16px;
+}
+
+/* Graf vývoje míry. Na PC v levém sloupci, přilepený pod hlavičkou a svisle na střed okna
+   (stejně jako kalendář v Historii). */
+.measures-chart {
+  margin-top: 24px;
+}
+
+@media (min-width: 900px) {
+  .measures > .measures-chart {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--header-h) + var(--page-pad-y));
+    height: calc(100vh - var(--header-h) - 2 * var(--page-pad-y));
+    height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+.measures-range {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: var(--gap);
+}
+
+.measures-chart-figure {
+  position: relative; /* bublina s hodnotou se umisťuje vůči grafu */
+}
+
+.measures-svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  touch-action: pan-y; /* svislé posouvání stránky prstem zůstává, vodorovný tah ukazuje hodnoty */
+}
+
+.measures-svg .chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.measures-svg .chart-label {
+  fill: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.measures-svg .chart-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Kolečko bodu s obrysem v barvě pozadí, aby se odlišilo od čáry */
+.measures-svg .chart-point {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.measures-svg .chart-guide {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.measures-svg .chart-hit {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.measures-tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.measures-chart .body-map-hint:empty {
+  display: none;
 }
 
 /* ===== Nastavení ===== */

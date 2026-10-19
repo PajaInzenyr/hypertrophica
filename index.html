@@ -30,6 +30,13 @@
         <span class="app-name">Hypertrophica</span>
         <span class="app-subtitle" data-i18n="app.subtitle"></span>
       </a>
+      <!-- Odkaz na pohled Tělo (hmotnost a míry); ikona = krejčovský metr -->
+      <a id="body-link" class="header-button" href="#/telo" hidden>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <rect x="2.5" y="8" width="19" height="8" rx="1.5"/>
+          <path d="M6.5 8v3M10.5 8v4.5M14.5 8v3M18.5 8v4.5"/>
+        </svg>
+      </a>
       <!-- Odkaz na historii zapsaných sérií -->
       <a id="history-link" class="header-button" href="#/historie" hidden>
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
@@ -199,6 +206,38 @@
       <a class="history-backup-link" href="#/nastaveni" data-i18n="history.backupLink"></a>
     </section>
 
+    <!-- Pohled 6: Tělo (adresa #/telo) – zápis hmotnosti a tělesných měr, vývoj v grafu.
+         Formulář, přehled, graf i seznam měření doplní app.js. -->
+    <section id="body-view" class="measures" aria-labelledby="body-title" hidden>
+      <a class="back-link" href="#/" id="body-back"></a>
+      <h1 id="body-title" tabindex="-1" data-i18n="body.title"></h1>
+      <div id="body-intro" class="measures-intro"></div>
+      <!-- Formulář: datum, hmotnost, tělesný tuk a (rozbalovací) míry v cm -->
+      <section class="log measures-entry" aria-labelledby="body-form-title">
+        <h2 id="body-form-title" data-i18n="body.formTitle"></h2>
+        <form id="body-form" class="measures-form" novalidate></form>
+        <p id="body-feedback" class="log-feedback" role="status"></p>
+      </section>
+      <!-- Poslední hodnota každé míry; klepnutí na dlaždici ji zobrazí v grafu -->
+      <section id="body-latest-section" class="measures-latest-section" aria-labelledby="body-latest-title" hidden>
+        <h2 id="body-latest-title" data-i18n="body.latestTitle"></h2>
+        <ul id="body-latest" class="measures-latest" role="list"></ul>
+      </section>
+      <!-- Graf vývoje vybrané míry. Na PC v levém sloupci (jako kalendář v Historii). -->
+      <section id="body-chart" class="measures-chart" aria-labelledby="body-chart-title" hidden>
+        <h2 id="body-chart-title"></h2>
+        <div id="body-range" class="measures-range" role="group" data-i18n-aria-label="body.rangeLabel"></div>
+        <div id="body-chart-figure" class="measures-chart-figure"></div>
+        <p id="body-chart-note" class="body-map-hint"></p>
+      </section>
+      <!-- Seznam měření od nejnovějšího, s úpravou a smazáním -->
+      <section id="body-list-section" class="measures-list-section" aria-labelledby="body-list-title" hidden>
+        <h2 id="body-list-title" data-i18n="body.listTitle"></h2>
+        <ul id="body-list" class="measures-list" role="list"></ul>
+        <button id="body-more" class="button-secondary" type="button" data-i18n="history.more" hidden></button>
+      </section>
+    </section>
+
     <!-- Pohled 5: nastavení (adresa #/nastaveni) – motiv, jazyk, záloha dat a O aplikaci -->
     <section id="settings-view" class="settings" aria-labelledby="settings-title" hidden>
       <a class="back-link" href="#/" id="settings-back"></a>
@@ -223,6 +262,7 @@
         <div class="backup-actions">
           <button id="backup-export" class="button-primary" type="button" data-i18n="backup.exportJson"></button>
           <button id="backup-export-csv" class="button-secondary" type="button" data-i18n="backup.exportCsv"></button>
+          <button id="backup-export-body-csv" class="button-secondary" type="button" data-i18n="backup.exportBodyCsv"></button>
           <button id="backup-import" class="button-secondary" type="button" data-i18n="backup.import"></button>
           <!-- Skrytý výběr souboru; otevře ho tlačítko „Importovat zálohu“ -->
           <input id="backup-file" type="file" accept=".json,application/json" hidden>

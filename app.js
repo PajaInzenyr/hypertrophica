@@ -9,6 +9,7 @@ import * as plan from './js/plan.js';
 import { initTheme } from './js/theme.js';
 import * as log from './js/log.js';
 import * as backup from './js/backup.js';
+import * as body from './js/body.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -16,7 +17,7 @@ const state = {
   byId: new Map(), // id cviku → objekt z exercises.json
   muscles: new Map(), // id svalu → objekt z muscles.json
   filters: { ...EMPTY_FILTERS },
-  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan' | 'history' | 'settings'
+  view: null, // právě zobrazený pohled: 'list' | 'detail' | 'plan' | 'history' | 'settings' | 'body'
   scrollY: { list: 0, plan: 0, history: 0 }, // pozice, kam se vrátit z detailu
   lastOpenedId: null,
   returnHash: '#/', // kam vede „Zpět“ z detailu (seznam, trénink, nebo historie)
@@ -29,6 +30,10 @@ const state = {
   historyDates: [], // dny se sériemi, nejnovější první ("2026-10-13", …)
   historySetCounts: new Map(), // den → počet sérií (pro kalendář)
   calendarMonth: null, // měsíc zobrazený v kalendáři historie: { year, month } (month 0–11)
+  bodyRecords: [], // měření (hmotnost a míry) od nejstaršího dne
+  bodyMetric: 'weightKg', // míra zobrazená v grafu v pohledu Tělo
+  bodyRange: 'all', // období grafu: '3m' | '1y' | 'all'
+  bodyItems: 0, // kolik měření se v seznamu zobrazuje (tlačítko „Zobrazit starší“ přidává)
 };
 
 // ===== Odkazy na prvky stránky =====
@@ -85,10 +90,28 @@ const ui = {
   settingsTitle: $('settings-title'),
   backupExport: $('backup-export'),
   backupExportCsv: $('backup-export-csv'),
+  backupExportBodyCsv: $('backup-export-body-csv'),
   backupImport: $('backup-import'),
   backupFile: $('backup-file'),
   backupConfirm: $('backup-confirm'),
   backupFeedback: $('backup-feedback'),
+  bodyLink: $('body-link'),
+  bodyView: $('body-view'),
+  bodyBack: $('body-back'),
+  bodyTitle: $('body-title'),
+  bodyIntro: $('body-intro'),
+  bodyForm: $('body-form'),
+  bodyFeedback: $('body-feedback'),
+  bodyLatestSection: $('body-latest-section'),
+  bodyLatest: $('body-latest'),
+  bodyChart: $('body-chart'),
+  bodyChartTitle: $('body-chart-title'),
+  bodyRange: $('body-range'),
+  bodyChartFigure: $('body-chart-figure'),
+  bodyChartNote: $('body-chart-note'),
+  bodyListSection: $('body-list-section'),
+  bodyList: $('body-list'),
+  bodyMore: $('body-more'),
 };
 
 // Pomocná funkce pro vytvoření HTML prvku:
@@ -165,6 +188,12 @@ async function init() {
   ui.settingsLink.setAttribute('aria-label', t('settings.headerLabel'));
   ui.settingsLink.title = t('settings.headerLabel');
   ui.settingsLink.hidden = false;
+  ui.bodyBack.textContent = `← ${t('detail.back')}`;
+  ui.bodyLink.setAttribute('aria-label', t('body.headerLabel'));
+  ui.bodyLink.title = t('body.headerLabel');
+  ui.bodyLink.hidden = false;
+  createBodyForm();
+  createBodyRange();
   createPlanTabs();
   ui.planLink.hidden = false;
   updatePlanLink();
@@ -244,6 +273,7 @@ function bindEvents() {
   });
   ui.backupExport.addEventListener('click', onExportBackup);
   ui.backupExportCsv.addEventListener('click', onExportCsv);
+  ui.backupExportBodyCsv.addEventListener('click', onExportBodyCsv);
   ui.backupImport.addEventListener('click', () => ui.backupFile.click());
   ui.backupFile.addEventListener('change', onBackupFileChosen);
   ui.historyMore.addEventListener('click', () => {
@@ -252,6 +282,17 @@ function bindEvents() {
   });
   ui.calendarPrev.addEventListener('click', () => shiftCalendarMonth(-1));
   ui.calendarNext.addEventListener('click', () => shiftCalendarMonth(1));
+  ui.bodyForm.addEventListener('submit', onBodySubmit);
+  ui.bodyLatest.addEventListener('click', onBodyTileClick);
+  ui.bodyList.addEventListener('click', onBodyListClick);
+  ui.bodyMore.addEventListener('click', () => {
+    state.bodyItems += BODY_PAGE;
+    renderBodyList();
+  });
+  // Graf se kreslí v pixelech podle šířky prvku – po změně velikosti okna (otočení mobilu) se překreslí.
+  window.addEventListener('resize', () => {
+    if (state.view === 'body') requestAnimationFrame(renderBodyChart);
+  });
   document.addEventListener('click', onDetailBackgroundClick);
   document.addEventListener('keydown', onDetailEscape);
   window.addEventListener('hashchange', route);
@@ -882,7 +923,8 @@ function onClearPlan() {
 // #/trenink?cviky=id1,id2,… = sdílený trénink (náhled s možností uložit),
 // #/tyden = souhrn tréninků 1–4 (stejný pohled jako trénink, jiná záložka),
 // #/historie = historie zapsaných sérií,
-// #/nastaveni = nastavení (motiv, záloha a obnova dat)
+// #/nastaveni = nastavení (motiv, záloha a obnova dat),
+// #/telo = hmotnost a tělesné míry
 function route() {
   const previous = state.view;
   // Zapamatuj si, kam se v seznamu / tréninku / historii odscrollovalo, ať se tam dá vrátit.
@@ -909,6 +951,8 @@ function route() {
     showHistory(previous);
   } else if (location.hash === '#/nastaveni') {
     showSettings();
+  } else if (location.hash === '#/telo') {
+    showBody();
   } else if (location.hash === '#/tyden') {
     state.planHash = location.hash;
     state.sharedPlan = null;
@@ -927,8 +971,9 @@ function setView(name) {
   ui.planView.hidden = name !== 'plan';
   ui.historyView.hidden = name !== 'history';
   ui.settingsView.hidden = name !== 'settings';
-  // Zvýrazní ikonu tréninku / historie / nastavení v hlavičce, když je pohled otevřený.
-  [[ui.planLink, 'plan'], [ui.historyLink, 'history'], [ui.settingsLink, 'settings']].forEach(([link, view]) => {
+  ui.bodyView.hidden = name !== 'body';
+  // Zvýrazní ikonu tréninku / historie / nastavení / těla v hlavičce, když je pohled otevřený.
+  [[ui.planLink, 'plan'], [ui.historyLink, 'history'], [ui.settingsLink, 'settings'], [ui.bodyLink, 'body']].forEach(([link, view]) => {
     if (name === view) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   });
@@ -1108,16 +1153,19 @@ function parseNumber(text) {
 }
 
 // Políčko s tlačítky − a + (na mobilu se hodnota mění klepnutím, bez psaní).
-// step = o kolik tlačítka mění hodnotu; start = hodnota po klepnutí na + u prázdného políčka.
+// step = o kolik tlačítka mění hodnotu; start = hodnota po klepnutí na + u prázdného políčka
+// (číslo, nebo funkce, která ho vrátí – např. poslední zapsaná hodnota).
 function stepperField({ id, label, hint, inputMode, step, start, min, max }) {
   const input = el('input', { id, type: 'text', inputMode, autocomplete: 'off', className: 'log-input' });
   const change = (direction) => {
     const value = parseNumber(input.value);
     if (value === null || Number.isNaN(value)) {
-      if (direction > 0) input.value = formatNumber(start);
+      if (direction > 0) input.value = formatNumber(typeof start === 'function' ? start() : start);
       return;
     }
-    input.value = formatNumber(Math.min(max, Math.max(min, value + direction * step)));
+    // Zaokrouhlení: 82.1 + 0.1 by v počítači dalo 82.19999…
+    const next = Math.round((value + direction * step) * 100) / 100;
+    input.value = formatNumber(Math.min(max, Math.max(min, next)));
     input.removeAttribute('aria-invalid');
   };
   const stepButton = (direction, symbol, key) => {
@@ -1441,6 +1489,418 @@ async function jumpToHistoryDay(date) {
   heading.focus({ preventScroll: true });
 }
 
+// ===== Pohled Tělo =====
+// Zápis hmotnosti a tělesných měr (jeden záznam na den, js/body.js), přehled posledních
+// hodnot, graf vývoje vybrané míry a seznam všech měření s úpravou a smazáním.
+const BODY_PAGE = 20;
+const BODY_METRIC = new Map(body.METRICS.map((m) => [m.key, m]));
+// Míry v rozbalovací části formuláře „Míry (cm)“; hmotnost a tuk jsou vidět vždy.
+const BODY_CM_KEYS = body.METRICS.filter((m) => m.unit === 'cm').map((m) => m.key);
+let bodyRenderId = 0;
+const bodyForm = {
+  date: null, // <input type="date">
+  dateHint: null, // poznámka pod datem („pro tento den už je měření uložené“)
+  inputs: new Map(), // klíč míry → <input>
+  more: null, // <details> s mírami v cm
+  prefilled: false, // true = políčka obsahují uložený záznam (ne rozepsané hodnoty)
+};
+
+// "82,4 kg", "84,5 cm", česky "15 %", anglicky "15%"
+function formatMetric(key, value) {
+  const { unit } = BODY_METRIC.get(key);
+  return unit === '%' ? t('body.percent', { value: formatNumber(value) }) : `${formatNumber(value)} ${unit}`;
+}
+
+// "2026-10-19" → "19. 10." (anglicky "19/10"); s rokem, když není letošní.
+function formatShortDate(isoDate) {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  const options = { day: 'numeric', month: 'numeric', ...(y !== new Date().getFullYear() ? { year: 'numeric' } : {}) };
+  return new Date(y, m - 1, d).toLocaleDateString(currentLocale(), options);
+}
+
+// Poslední zapsaná hodnota míry (pro tlačítko + u prázdného políčka), nebo undefined.
+function lastBodyValue(key) {
+  return state.bodyRecords.findLast((r) => r[key] !== null)?.[key];
+}
+
+// Formulář se vytvoří jednou při startu, při otevření pohledu se jen předvyplní.
+function createBodyForm() {
+  bodyForm.date = el('input', { id: 'body-date', type: 'date', className: 'log-input measures-date' });
+  bodyForm.dateHint = el('p', { id: 'body-date-hint', className: 'log-hint' });
+  bodyForm.date.setAttribute('aria-describedby', 'body-date-hint');
+  bodyForm.date.addEventListener('change', fillBodyForm);
+  const fields = new Map(body.METRICS.map((m) => {
+    const { field, input } = stepperField({
+      id: `body-${m.key}`, label: t(`body.field.${m.key}`), inputMode: 'decimal',
+      step: m.step, start: () => lastBodyValue(m.key) ?? m.start, min: m.min, max: m.max,
+    });
+    bodyForm.inputs.set(m.key, input);
+    return [m.key, field];
+  }));
+  bodyForm.more = el('details', { className: 'measures-more' },
+    el('summary', { textContent: t('body.moreMeasures') }),
+    el('div', { className: 'log-fields measures-fields' }, ...BODY_CM_KEYS.map((key) => fields.get(key)))
+  );
+  ui.bodyForm.replaceChildren(
+    el('div', { className: 'log-field measures-date-field' },
+      el('label', { htmlFor: 'body-date', textContent: t('body.date') }),
+      bodyForm.date,
+      bodyForm.dateHint
+    ),
+    el('div', { className: 'log-fields measures-fields' }, fields.get('weightKg'), fields.get('bodyFat')),
+    bodyForm.more,
+    el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('body.save') })
+  );
+}
+
+// Předvyplní formulář uloženým měřením zvoleného dne. Když pro den nic uložené není,
+// políčka se vyprázdní – ale jen pokud v nich byl uložený záznam jiného dne;
+// rozepsané hodnoty zůstanou (uživatel třeba jen opravuje datum).
+function fillBodyForm() {
+  const record = state.bodyRecords.find((r) => r.date === bodyForm.date.value);
+  bodyForm.inputs.forEach((input, key) => {
+    input.removeAttribute('aria-invalid');
+    if (record) input.value = record[key] === null ? '' : formatNumber(record[key]);
+    else if (bodyForm.prefilled) input.value = '';
+  });
+  bodyForm.prefilled = Boolean(record);
+  bodyForm.date.removeAttribute('aria-invalid');
+  bodyForm.dateHint.textContent = record ? t('body.existingHint') : '';
+  if (record && BODY_CM_KEYS.some((key) => record[key] !== null)) bodyForm.more.open = true;
+}
+
+async function showBody() {
+  setView('body');
+  state.bodyItems = Math.max(state.bodyItems, BODY_PAGE);
+  ui.bodyFeedback.textContent = '';
+  window.scrollTo(0, 0);
+  ui.bodyTitle.focus();
+  await renderBody();
+  // Výchozí den formuláře = dnes (datum v políčku zůstane, dokud se stránka znovu nenačte).
+  const today = log.localDate();
+  bodyForm.date.max = today;
+  if (!bodyForm.date.value) bodyForm.date.value = today;
+  fillBodyForm();
+}
+
+// Načte měření a překreslí přehled, graf a seznam.
+async function renderBody() {
+  const renderId = ++bodyRenderId;
+  const [records, persistent] = await Promise.all([body.getAll(), log.isStorageAvailable()]);
+  if (renderId !== bodyRenderId) return;
+  state.bodyRecords = records;
+  // Míra v grafu musí mít data; jinak první míra, která je zapsaná.
+  if (!records.some((r) => r[state.bodyMetric] !== null)) {
+    state.bodyMetric = body.METRIC_KEYS.find((key) => records.some((r) => r[key] !== null)) ?? 'weightKg';
+  }
+  ui.bodyIntro.replaceChildren(
+    el('p', { textContent: records.length ? t('body.summary', { count: records.length }) : t('body.empty') }),
+    ...(persistent ? [] : [el('p', { className: 'log-warning', textContent: t('body.memoryOnly') })])
+  );
+  renderBodyLatest();
+  renderBodyChart();
+  renderBodyList();
+}
+
+// Dlaždice s poslední hodnotou každé zapsané míry a změnou oproti předchozímu měření.
+function renderBodyLatest() {
+  const tiles = body.METRIC_KEYS.flatMap((key) => {
+    const values = state.bodyRecords.filter((r) => r[key] !== null);
+    if (!values.length) return [];
+    const last = values[values.length - 1];
+    const previous = values[values.length - 2];
+    let change;
+    if (previous) {
+      const delta = Math.round((last[key] - previous[key]) * 10) / 10;
+      const sign = delta > 0 ? '+' : delta < 0 ? '−' : '±';
+      change = t('body.delta', { delta: sign + formatNumber(Math.abs(delta)), date: formatShortDate(previous.date) });
+    } else {
+      change = t('body.measuredOn', { date: formatShortDate(last.date) });
+    }
+    const button = el('button', { type: 'button', className: 'measure-tile' },
+      el('span', { className: 'measure-tile-label', textContent: t(`body.metric.${key}`) }),
+      el('span', { className: 'measure-tile-value', textContent: formatMetric(key, last[key]) }),
+      el('span', { className: 'measure-tile-change', textContent: change })
+    );
+    button.dataset.metric = key;
+    button.setAttribute('aria-pressed', String(key === state.bodyMetric));
+    button.title = t('body.showInChart');
+    return [el('li', {}, button)];
+  });
+  ui.bodyLatest.replaceChildren(...tiles);
+  ui.bodyLatestSection.hidden = tiles.length === 0;
+}
+
+function onBodyTileClick(event) {
+  const tile = event.target.closest('.measure-tile');
+  if (!tile) return;
+  state.bodyMetric = tile.dataset.metric;
+  ui.bodyLatest.querySelectorAll('.measure-tile').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b === tile));
+  });
+  renderBodyChart();
+}
+
+// Seznam měření od nejnovějšího: datum, hodnoty, tlačítka Upravit a Smazat.
+function renderBodyList() {
+  const records = [...state.bodyRecords].reverse();
+  ui.bodyList.replaceChildren(...records.slice(0, state.bodyItems).map((record) => {
+    const values = body.METRIC_KEYS.filter((key) => record[key] !== null)
+      .map((key) => `${t(`body.metric.${key}`)} ${formatMetric(key, record[key])}`)
+      .join(' · ');
+    const date = formatDate(record.date, true);
+    const button = (action, icon, key) => {
+      const b = el('button', { type: 'button', className: `icon-button measures-${action}` });
+      b.dataset.date = record.date;
+      b.setAttribute('aria-label', t(key, { date }));
+      b.title = b.getAttribute('aria-label');
+      b.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">${icon}</svg>`;
+      return b;
+    };
+    return el('li', { className: 'measures-item' },
+      el('div', { className: 'measures-item-text' },
+        el('span', { className: 'measures-item-date', textContent: date }),
+        el('span', { className: 'measures-item-values', textContent: values })
+      ),
+      button('edit', '<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>', 'body.edit'),
+      button('delete', ICONS.remove, 'body.delete')
+    );
+  }));
+  ui.bodyListSection.hidden = records.length === 0;
+  ui.bodyMore.hidden = records.length <= state.bodyItems;
+}
+
+async function onBodyListClick(event) {
+  const button = event.target.closest('.icon-button');
+  if (!button) return;
+  const { date } = button.dataset;
+  if (button.classList.contains('measures-edit')) {
+    // Úprava = načtení dne do formuláře nahoře; uložení záznam přepíše.
+    bodyForm.date.value = date;
+    fillBodyForm();
+    ui.bodyFeedback.textContent = t('body.editing', { date: formatDate(date) });
+    ui.bodyForm.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    bodyForm.inputs.get('weightKg').focus({ preventScroll: true });
+    return;
+  }
+  if (!window.confirm(t('body.deleteConfirm', { date: formatDate(date) }))) return;
+  try {
+    await body.remove(date);
+  } catch (error) {
+    console.error(error);
+    ui.bodyFeedback.textContent = t('body.errorSave');
+    return;
+  }
+  await renderBody();
+  if (bodyForm.date.value === date) fillBodyForm();
+  ui.bodyFeedback.textContent = t('body.deleted', { date: formatDate(date) });
+  ui.bodyForm.querySelector('.log-submit').focus(); // smazané tlačítko zmizelo, fokus nesmí zůstat „nikde“
+}
+
+// Zkontroluje formulář. Vrátí { date, values }, nebo null a ukáže chybu u políčka.
+function readBodyForm() {
+  const fail = (input, message) => {
+    input.setAttribute('aria-invalid', 'true');
+    ui.bodyFeedback.textContent = message;
+    if (input.closest('details')) bodyForm.more.open = true; // chybné políčko musí být vidět
+    input.focus();
+    return null;
+  };
+  bodyForm.date.removeAttribute('aria-invalid');
+  bodyForm.inputs.forEach((input) => input.removeAttribute('aria-invalid'));
+  const date = bodyForm.date.value;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > log.localDate()) return fail(bodyForm.date, t('body.errorDate'));
+  const values = {};
+  for (const [key, input] of bodyForm.inputs) {
+    const number = parseNumber(input.value);
+    if (number === null) {
+      values[key] = null;
+      continue;
+    }
+    const value = body.cleanValue(key, number);
+    if (value === undefined) {
+      const { min, max } = BODY_METRIC.get(key);
+      return fail(input, t('body.errorRange', {
+        name: t(`body.metric.${key}`), min: formatMetric(key, min), max: formatMetric(key, max),
+      }));
+    }
+    values[key] = value;
+  }
+  if (Object.values(values).every((v) => v === null)) {
+    return fail(bodyForm.inputs.get('weightKg'), t('body.errorEmpty'));
+  }
+  return { date, values };
+}
+
+async function onBodySubmit(event) {
+  event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
+  const entry = readBodyForm();
+  if (!entry) return;
+  try {
+    await body.save(entry.date, entry.values);
+  } catch (error) {
+    console.error(error);
+    ui.bodyFeedback.textContent = t('body.errorSave');
+    return;
+  }
+  await renderBody();
+  fillBodyForm(); // přepíše políčka uloženými (zaokrouhlenými) hodnotami a ukáže poznámku u data
+  ui.bodyFeedback.textContent = t('body.saved', { date: formatDate(entry.date) });
+}
+
+// ===== Graf vývoje míry (pohled Tělo) =====
+// Čárový graf jedné míry v čase, kreslený jako SVG přímo v kódu (bez knihovny, funguje offline).
+// Osa x = skutečný čas (mezery mezi měřeními odpovídají počtu dní), osa y = hodnota.
+// Kreslí se v pixelech podle šířky prvku, aby text v grafu měl na mobilu i PC stejnou velikost.
+const BODY_RANGES = { '3m': 3, '1y': 12, all: null }; // období grafu → počet měsíců (null = vše)
+const SVG_NS = 'http://www.w3.org/2000/svg';
+// Nad tento počet bodů se kreslí jen čára (kolečka by splynula), zvýrazněný zůstane poslední bod.
+const CHART_MAX_MARKERS = 60;
+
+function svgEl(tag, attrs = {}) {
+  const node = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([name, value]) => node.setAttribute(name, value));
+  return node;
+}
+
+// Přepínač období grafu (3 měsíce / rok / vše); vytvoří se jednou při startu.
+function createBodyRange() {
+  ui.bodyRange.replaceChildren(...Object.keys(BODY_RANGES).map((range) => {
+    const button = el('button', {
+      type: 'button', className: 'button-secondary button-toggle', textContent: t(`body.range.${range}`),
+    });
+    button.dataset.range = range;
+    button.setAttribute('aria-pressed', String(range === state.bodyRange));
+    button.addEventListener('click', () => {
+      state.bodyRange = range;
+      ui.bodyRange.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      renderBodyChart();
+    });
+    return button;
+  }));
+}
+
+// "Hezké" hodnoty pro vodorovné čáry mřížky: 80, 82, 84… místo 80,37, 82,11…
+function niceTicks(min, max, count = 4) {
+  if (min === max) {
+    min -= 1;
+    max += 1;
+  }
+  const raw = (max - min) / count;
+  const magnitude = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map((f) => f * magnitude).find((s) => s >= raw);
+  const ticks = [];
+  for (let v = Math.floor(min / step) * step; v <= Math.ceil(max / step) * step + step / 2; v += step) {
+    ticks.push(Math.round(v * 1e6) / 1e6); // bez chyb zaokrouhlení typu 82.00000001
+  }
+  return ticks;
+}
+
+// "2026-10-19" → časové razítko v ms (poledne místního času, aby nevadil přechod na letní čas)
+const dateToTime = (isoDate) => {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return new Date(y, m - 1, d, 12).getTime();
+};
+
+function renderBodyChart() {
+  const key = state.bodyMetric;
+  const all = state.bodyRecords.filter((r) => r[key] !== null);
+  ui.bodyChart.hidden = all.length === 0;
+  if (!all.length) return;
+  ui.bodyChartTitle.textContent = t(`body.field.${key}`) + (BODY_METRIC.get(key).unit === 'cm' ? ' (cm)' : '');
+
+  const months = BODY_RANGES[state.bodyRange];
+  const now = new Date();
+  const from = months ? log.localDate(new Date(now.getFullYear(), now.getMonth() - months, now.getDate())) : '';
+  const points = all.filter((r) => r.date >= from).map((r) => ({ date: r.date, value: r[key], time: dateToTime(r.date) }));
+  if (points.length < 2) {
+    ui.bodyChartFigure.replaceChildren();
+    ui.bodyChartNote.textContent = t('body.chartTooFew');
+    return;
+  }
+  ui.bodyChartNote.textContent = '';
+
+  // Rozměry v pixelech; okraje = místo pro popisky os.
+  const width = Math.max(ui.bodyChartFigure.clientWidth, 280);
+  const height = Math.round(Math.min(Math.max(width * 0.6, 200), 360));
+  const pad = { top: 12, right: 14, bottom: 28, left: 48 };
+  const values = points.map((p) => p.value);
+  const ticks = niceTicks(Math.min(...values), Math.max(...values));
+  const [low, high] = [ticks[0], ticks[ticks.length - 1]];
+  const [start, end] = [points[0].time, points[points.length - 1].time];
+  const x = (time) => pad.left + ((time - start) / (end - start)) * (width - pad.left - pad.right);
+  const y = (value) => pad.top + ((high - value) / (high - low)) * (height - pad.top - pad.bottom);
+
+  const first = points[0];
+  const last = points[points.length - 1];
+  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, width, height, class: 'measures-svg', role: 'img' });
+  // Popis pro čtečky obrazovky; jednotlivé hodnoty jsou v seznamu měření.
+  svg.setAttribute('aria-label', t('body.chartLabel', {
+    metric: t(`body.metric.${key}`), count: points.length,
+    from: formatDate(first.date), first: formatMetric(key, first.value),
+    to: formatDate(last.date), last: formatMetric(key, last.value),
+  }));
+
+  // Mřížka a popisky osy y
+  ticks.forEach((tick) => {
+    svg.append(
+      svgEl('line', { class: 'chart-grid', x1: pad.left, x2: width - pad.right, y1: y(tick), y2: y(tick) }),
+      Object.assign(svgEl('text', { class: 'chart-label', x: pad.left - 8, y: y(tick), 'text-anchor': 'end', 'dominant-baseline': 'middle' }),
+        { textContent: formatNumber(tick) })
+    );
+  });
+  // Popisky osy x: první a poslední den (a prostřední, když je místo)
+  const xLabels = [[first, 'start'], [last, 'end']];
+  if (width >= 480) xLabels.push([{ time: (start + end) / 2, date: log.localDate(new Date((start + end) / 2)) }, 'middle']);
+  xLabels.forEach(([point, anchor]) => {
+    svg.append(Object.assign(svgEl('text', { class: 'chart-label', x: x(point.time), y: height - 8, 'text-anchor': anchor }),
+      { textContent: formatShortDate(point.date) }));
+  });
+
+  // Čára a body
+  svg.append(svgEl('polyline', {
+    class: 'chart-line', points: points.map((p) => `${x(p.time)},${y(p.value)}`).join(' '),
+  }));
+  const markers = points.length <= CHART_MAX_MARKERS ? points : [last];
+  markers.forEach((p) => svg.append(svgEl('circle', { class: 'chart-point', cx: x(p.time), cy: y(p.value), r: 4 })));
+
+  // Najetí myší / dotyk: svislá čára a bublina s hodnotou nejbližšího měření.
+  const guide = svgEl('line', { class: 'chart-guide', y1: pad.top, y2: height - pad.bottom, visibility: 'hidden' });
+  const focus = svgEl('circle', { class: 'chart-point chart-focus', r: 6, visibility: 'hidden' });
+  const hit = svgEl('rect', { class: 'chart-hit', x: pad.left, y: 0, width: width - pad.left - pad.right, height });
+  svg.append(guide, focus, hit);
+  const tooltip = el('div', { className: 'measures-tooltip', hidden: true });
+  tooltip.setAttribute('aria-hidden', 'true'); // čtečky mají popis grafu a seznam měření
+  const show = (event) => {
+    const box = svg.getBoundingClientRect();
+    const pointerX = event.clientX - box.left;
+    const nearest = points.reduce((best, p) => (Math.abs(x(p.time) - pointerX) < Math.abs(x(best.time) - pointerX) ? p : best));
+    const [px, py] = [x(nearest.time), y(nearest.value)];
+    guide.setAttribute('x1', px);
+    guide.setAttribute('x2', px);
+    focus.setAttribute('cx', px);
+    focus.setAttribute('cy', py);
+    guide.setAttribute('visibility', 'visible');
+    focus.setAttribute('visibility', 'visible');
+    tooltip.textContent = `${formatShortDate(nearest.date)} · ${formatMetric(key, nearest.value)}`;
+    tooltip.hidden = false;
+    // Bublina nad bodem, ale vždy celá uvnitř grafu.
+    const left = Math.min(Math.max(px - tooltip.offsetWidth / 2, 0), width - tooltip.offsetWidth);
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${Math.max(py - tooltip.offsetHeight - 12, 0)}px`;
+  };
+  const hide = () => {
+    guide.setAttribute('visibility', 'hidden');
+    focus.setAttribute('visibility', 'hidden');
+    tooltip.hidden = true;
+  };
+  hit.addEventListener('pointermove', show);
+  hit.addEventListener('pointerdown', show);
+  // Myš: bublina zmizí po odjetí z grafu. Dotyk: zůstane, dokud se neklepne jinam do grafu.
+  hit.addEventListener('pointerleave', (event) => { if (event.pointerType === 'mouse') hide(); });
+  ui.bodyChartFigure.replaceChildren(svg, tooltip);
+}
+
 // ===== Záloha dat (v pohledu Historie) =====
 async function onExportBackup() {
   const filename = `hypertrophica-zaloha-${log.localDate()}.json`;
@@ -1449,6 +1909,7 @@ async function onExportBackup() {
       sets: await log.getAllSets(),
       favorites: [...getFavorites()],
       week: plan.getWeek(),
+      body: await body.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -1474,6 +1935,26 @@ async function onExportCsv() {
     const result = await backup.saveFile(filename, csv, 'text/csv');
     if (result !== 'cancelled') {
       ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedCsv', { file: filename });
+    }
+  } catch (error) {
+    console.error(error);
+    ui.backupFeedback.textContent = t('backup.errorExport');
+  }
+}
+
+// Tabulka měření (hmotnost a míry) pro Excel.
+async function onExportBodyCsv() {
+  const filename = `hypertrophica-${t('backup.bodyCsvFile')}-${log.localDate()}.csv`;
+  try {
+    const records = await body.getAll();
+    if (records.length === 0) {
+      ui.backupFeedback.textContent = t('backup.bodyCsvEmpty');
+      return;
+    }
+    const csv = backup.createBodyCsv(records, t('backup.bodyCsvHeader').split(','));
+    const result = await backup.saveFile(filename, csv, 'text/csv');
+    if (result !== 'cancelled') {
+      ui.backupFeedback.textContent = t(result === 'shared' ? 'backup.shared' : 'backup.exportedBodyCsv', { file: filename });
     }
   } catch (error) {
     console.error(error);
@@ -1508,9 +1989,10 @@ function showImportPreview(parsed) {
   const choice = (className, key, mode) => actionButton(className, t(key), () => onImportChoice(parsed, mode));
   ui.backupConfirm.replaceChildren(
     el('p', { textContent: t('backup.preview', {
-      date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts,
+      date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts, body: parsed.body.length,
     }) }),
     ...(parsed.skipped ? [el('p', { textContent: t('backup.previewSkipped', { count: parsed.skipped }) })] : []),
+    ...(parsed.bodySkipped ? [el('p', { textContent: t('backup.previewBodySkipped', { count: parsed.bodySkipped }) })] : []),
     el('p', { className: 'backup-hint', textContent: t('backup.modeHint') }),
     el('div', { className: 'backup-actions' },
       choice('button-primary', 'backup.merge', 'merge'),
@@ -1537,9 +2019,12 @@ async function onImportChoice(parsed, mode) {
     return;
   }
   let result;
+  let bodyResult;
   try {
-    // Série první: kdyby zápis do IndexedDB selhal, oblíbené a tréninky zůstanou beze změny.
+    // Série a měření první: kdyby zápis do IndexedDB selhal, oblíbené a tréninky zůstanou beze změny.
+    // (Každá tabulka se zapisuje samostatně – když selže až měření, série už zůstanou importované.)
     result = await log.importSets(parsed.sets, mode);
+    bodyResult = await body.importRecords(parsed.body, mode);
   } catch (error) {
     console.error(error);
     ui.backupFeedback.textContent = t('backup.errorImport');
@@ -1555,6 +2040,6 @@ async function onImportChoice(parsed, mode) {
   renderList();
   renderFavorites();
   afterPlanChange();
-  // Historii není třeba překreslovat – při otevření se načte vždy znovu.
-  ui.backupFeedback.textContent = t('backup.imported', result);
+  // Historii a Tělo není třeba překreslovat – při otevření se načtou vždy znovu.
+  ui.backupFeedback.textContent = `${t('backup.imported', result)} ${t('backup.importedBody', bodyResult)}`;
 }

@@ -1,16 +1,19 @@
 // Záloha dat do souboru a obnova ze zálohy.
 //
 // Záloha (JSON) obsahuje všechno, co aplikace ukládá v zařízení:
-//   { "app": "hypertrophica", "schemaVersion": 1, "exportedAt": "2026-10-13T18:30:00.000Z",
-//     "sets": [ … série … ], "favorites": [ … ID cviků … ], "week": { "active": 0, "slots": [ … ] } }
+//   { "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "2026-10-13T18:30:00.000Z",
+//     "sets": [ … série … ], "favorites": [ … ID cviků … ], "week": { "active": 0, "slots": [ … ] },
+//     "body": [ … měření hmotnosti a měr … ] }
+// Záloha verze 1 (před přidáním pohledu Tělo) pole "body" nemá – importuje se bez měření.
 // Soubor si uživatel uloží (Stažené soubory, Disk Google…) a později ho může importovat
 // zpět – na stejném nebo jiném zařízení.
 
 import { SCHEMA_VERSION, normalizeSet } from './log.js';
+import { METRIC_KEYS, normalize as normalizeBody } from './body.js';
 
 const APP_ID = 'hypertrophica';
 
-export function createBackup({ sets, favorites, week }) {
+export function createBackup({ sets, favorites, week, body }) {
   return {
     app: APP_ID,
     schemaVersion: SCHEMA_VERSION,
@@ -18,6 +21,7 @@ export function createBackup({ sets, favorites, week }) {
     sets,
     favorites,
     week,
+    body,
   };
 }
 
@@ -30,8 +34,9 @@ export class BackupError extends Error {
 }
 
 // Přečte a zkontroluje obsah souboru se zálohou. knownIds = ID existujících cviků.
-// Vrátí { sets, skipped, favorites, week, exportedAt }; skipped = počet vynechaných
-// sérií (neplatné hodnoty, neznámý cvik, duplicitní id). Při zásadní chybě vyhodí BackupError.
+// Vrátí { sets, skipped, favorites, week, body, bodySkipped, exportedAt }; skipped = počet vynechaných
+// sérií (neplatné hodnoty, neznámý cvik, duplicitní id), bodySkipped = počet vynechaných měření
+// (neplatné datum, žádná platná hodnota, stejný den dvakrát). Při zásadní chybě vyhodí BackupError.
 export function parseBackup(text, knownIds) {
   let data;
   try {
@@ -57,11 +62,23 @@ export function parseBackup(text, knownIds) {
   const favorites = Array.isArray(data.favorites)
     ? [...new Set(data.favorites.filter((id) => knownIds.has(id)))]
     : [];
+  const rawBody = Array.isArray(data.body) ? data.body : [];
+  const days = new Set();
+  const body = [];
+  rawBody.forEach((raw) => {
+    const record = normalizeBody(raw);
+    if (record && !days.has(record.id)) {
+      days.add(record.id);
+      body.push(record);
+    }
+  });
   return {
     sets,
     skipped: rawSets.length - sets.length,
     favorites,
     week: data.week ?? null,
+    body,
+    bodySkipped: rawBody.length - body.length,
     exportedAt: typeof data.exportedAt === 'string' ? data.exportedAt : null,
   };
 }
@@ -80,6 +97,15 @@ export function createCsv(sets, nameOf, header) {
     return [s.date, nameOf(s.exerciseId), s.exerciseId, number, s.reps,
       String(s.weightKg).replace('.', ','), s.rir ?? ''];
   });
+  return '\uFEFF' + [header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n') + '\r\n';
+}
+
+// Tabulka měření (hmotnost a míry) pro Excel, stejný formát jako tabulka sérií.
+// records = měření seřazená podle data, header = názvy sloupců (backup.bodyCsvHeader v i18n):
+// datum a pak míry v pořadí METRIC_KEYS. Nevyplněná míra = prázdná buňka.
+export function createBodyCsv(records, header) {
+  const rows = records.map((r) => [r.date,
+    ...METRIC_KEYS.map((key) => (r[key] === null ? '' : String(r[key]).replace('.', ',')))]);
   return '\uFEFF' + [header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n') + '\r\n';
 }
 
