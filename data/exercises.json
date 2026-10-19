@@ -140,6 +140,16 @@
     "notes": { "cs": "Nezakláněj se v bedrech – pokud to bez záklonu nejde, sniž váhu.", "en": "Don't lean back at the lower back – if you can't press without it, reduce the weight." }
   },
   {
+    "id": "overhead-press-barbell-seated",
+    "name": { "cs": "Tlaky nad hlavu s osou vsedě", "en": "Seated Barbell Overhead Press" },
+    "type": "compound",
+    "primary": ["front_delts"],
+    "secondary": ["side_delts", "triceps"],
+    "equipment": ["barbell", "bench", "squat_rack"],
+    "description": { "cs": "Postav lavici s opěradlem nastaveným téměř kolmo do klece nebo stojanů a nastav háky zhruba do výšky brady. Sedni si zády k opěradlu, chodidla pevně na zemi, úchop těsně širší než ramena. Sundej osu, spusť ji kontrolovaně k horní části hrudníku a vytlač ji svisle nad hlavu; hlavu při tom mírně ustup dozadu a nad osou ji vrať zpět.", "en": "Place a bench with the backrest set almost upright in a rack and set the hooks at roughly chin height. Sit with your back against the backrest, feet planted firmly, grip just wider than shoulder width. Unrack the bar, lower it under control to your upper chest and press it straight overhead; move your head slightly back as it passes and bring it forward again once the bar is overhead." },
+    "notes": { "cs": "Opěradlo a sed vyřadí nohy a omezí záklon trupu, takže víc práce zůstane na ramenou než ve stoje. Zadek a záda drž po celou dobu na lavici.", "en": "The backrest and seated position take your legs out of the lift and limit leaning back, so more of the work stays on the shoulders than when standing. Keep your glutes and back on the bench throughout." }
+  },
+  {
     "id": "lateral-raise-dumbbell",
     "name": { "cs": "Upažování s jednoručkami", "en": "Dumbbell Lateral Raise" },
     "type": "isolation",
