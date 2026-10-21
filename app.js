@@ -1220,14 +1220,25 @@ function logSection(ex) {
     el('div', { className: 'log-fields' }, weight.field, reps.field, rir.field),
     el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('log.add') })
   );
+  const inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
+  // Cvik má v aktivním tréninku plán sérií → nad formulářem odškrtávací seznam.
+  // Odškrtnutí překreslí dnešní série pod formulářem a naopak (smazaná série se v plánu odškrtne).
+  const slot = plan.getActive();
+  const planned = plan.isInPlan(ex.id) && targets.getRows(slot, ex.id).length
+    ? plannedSets(ex.id, slot, 'train', () => renderLog(lists, ex.id, inputs))
+    : null;
   const section = el('section', { className: 'log' },
     el('h2', { id: 'log-heading', textContent: t('log.heading') }),
+    ...(planned ? [
+      el('h3', { textContent: t('planned.heading', { number: slot + 1 }) }),
+      planned.block,
+      el('h3', { textContent: t('planned.extra') }),
+    ] : []),
     form,
     feedback,
     lists
   );
   section.setAttribute('aria-labelledby', 'log-heading');
-  const inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
@@ -1243,6 +1254,7 @@ function logSection(ex) {
     }
     // Hodnoty ve formuláři zůstanou – další série bývá stejná, stačí znovu klepnout.
     const today = await renderLog(lists, ex.id, inputs);
+    planned?.refresh();
     feedback.textContent = t('log.saved', { number: today.length, set: formatSet(saved) });
   });
 
@@ -1253,6 +1265,7 @@ function logSection(ex) {
     if (!window.confirm(t('log.deleteConfirm', { number, set: label }))) return;
     await log.deleteSet(id);
     await renderLog(lists, ex.id, inputs);
+    planned?.refresh(); // smazaná série mohla být odškrtnutý řádek plánu
     feedback.textContent = t('log.deleted');
     form.querySelector('.log-submit').focus(); // smazané tlačítko zmizelo, fokus nesmí zůstat „nikde“
   });
