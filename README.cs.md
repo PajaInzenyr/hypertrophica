@@ -42,6 +42,7 @@ Zásady, na kterých aplikace stojí:
 | 📖 **Detail cviku** | Provedení, zapojené svaly (i na schématu), typ, vybavení, poznámky a tipy. |
 | ⭐ **Oblíbené** | Hvězdička u cviku, rychlý seznam oblíbených. |
 | 📋 **Tréninky 1–4** | Seřazené seznamy cviků, schéma zapojených partií, sdílení odkazem, zámek proti nechtěným úpravám. |
+| ✅ **Plánované série** | Naplánuj hmotnost × opakování ke každému cviku v tréninku a při cvičení série odškrtávej (nebo je předtím uprav). |
 | 📅 **Týden** | Souhrn všech tréninků: které partie jsou zapojené, nedostatečně zapojené nebo vynechané. |
 | 🏋️ **Záznam sérií** | Hmotnost, opakování a RIR přímo v detailu cviku, předvyplnění podle minula, souhrn posledních tréninků. |
 | 🕘 **Historie** | Všechny série po dnech a kalendář tréninků. |
@@ -99,22 +100,32 @@ Hvězdička u cviku v seznamu nebo v detailu. Oblíbené cviky jsou v samostatn�
 
 ### Tréninky 1–4 a Týden
 
-Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je seřazený seznam cviků, bez sérií, opakování a vah. Záložka *Týden* ukazuje, které partie tréninky dohromady zapojily a které zůstaly vynechané.
+Jednoduché plány tréninků: až 4 tréninky (*Trénink 1–4*), každý je seřazený seznam cviků, volitelně s plánovanými sériemi (viz *Plánované série* níže). Záložka *Týden* ukazuje, které partie tréninky dohromady zapojily a které zůstaly vynechané.
 
 - **Přepínač:** v pohledu tréninku řada tlačítek *1 2 3 4 Týden*. Malé číslo u tlačítka = počet cviků v tréninku. Klepnutí na 1–4 udělá trénink **aktivním**.
 - **Přidání / odebrání:** tlačítko ⊕ vedle cviku v seznamu nebo v detailu přidává do **aktivního** tréninku (✓ = cvik už v něm je). Nový cvik se přidá na konec. Stejný cvik může být ve více trénincích.
 - **Zobrazení:** ikona seznamu v hlavičce (odznak = počet cviků v aktivním tréninku), adresa `#/trenink`; souhrn týdne na adrese `#/tyden`.
-- **Odcvičeno dnes:** cvik, u kterého jsou dnes zapsané série, má v pravém horním rohu karty kroužek s počtem dnešních sérií. Další den kroužky zmizí.
+- **Odcvičeno dnes:** cvik, u kterého jsou dnes zapsané série, má v pravém horním rohu karty kroužek s počtem dnešních sérií; cvik s plánovanými sériemi ukazuje *hotovo/plán* (např. `2/3`). Další den kroužky zmizí.
 - **Pořadí:** šipky ↑ ↓ u cviku, × cvik odebere, *Vymazat trénink* smaže aktivní trénink.
-- **Zámek:** ikona zámku vedle nadpisu, platí pro všechny tréninky najednou. Zamčené tréninky skryjí šipky, křížky, *Vymazat trénink* i *Nový týden* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení.
+- **Zámek:** ikona zámku vedle nadpisu, platí pro všechny tréninky najednou. Zamčené tréninky skryjí šipky, křížky, *Vymazat trénink* i *Nový týden* a cvik nejde odebrat ani tlačítkem ✓ v seznamu či detailu – ochrana proti nechtěnému klepnutí během cvičení. Zámek zároveň přepne plánované série z úprav na odškrtávání.
 - **Partie v tréninku:** pod seznamem cviků je schéma postavy. Plnou barvou svaly, které jsou u některého cviku primární, světlejší barvou svaly zapojené jen sekundárně. Číslo na partii = počet cviků v tréninku, které ji zapojují.
 - **Týden:** sečte cviky ze všech 4 tréninků (cvik ve dvou trénincích se počítá dvakrát). Partie je
   - **zapojená**, když ji zapojuje aspoň 1 cvik primárně **nebo** aspoň 2 cviky sekundárně (plná barva),
   - **nedostatečně zapojená**, když ji zapojuje jen 1 cvik sekundárně (světlejší barva),
   - **vynechaná**, když ji nezapojuje žádný cvik (bez barvy).
 
-  Pod schématem jsou vynechané a nedostatečně zapojené partie jako tlačítka – klepnutí otevře cviky, které partii zapojují primárně. *Nový týden* vymaže všechny 4 tréninky.
+  Pod schématem jsou vynechané a nedostatečně zapojené partie jako tlačítka – klepnutí otevře cviky, které partii zapojují primárně. *Nový týden* vymaže všechny 4 tréninky (i s plánovanými sériemi).
 - **Sdílení:** *Kopírovat odkaz* (na mobilu i *Sdílet*) vytvoří adresu `…/hypertrophica/#/trenink?cviky=id1,id2,…` s aktivním tréninkem. Kdo ji otevře, uvidí náhled tréninku a tlačítkem *Uložit jako můj trénink N* ho může převzít (nahradí jeho aktivní trénink). Odkaz obsahuje jen ID cviků, nic se neukládá na server.
+
+### Plánované série
+
+Plán je šablona sérií pro cvik v jednom tréninku, např. *Trénink 2 → Bench press: 80 kg × 8, 80 kg × 8, 80 kg × 8*. Opakuje se každý týden; co skutečně odcvičíš, se zapisuje jako běžné série.
+
+- **Plánování (odemčený trénink):** pod každým cvikem v tréninku tlačítko *+ Série* přidá sérii (kopii poslední plánované; první zkopíruje poslední zapsanou sérii cviku, jinak 20 kg × 8). *Podle minula* (zobrazí se, dokud cvik nemá plán) naplánuje série podle jeho posledního tréninku. Tužka sérii upraví (hmotnost, opakování, nepovinně RIR), × ji odebere.
+- **Cvičení (zamčený trénink):** každá plánovaná série má zaškrtávací políčko. Odškrtnutí zapíše sérii s hodnotami z plánu. Tužka nejdřív dovolí upravit hmotnost, opakování nebo RIR – *Zapsat* pak uloží upravenou sérii; samotný plán se nemění. Série zapsaná jinak než podle plánu ukazuje plán vedle sebe (`20 kg × 7  plán 20 kg × 8`). Zrušení zaškrtnutí zapsanou sérii smaže.
+- **Detail cviku:** když je cvik v aktivním tréninku a má plán, sekce *Záznam* začíná stejným seznamem k odškrtnutí (*Plán – Trénink N*); formulář pod ním (*Další série*) zapisuje série mimo plán.
+- **Každý den začíná prázdný:** série se počítá jako hotová jen v den, kdy byla zapsaná, takže další tréninkový den je seznam zase neodškrtnutý.
+- Odebráním cviku z tréninku (nebo *Novým týdnem*) zmizí i jeho plánované série.
 
 ### Záznam sérií a historie
 
@@ -138,12 +149,12 @@ Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede
 
 - **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
 - **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
-- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené, tréninky 1–4 i měření těla. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
+- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené, tréninky 1–4 s plánovanými sériemi i měření těla. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
-  - **Sloučit s daty v zařízení** – přidá série a měření, které v zařízení chybí (stejná série se nezdvojí; u dne změřeného v obou se ponechá naposledy upravené měření), sjednotí oblíbené a doplní jen prázdné tréninky.
+  - **Sloučit s daty v zařízení** – přidá série a měření, které v zařízení chybí (stejná série se nezdvojí; u dne změřeného v obou se ponechá naposledy upravené měření), sjednotí oblíbené a doplní jen prázdné tréninky (plánované série převezme jen u tréninků, které v zařízení plán nemají).
   - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
   - Neplatné série a měření a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
-  - Zálohy ze starších verzí (bez měření těla) jdou importovat i nadále.
+  - Zálohy ze starších verzí (bez měření těla nebo plánovaných sérií) jdou importovat i nadále.
 - **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
 - **Exportovat měření těla (CSV):** `hypertrophica-mereni-RRRR-MM-DD.csv` (v angličtině `hypertrophica-measurements-…csv`), jeden řádek = jeden den, sloupce `datum;hmotnost_kg;tuk_procent;krk_cm;hrudnik_cm;pas_cm;boky_cm;paze_cm;stehno_cm;lytko_cm`; prázdná buňka = neměřeno. Stejně jako CSV sérií jen pro export.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
@@ -157,6 +168,7 @@ Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodcház�
 |---|---|
 | Oblíbené | `localStorage`, klíč `hw.favorites` |
 | Tréninky 1–4 | `localStorage`, klíč `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
+| Plánované série | `localStorage`, klíč `hw.targets` (`{ "0": { "<id cviku>": [{ "id", "weightKg", "reps", "rir" }, …] } }`, modul `js/targets.js`) |
 | Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
 | Motiv | `localStorage`, klíč `hw.theme` |
 | Jazyk | `localStorage`, klíč `hw.lang` (bez klíče = podle prohlížeče) |
@@ -184,7 +196,7 @@ Tato část je pro toho, kdo aplikaci upravuje – přidává cviky nebo mění 
 index.html          # stránka
 style.css           # vzhled
 app.js              # vstupní bod, stav aplikace, vykreslování
-js/                 # moduly: filtry, oblíbené, schéma, tréninky, záznam sérií, míry těla, záloha, motiv, texty
+js/                 # moduly: filtry, oblíbené, schéma, tréninky, plánované série, záznam sérií, míry těla, záloha, motiv, texty
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # svalové skupiny

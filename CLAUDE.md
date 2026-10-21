@@ -51,6 +51,14 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 - **Úložiště:** IndexedDB, stejná databáze `hypertrophica`, tabulka `body` (od `SCHEMA_VERSION` 2), modul `js/body.js`. Jeden záznam na den (`id` = datum). Seznam měr, jednotky a rozsahy jsou v `METRICS` v `js/body.js`; nová míra = položka v `METRICS`, texty `body.field.<klíč>` a `body.metric.<klíč>` v obou i18n souborech a sloupec v `backup.bodyCsvHeader`.
 - **Záloha:** pole `body` v JSON záloze (`schemaVersion` 2; zálohy verze 1 jdou importovat bez měření), export měření do CSV.
 
+## Rozsah v4: plánované série
+
+- **Plán** = šablona sérií (hmotnost / opakování / RIR, opakování jedno číslo, bez rozsahu) pro cvik v jednom z tréninků 1–4. Ukládá se do `localStorage` (klíč `hw.targets`, modul `js/targets.js`): `{ "<slot 0–3>": { "<id cviku>": [{ "id", "weightKg", "reps", "rir" }, …] } }`. Plán cviku, který v tréninku není, se maže (`retain()`).
+- **Odemčený trénink** = úprava plánu (*+ Série*, *Podle minula*, ✎, ✕). **Zamčený trénink** a **detail cviku** (cvik v aktivním tréninku s plánem) = odškrtávání: zaškrtnutí zapíše sérii s hodnotami z plánu, ✎ je dovolí před zapsáním upravit (plán se nemění), zrušení zaškrtnutí sérii smaže.
+- Zapsaná série má nepovinné pole `planRowId` = `id` řádku plánu; řádek je hotový, když dnes existuje série s tímto `planRowId`. Nové pole nevyžaduje změnu `SCHEMA_VERSION`.
+- **Záloha:** pole `targets` v JSON (starší zálohy bez něj jdou importovat).
+- Princip: **jednoduchost** – žádné rozsahy opakování, automatická progrese ani plán ve sdíleném odkazu.
+
 ## Jazyky
 
 10. **Čeština a angličtina.** Volba v **Nastavení** (sekce *Jazyk*): *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (`cs`, `sk` → čeština, jinak angličtina). Ukládá se do `localStorage` (klíč `hw.lang`, „Systém“ = klíč smazaný); po změně se stránka znovu načte. Logika je v `js/i18n.js`.
@@ -66,7 +74,7 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 index.html
 style.css
 app.js              # vstupní bod, stav aplikace, render
-js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, theme.js, log.js, body.js, backup.js
+js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, targets.js, theme.js, log.js, body.js, backup.js
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
@@ -136,8 +144,9 @@ Série (IndexedDB, tabulka `sets`, ne soubor v repozitáři) – objekt:
 ```
 
 - `id`: UUID, podle něj se při importu zálohy párují stejné série.
+- `planRowId`: jen u série zapsané odškrtnutím plánu (viz *Rozsah v4*), jinak pole chybí.
 - `date`: den tréninku v místním čase; `reps` 1–100; `weightKg` 0–1000 (0 = vlastní váha); `rir` 0–10 nebo `null`.
-- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] }, "body": […] }`.
+- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] }, "body": […], "targets": { … } }`.
 
 Měření těla (IndexedDB, tabulka `body`) – objekt:
 
