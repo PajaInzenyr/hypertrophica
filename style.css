@@ -1263,9 +1263,10 @@ select:disabled {
   gap: 8px;
 }
 
-/* Položka: pořadí | odkaz na cvik | šipky nad sebou | odebrat */
+/* Položka: pořadí | odkaz na cvik | šipky nad sebou | odebrat; pod tím plán sérií */
 .plan-item {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 4px;
 }
@@ -1315,6 +1316,120 @@ select:disabled {
   flex: none;
   display: flex;
   flex-direction: column;
+}
+
+/* ===== Plánované série (pod cvikem v tréninku a v detailu cviku) ===== */
+.planned {
+  min-width: 0;
+}
+
+/* V tréninku celá šířka pod kartou cviku, odsazené o sloupec s pořadím */
+.plan-item .planned {
+  flex: 1 0 100%;
+  padding-left: 32px;
+}
+
+.planned-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.planned-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--tap);
+  border-top: 1px solid var(--border);
+}
+
+.planned-row:first-child {
+  border-top: 0;
+}
+
+.planned-text {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.planned-plan .planned-text {
+  flex: 1;
+  padding-left: 4px;
+}
+
+/* Celý řádek (políčko i text) je klikací, aby se dalo trefit i na mobilu */
+.planned-check {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+  min-height: var(--tap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.planned-checkbox {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 10px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.planned-row.is-done .planned-text {
+  color: var(--text-muted);
+}
+
+/* Zapsaná série se liší od plánu: plán drobně vedle */
+.planned-diff {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.planned-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.planned-action {
+  padding: 4px 12px;
+  font-size: 0.9375rem;
+}
+
+/* Editor řádku: stejná políčka jako záznam série, celá šířka pod řádkem */
+.planned-editor {
+  flex: 1 0 100%;
+  margin: 4px 0 8px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.planned-editor .log-feedback {
+  min-height: 1.5em;
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.planned-editor-actions {
+  display: flex;
+  gap: var(--gap);
+}
+
+.planned-editor-actions button {
+  flex: 1;
+}
+
+/* Detail cviku: plán nad formulářem pro další série */
+.log .planned {
+  margin-bottom: 8px;
 }
 
 .plan-actions {
