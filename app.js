@@ -2189,6 +2189,7 @@ async function onExportBackup() {
       favorites: [...getFavorites()],
       week: plan.getWeek(),
       body: await body.getAll(),
+      targets: targets.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -2313,6 +2314,7 @@ async function onImportChoice(parsed, mode) {
     ? parsed.favorites
     : [...new Set([...getFavorites(), ...parsed.favorites])]);
   plan.importWeek(parsed.week, mode, new Set(state.byId.keys()));
+  targets.importTargets(parsed.targets, mode); // plán cviků, které v tréninku nejsou, vyřadí afterPlanChange
 
   // Překresli vše, co oblíbené a tréninky zobrazuje.
   syncFilterControls();
