@@ -700,6 +700,16 @@
     "notes": { "cs": "Nejtěžší je spodní část pohybu – tam nespěchej a nepouštěj osu volně dolů.", "en": "The bottom part of the movement is the hardest – don't rush it and don't let the bar drop freely." }
   },
   {
+    "id": "cable-curl",
+    "name": { "cs": "Bicepsový zdvih na kladce", "en": "Cable Biceps Curl" },
+    "type": "isolation",
+    "primary": ["biceps"],
+    "secondary": ["forearms"],
+    "equipment": ["cable"],
+    "description": { "cs": "Postav se čelem ke spodní kladce s rovnou tyčí, EZ nástavcem nebo lanem v podhmatu. Lokty drž u boků a zvedej úchop k ramenům bez švihu trupem. Pomalu spouštěj do plného natažení paží.", "en": "Stand facing a low cable holding a straight bar, EZ attachment or rope with an underhand grip. Keep your elbows at your sides and curl the handle to your shoulders without swinging your torso. Lower slowly to full arm extension." },
+    "notes": { "cs": "Kladka udržuje napětí po celém rozsahu pohybu, i dole, kde u jednoruček odpor mizí.", "en": "The cable keeps tension through the whole range of motion, including the bottom where dumbbell resistance fades." }
+  },
+  {
     "id": "overhead-triceps-extension-cable",
     "name": { "cs": "Tricepsová extenze nad hlavou", "en": "Cable Overhead Triceps Extension" },
     "type": "isolation",
@@ -708,6 +718,16 @@
     "equipment": ["cable"],
     "description": { "cs": "Postav se zády ke kladce, lano drž za hlavou, lokty směřují nahoru. Mírně se předkloň a natáhni lokty vpřed a nahoru. Pomalu vrať do maximálního pokrčení.", "en": "Stand with your back to the cable, holding the rope behind your head with your elbows pointing up. Lean forward slightly and extend your elbows forward and up. Slowly return to maximum flexion." },
     "notes": { "cs": "Paže nad hlavou protahují dlouhou hlavu tricepsu; studie ukazují větší růst než u stahování kladky.", "en": "Arms overhead stretch the long head of the triceps; studies show more growth than with pushdowns." }
+  },
+  {
+    "id": "seated-overhead-triceps-extension-dumbbell",
+    "name": { "cs": "Tricepsová extenze s jednoručkou vsedě", "en": "Seated Dumbbell Overhead Triceps Extension" },
+    "type": "isolation",
+    "primary": ["triceps"],
+    "secondary": [],
+    "equipment": ["dumbbell", "bench"],
+    "description": { "cs": "Sedni si na lavici s opěrou zad (svisle nebo mírně skloněnou). Jednoručku drž oběma rukama za horní kotouč nad hlavou. Ohýbej jen v loktech a spouštěj ji za hlavu, lokty směřují nahoru. Propni paže zpět nad hlavu.", "en": "Sit on a bench with back support (upright or slightly reclined). Hold one dumbbell overhead with both hands under the top plate. Bend only at the elbows and lower it behind your head, elbows pointing up. Extend your arms back overhead." },
+    "notes": { "cs": "Paže nad hlavou protahují dlouhou hlavu tricepsu. Opěra zad brání prohýbání v bedrech.", "en": "Arms overhead stretch the long head of the triceps. The back support prevents arching your lower back." }
   },
   {
     "id": "close-grip-bench-press",
