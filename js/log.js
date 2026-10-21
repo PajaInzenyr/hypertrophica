@@ -8,6 +8,8 @@
 // - id: náhodné jedinečné ID (UUID), podle něj se pozná stejná série při importu zálohy
 // - date: den tréninku (místní čas), createdAt: přesný čas uložení (pořadí sérií v rámci dne)
 // - rir: „reps in reserve“ = kolik opakování zbývalo do selhání; null = nezadáno
+// - planRowId: jen u série zapsané odškrtnutím řádku plánu (js/targets.js) = id toho řádku;
+//   u ostatních sérií pole chybí. Podle něj se pozná, který řádek plánu je dnes hotový.
 //
 // Data jsou jen v tomto prohlížeči a zařízení. Zálohu do souboru řeší js/backup.js.
 // Když IndexedDB není dostupná (některá anonymní okna, zakázaná data webu), záznamy
@@ -128,7 +130,8 @@ export async function getSetsForDate(date) {
 // ===== Zápis =====
 
 // Uloží novou sérii a vrátí celý uložený záznam.
-export async function addSet({ exerciseId, reps, weightKg, rir = null }) {
+// planRowId = id řádku plánu, když se série zapisuje odškrtnutím plánu (jinak se nezadává).
+export async function addSet({ exerciseId, reps, weightKg, rir = null, planRowId = null }) {
   const now = new Date();
   const record = {
     id: newId(),
@@ -140,6 +143,7 @@ export async function addSet({ exerciseId, reps, weightKg, rir = null }) {
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
+  if (planRowId) record.planRowId = planRowId;
   await putAll([record]);
   requestPersistence();
   return record;
@@ -245,5 +249,9 @@ export function normalizeSet(raw, knownIds) {
     ? new Date(value).toISOString()
     : `${date}T12:00:00.000Z`);
   const createdAt = time(raw.createdAt);
-  return { id, exerciseId, date, reps, weightKg, rir, createdAt, updatedAt: time(raw.updatedAt ?? createdAt) };
+  const set = { id, exerciseId, date, reps, weightKg, rir, createdAt, updatedAt: time(raw.updatedAt ?? createdAt) };
+  if (typeof raw.planRowId === 'string' && raw.planRowId.length > 0 && raw.planRowId.length <= 40) {
+    set.planRowId = raw.planRowId;
+  }
+  return set;
 }

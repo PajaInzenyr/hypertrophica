@@ -6,6 +6,7 @@ import { EMPTY_FILTERS, filterExercises, hasActiveFilters } from './js/filters.j
 import { loadBodyMapSource, createBodyMap } from './js/bodymap.js';
 import { isFavorite, toggleFavorite, getFavorites, replaceFavorites, onExternalChange } from './js/favorites.js';
 import * as plan from './js/plan.js';
+import * as targets from './js/targets.js';
 import { initTheme } from './js/theme.js';
 import * as log from './js/log.js';
 import * as backup from './js/backup.js';
@@ -158,6 +159,7 @@ async function init() {
     );
     exercises.forEach((ex) => state.byId.set(ex.id, ex));
     plan.retainOnly(new Set(state.byId.keys()));
+    targets.retain(plan.getSlots());
   } catch (error) {
     console.error(error);
     // Pokud selhal už i18n, t() vrátí jen klíč – proto pevný český text navíc.
@@ -250,9 +252,9 @@ function bindEvents() {
     const planToggle = event.target.closest('.plan-button');
     if (planToggle) onPlanToggle(planToggle);
   });
-  // Šipky a odebrání v tréninku.
+  // Šipky a odebrání v tréninku (tlačítka plánu sérií mají vlastní obsluhu, viz plannedSets).
   ui.planList.addEventListener('click', (event) => {
-    const button = event.target.closest('.icon-button');
+    const button = event.target.closest('.icon-button[data-action]');
     if (button) onPlanItemAction(button);
   });
   ui.planLock.addEventListener('click', onToggleLock);
@@ -262,8 +264,9 @@ function bindEvents() {
     const chip = event.target.closest('[data-muscle]');
     if (chip) showMuscleExercises(chip.dataset.muscle);
   });
-  // Změna tréninku v jiné záložce.
+  // Změna tréninku nebo plánu sérií v jiné záložce.
   plan.onExternalChange(afterPlanChange);
+  targets.onExternalChange(afterPlanChange);
   // Změna oblíbených v jiné záložce: překresli, co je vidět.
   onExternalChange(() => {
     syncFilterControls();
@@ -460,6 +463,8 @@ const slotNumber = () => plan.getActive() + 1;
 
 // Po jakékoli změně tréninku překresli vše, co ho zobrazuje.
 function afterPlanChange() {
+  // Plán sérií cviku, který z tréninku zmizel, už není potřeba.
+  targets.retain(plan.getSlots());
   document.querySelectorAll('.plan-button').forEach(updatePlanButton);
   updatePlanLink();
   if (state.view === 'plan') renderPlan();
@@ -530,7 +535,12 @@ function renderPlan() {
   ui.planLock.hidden = ids.length === 0;
   updateLockButton();
   ui.planIntro.textContent = t(!ids.length ? 'plan.empty' : locked ? 'plan.lockedHint' : 'plan.hint', { number });
-  ui.planList.replaceChildren(...ids.map((id, index) => planItem(state.byId.get(id), index, ids.length, !locked)));
+  // Pod každým cvikem plán sérií: odemčeno = úprava plánu, zamčeno = odškrtávání při cvičení.
+  ui.planList.replaceChildren(...ids.map((id, index) => {
+    const item = planItem(state.byId.get(id), index, ids.length, !locked);
+    item.append(plannedSets(id, plan.getActive(), locked ? 'train' : 'plan', updateDoneCounts).block);
+    return item;
+  }));
   updateDoneCounts();
   renderPlanMap(ids);
   if (ids.length === 0) {
@@ -765,6 +775,7 @@ const ICONS = {
   up: '<path d="M6 15l6-6 6 6"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
   remove: '<path d="M6 6l12 12M18 6L6 18"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
 };
 
 function iconButton(action, ex, disabled = false) {
@@ -819,6 +830,7 @@ function ariaHidden(node) {
 }
 
 // Doplní ke cvikům v tréninku počet dnes zapsaných sérií (kroužek s číslem v rohu karty).
+// Cvik s plánem sérií ukazuje „hotovo/plán“ (např. 2/3); série mimo plán se počítají taky.
 // Série se čtou z IndexedDB asynchronně, proto se doplní až po vykreslení seznamu.
 async function updateDoneCounts() {
   const counts = new Map(); // id cviku → počet dnešních sérií
@@ -827,8 +839,10 @@ async function updateDoneCounts() {
   });
   ui.planList.querySelectorAll('.plan-item').forEach((item) => {
     const count = counts.get(item.dataset.id) ?? 0;
-    item.querySelector('.done-count').textContent = count ? String(count) : '';
-    item.querySelector('.done-label').textContent = count ? t('plan.doneToday', { count }) : '';
+    const total = targets.getRows(plan.getActive(), item.dataset.id).length;
+    item.querySelector('.done-count').textContent = total ? `${count}/${total}` : count ? String(count) : '';
+    item.querySelector('.done-label').textContent = total ? t('plan.doneOfPlanned', { count, total })
+      : count ? t('plan.doneToday', { count }) : '';
   });
 }
 
@@ -1206,14 +1220,25 @@ function logSection(ex) {
     el('div', { className: 'log-fields' }, weight.field, reps.field, rir.field),
     el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('log.add') })
   );
+  const inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
+  // Cvik má v aktivním tréninku plán sérií → nad formulářem odškrtávací seznam.
+  // Odškrtnutí překreslí dnešní série pod formulářem a naopak (smazaná série se v plánu odškrtne).
+  const slot = plan.getActive();
+  const planned = plan.isInPlan(ex.id) && targets.getRows(slot, ex.id).length
+    ? plannedSets(ex.id, slot, 'train', () => renderLog(lists, ex.id, inputs))
+    : null;
   const section = el('section', { className: 'log' },
     el('h2', { id: 'log-heading', textContent: t('log.heading') }),
+    ...(planned ? [
+      el('h3', { textContent: t('planned.heading', { number: slot + 1 }) }),
+      planned.block,
+      el('h3', { textContent: t('planned.extra') }),
+    ] : []),
     form,
     feedback,
     lists
   );
   section.setAttribute('aria-labelledby', 'log-heading');
-  const inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
@@ -1229,6 +1254,7 @@ function logSection(ex) {
     }
     // Hodnoty ve formuláři zůstanou – další série bývá stejná, stačí znovu klepnout.
     const today = await renderLog(lists, ex.id, inputs);
+    planned?.refresh();
     feedback.textContent = t('log.saved', { number: today.length, set: formatSet(saved) });
   });
 
@@ -1239,6 +1265,7 @@ function logSection(ex) {
     if (!window.confirm(t('log.deleteConfirm', { number, set: label }))) return;
     await log.deleteSet(id);
     await renderLog(lists, ex.id, inputs);
+    planned?.refresh(); // smazaná série mohla být odškrtnutý řádek plánu
     feedback.textContent = t('log.deleted');
     form.querySelector('.log-submit').focus(); // smazané tlačítko zmizelo, fokus nesmí zůstat „nikde“
   });
@@ -1330,6 +1357,261 @@ function logTodayItem(set, index) {
     button
   );
 }
+
+// ===== Plánované série =====
+// Blok s plánem sérií jednoho cviku (js/targets.js). Je pod cvikem v tréninku a v detailu cviku.
+// mode 'plan' = úprava plánu (odemčený trénink): řádky s ✎ a ✕, tlačítka „+ Série“ a „Podle minula“.
+// mode 'train' = cvičení (zamčený trénink a detail cviku): řádky se zaškrtávacím políčkem.
+//   Odškrtnutí zapíše sérii s hodnotami z plánu; ✎ dovolí hodnoty před zapsáním upravit
+//   (plán se tím nemění). Zrušení zaškrtnutí zapsanou sérii smaže.
+// Řádek je „hotový“, když dnes existuje série s planRowId = id řádku (zítra je tedy zase prázdný).
+
+// Otevřený editor řádku – nejvýš jeden v celé aplikaci: { ctx, rowId } nebo null.
+let plannedEdit = null;
+
+// Vytvoří blok a vrátí { block, refresh }. onChange se zavolá po zapsání nebo smazání série
+// (překreslí počty v tréninku, v detailu seznam dnešních sérií).
+function plannedSets(exerciseId, slot, mode, onChange = () => {}) {
+  const status = el('p', { className: 'visually-hidden' });
+  status.setAttribute('role', 'status');
+  const ctx = {
+    exerciseId, slot, mode, onChange, status,
+    name: localized(state.byId.get(exerciseId)?.name),
+    content: el('div'),
+    renderId: 0,
+    rows: [], done: new Map(), lastSession: [], inputs: null, feedback: null,
+  };
+  ctx.block = el('div', { className: `planned planned-${mode}` }, ctx.content, status);
+  ctx.refresh = (focus) => renderPlanned(ctx, focus);
+  ctx.block.addEventListener('click', (event) => onPlannedClick(ctx, event));
+  ctx.block.addEventListener('change', (event) => onPlannedCheck(ctx, event));
+  ctx.block.addEventListener('submit', (event) => onPlannedSubmit(ctx, event));
+  ctx.refresh();
+  return ctx;
+}
+
+// Načte plán a dnešní série cviku a vykreslí řádky. focus = selektor prvku, na který po
+// vykreslení přesunout fokus (překreslený prvek by jinak fokus ztratil).
+async function renderPlanned(ctx, focus = null) {
+  const renderId = ++ctx.renderId;
+  const sets = await log.getSetsForExercise(ctx.exerciseId);
+  if (renderId !== ctx.renderId) return; // mezitím začalo novější vykreslení
+  const today = log.localDate();
+  ctx.rows = targets.getRows(ctx.slot, ctx.exerciseId);
+  ctx.done = new Map(sets.filter((s) => s.date === today && s.planRowId).map((s) => [s.planRowId, s]));
+  // Série posledního tréninku před dneškem (pro „Podle minula“).
+  const lastDate = sets.filter((s) => s.date < today).at(-1)?.date;
+  ctx.lastSession = sets.filter((s) => s.date === lastDate);
+  ctx.inputs = null;
+
+  const items = ctx.rows.map((row, index) => plannedRow(ctx, row, index));
+  const actions = ctx.mode === 'plan' ? [
+    plannedAction('add', t('planned.add'), t('planned.addLabel', { name: ctx.name })),
+    ...(ctx.rows.length === 0 && ctx.lastSession.length
+      ? [plannedAction('copy-last', t('planned.copyLast'), t('planned.copyLastLabel', { name: ctx.name }))]
+      : []),
+  ] : [];
+  ctx.content.replaceChildren(
+    ...(items.length ? [listWithRole('ol', 'planned-list', items)] : []),
+    ...(actions.length ? [el('div', { className: 'planned-actions' }, ...actions)] : [])
+  );
+  // Při cvičení se cvik bez plánu žádným blokem nezobrazuje.
+  ctx.block.hidden = items.length === 0 && actions.length === 0;
+  if (focus) ctx.block.querySelector(focus)?.focus();
+}
+
+// Jeden řádek plánu. Cvičení: ☐ 80 kg × 8 · RIR 2  ✎   Úprava plánu: 80 kg × 8 · RIR 2  ✎ ✕
+function plannedRow(ctx, row, index) {
+  const number = index + 1;
+  const done = ctx.done.get(row.id);
+  const planText = formatSet(row);
+  const editing = plannedEdit?.ctx === ctx && plannedEdit.rowId === row.id;
+  const item = el('li', { className: `planned-row${done ? ' is-done' : ''}` });
+  item.dataset.row = row.id;
+
+  if (ctx.mode === 'train') {
+    const checkbox = el('input', { type: 'checkbox', className: 'planned-checkbox', checked: Boolean(done) });
+    checkbox.dataset.row = row.id;
+    // Zapsaná série se může od plánu lišit – pak je plán vidět vedle.
+    const differs = done && formatSet(done) !== planText;
+    item.append(el('label', { className: 'planned-check' },
+      checkbox,
+      el('span', { className: 'visually-hidden', textContent: t('planned.setNumber', { number }) }),
+      el('span', { className: 'planned-text', textContent: done ? formatSet(done) : planText }),
+      differs ? el('span', { className: 'planned-diff', textContent: t('planned.planWas', { set: planText }) }) : null
+    ));
+    if (!done && !editing) item.append(plannedButton('edit', row.id, t('planned.editTrain', { number, set: planText })));
+  } else {
+    item.append(el('span', { className: 'planned-text', textContent: planText }));
+    if (!editing) {
+      item.append(
+        plannedButton('edit', row.id, t('planned.edit', { number, set: planText })),
+        plannedButton('remove', row.id, t('planned.remove', { number, set: planText }))
+      );
+    }
+  }
+  if (editing) item.append(plannedEditor(ctx, row));
+  return item;
+}
+
+// Ikonové tlačítko řádku (✎ / ✕).
+function plannedButton(action, rowId, label) {
+  const button = el('button', { type: 'button', className: 'icon-button' });
+  button.dataset.planned = action;
+  button.dataset.row = rowId;
+  button.setAttribute('aria-label', label);
+  button.title = label;
+  button.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">'
+    + ICONS[action] + '</svg>';
+  return button;
+}
+
+// Textové tlačítko pod řádky („+ Série“, „Podle minula“).
+function plannedAction(action, text, label) {
+  const button = el('button', { type: 'button', className: 'button-secondary planned-action', textContent: text });
+  button.dataset.planned = action;
+  button.setAttribute('aria-label', label);
+  return button;
+}
+
+// Formulář pro úpravu řádku: stejná políčka jako záznam série v detailu, předvyplněná plánem.
+// Cvičení: „Zapsat“ uloží sérii s upravenými hodnotami. Úprava plánu: „Uložit“ změní plán.
+function plannedEditor(ctx, row) {
+  const weight = stepperField({
+    id: 'planned-weight', label: t('log.weight'), inputMode: 'decimal',
+    step: 2.5, start: 20, ...log.LIMITS.weightKg,
+  });
+  const reps = stepperField({
+    id: 'planned-reps', label: t('log.reps'), inputMode: 'numeric',
+    step: 1, start: 8, ...log.LIMITS.reps,
+  });
+  const rir = stepperField({
+    id: 'planned-rir', label: t('log.rir'), inputMode: 'numeric',
+    step: 1, start: 2, ...log.LIMITS.rir,
+  });
+  weight.input.value = formatNumber(row.weightKg);
+  reps.input.value = String(row.reps);
+  rir.input.value = row.rir === null ? '' : String(row.rir);
+  ctx.inputs = { weight: weight.input, reps: reps.input, rir: rir.input };
+  ctx.feedback = el('p', { className: 'log-feedback' });
+  ctx.feedback.setAttribute('role', 'status');
+  const cancel = el('button', { type: 'button', className: 'button-secondary', textContent: t('planned.cancel') });
+  cancel.dataset.planned = 'cancel';
+  cancel.dataset.row = row.id;
+  const form = el('form', { className: 'planned-editor', noValidate: true },
+    el('div', { className: 'log-fields' }, weight.field, reps.field, rir.field),
+    ctx.feedback,
+    el('div', { className: 'planned-editor-actions' },
+      el('button', { type: 'submit', className: 'button-primary',
+        textContent: t(ctx.mode === 'train' ? 'planned.log' : 'planned.save') }),
+      cancel
+    )
+  );
+  form.dataset.row = row.id;
+  return form;
+}
+
+// Otevře editor řádku (a zavře případný editor v jiném bloku).
+function openPlannedEditor(ctx, rowId) {
+  const previous = plannedEdit?.ctx;
+  plannedEdit = { ctx, rowId };
+  if (previous && previous !== ctx) previous.refresh();
+  ctx.refresh('#planned-weight');
+}
+
+function closePlannedEditor(ctx, focus) {
+  if (plannedEdit?.ctx === ctx) plannedEdit = null;
+  ctx.refresh(focus);
+}
+
+async function onPlannedClick(ctx, event) {
+  const button = event.target.closest('[data-planned]');
+  if (!button) return;
+  const { planned: action, row: rowId } = button.dataset;
+  const { slot, exerciseId } = ctx;
+
+  if (action === 'edit') {
+    openPlannedEditor(ctx, rowId);
+  } else if (action === 'cancel') {
+    closePlannedEditor(ctx, `[data-planned="edit"][data-row="${rowId}"]`);
+  } else if (action === 'remove') {
+    const index = ctx.rows.findIndex((r) => r.id === rowId);
+    targets.removeRow(slot, exerciseId, rowId);
+    ctx.status.textContent = t('planned.removed');
+    // Fokus na ✕ řádku, který se posunul na místo odebraného (nebo na „+ Série“).
+    const next = ctx.rows[index + 1] ?? ctx.rows[index - 1];
+    await ctx.refresh(next ? `[data-planned="remove"][data-row="${next.id}"]` : '[data-planned="add"]');
+    updateDoneCounts();
+  } else if (action === 'add') {
+    // Nová série = kopie poslední v plánu; první série = poslední zapsaná série cviku, jinak 20 kg × 8.
+    const last = ctx.rows.at(-1) ?? ctx.lastSession.at(-1) ?? { weightKg: 20, reps: 8, rir: null };
+    const row = targets.addRow(slot, exerciseId, last);
+    await ctx.refresh('[data-planned="add"]');
+    ctx.status.textContent = t('planned.added', { number: ctx.rows.length, set: formatSet(row) });
+    updateDoneCounts();
+  } else if (action === 'copy-last') {
+    targets.setRows(slot, exerciseId, ctx.lastSession);
+    const date = formatDate(ctx.lastSession[0].date);
+    await ctx.refresh('[data-planned="add"]');
+    ctx.status.textContent = t('planned.copied', { date });
+    updateDoneCounts();
+  }
+}
+
+// Zaškrtnutí = zapsat sérii podle plánu, zrušení zaškrtnutí = zapsanou sérii smazat.
+async function onPlannedCheck(ctx, event) {
+  const checkbox = event.target.closest('.planned-checkbox');
+  if (!checkbox) return;
+  const rowId = checkbox.dataset.row;
+  const index = ctx.rows.findIndex((r) => r.id === rowId);
+  const row = ctx.rows[index];
+  checkbox.disabled = true; // dvojité klepnutí nesmí zapsat sérii dvakrát
+  try {
+    if (checkbox.checked) {
+      const saved = await log.addSet({ exerciseId: ctx.exerciseId, ...plannedValues(row), planRowId: rowId });
+      ctx.status.textContent = t('planned.checked', { number: index + 1, set: formatSet(saved) });
+    } else {
+      const done = ctx.done.get(rowId);
+      if (done) await log.deleteSet(done.id);
+      ctx.status.textContent = t('planned.unchecked', { number: index + 1 });
+    }
+  } catch (error) {
+    console.error(error);
+    ctx.status.textContent = t('log.errorSave');
+  }
+  await ctx.refresh(`.planned-checkbox[data-row="${rowId}"]`);
+  ctx.onChange();
+}
+
+async function onPlannedSubmit(ctx, event) {
+  event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
+  const rowId = event.target.dataset.row;
+  const values = readLogForm(ctx.inputs, ctx.feedback);
+  if (!values) return;
+  const index = ctx.rows.findIndex((r) => r.id === rowId);
+  if (ctx.mode === 'train') {
+    let saved;
+    try {
+      saved = await log.addSet({ exerciseId: ctx.exerciseId, ...values, planRowId: rowId });
+    } catch (error) {
+      console.error(error);
+      ctx.feedback.textContent = t('log.errorSave');
+      return;
+    }
+    plannedEdit = null;
+    await ctx.refresh(`.planned-checkbox[data-row="${rowId}"]`);
+    ctx.status.textContent = t('planned.checked', { number: index + 1, set: formatSet(saved) });
+    ctx.onChange();
+  } else {
+    targets.updateRow(ctx.slot, ctx.exerciseId, rowId, values);
+    plannedEdit = null;
+    await ctx.refresh(`[data-planned="edit"][data-row="${rowId}"]`);
+    ctx.status.textContent = t('planned.updated', { number: index + 1, set: formatSet(values) });
+  }
+}
+
+// Hodnoty série z řádku plánu (bez jeho id).
+const plannedValues = ({ weightKg, reps, rir }) => ({ weightKg, reps, rir });
 
 // ===== Pohled Nastavení =====
 // Motiv (obsluhuje js/theme.js) a záloha dat. Při každém otevření začíná „načisto“:
@@ -1907,6 +2189,7 @@ async function onExportBackup() {
       favorites: [...getFavorites()],
       week: plan.getWeek(),
       body: await body.getAll(),
+      targets: targets.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -2031,6 +2314,7 @@ async function onImportChoice(parsed, mode) {
     ? parsed.favorites
     : [...new Set([...getFavorites(), ...parsed.favorites])]);
   plan.importWeek(parsed.week, mode, new Set(state.byId.keys()));
+  targets.importTargets(parsed.targets, mode); // plán cviků, které v tréninku nejsou, vyřadí afterPlanChange
 
   // Překresli vše, co oblíbené a tréninky zobrazuje.
   syncFilterControls();

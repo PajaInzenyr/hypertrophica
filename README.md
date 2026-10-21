@@ -44,6 +44,7 @@ Principles behind the app:
 | 📖 **Exercise detail** | Execution, muscles involved (also shown on the map), type, equipment, notes and tips. |
 | ⭐ **Favourites** | Star an exercise, quick list of favourites. |
 | 📋 **Workouts 1–4** | Ordered exercise lists, map of muscles involved, sharing via link, lock against accidental edits. |
+| ✅ **Planned sets** | Plan weight × reps for each exercise in a workout, then tick sets off while training (or adjust them first). |
 | 📅 **Week** | Summary of all workouts: which muscle groups are trained, insufficiently trained or missed. |
 | 🏋️ **Set logging** | Weight, reps and RIR right in the exercise detail, prefilled from last time, summary of recent workouts. |
 | 🕘 **History** | All sets by day and a workout calendar. |
@@ -101,22 +102,32 @@ The star next to an exercise in the list or in the detail. Favourite exercises h
 
 ### Workouts 1–4 and Week
 
-Simple workout plans: up to 4 workouts (*Workout 1–4*), each an ordered list of exercises, without sets, reps or weights. The *Week* tab shows which muscle groups the workouts cover together and which are left out.
+Simple workout plans: up to 4 workouts (*Workout 1–4*), each an ordered list of exercises, optionally with planned sets (see *Planned sets* below). The *Week* tab shows which muscle groups the workouts cover together and which are left out.
 
 - **Switcher:** in the workout view, a row of buttons *1 2 3 4 Week*. The small number on a button = number of exercises in that workout. Tapping 1–4 makes that workout **active**.
 - **Add / remove:** the ⊕ button next to an exercise in the list or detail adds it to the **active** workout (✓ = already in it). New exercises go to the end. The same exercise can be in several workouts.
 - **Opening:** the list icon in the header (badge = number of exercises in the active workout), URL `#/trenink`; week summary at `#/tyden`.
-- **Done today:** an exercise with sets logged today shows a circle with today's set count in the top-right corner of its card. The circles disappear the next day.
+- **Done today:** an exercise with sets logged today shows a circle with today's set count in the top-right corner of its card; an exercise with planned sets shows *done/planned* (e.g. `2/3`). The circles disappear the next day.
 - **Order:** arrows ↑ ↓ next to an exercise, × removes it, *Clear workout* empties the active workout.
-- **Lock:** the lock icon next to the heading, applies to all workouts at once. Locked workouts hide the arrows, ×, *Clear workout* and *New week*, and exercises cannot be removed even via ✓ in the list or detail – protection against accidental taps during training.
+- **Lock:** the lock icon next to the heading, applies to all workouts at once. Locked workouts hide the arrows, ×, *Clear workout* and *New week*, and exercises cannot be removed even via ✓ in the list or detail – protection against accidental taps during training. Locking also switches planned sets from editing to ticking off.
 - **Muscles in workout:** below the exercise list is a body map. Solid colour = muscles that are primary for some exercise, lighter colour = muscles involved only as secondary. The number on a muscle group = number of exercises in the workout that work it.
 - **Week:** adds up exercises from all 4 workouts (an exercise in two workouts counts twice). A muscle group is
   - **trained** when at least 1 exercise works it as primary **or** at least 2 exercises as secondary (solid colour),
   - **insufficiently trained** when only 1 exercise works it, as secondary (lighter colour),
   - **missed** when no exercise works it (no colour).
 
-  Below the map, missed and insufficiently trained muscle groups are listed as buttons – tapping one shows the exercises that work it as primary. *New week* clears all 4 workouts.
+  Below the map, missed and insufficiently trained muscle groups are listed as buttons – tapping one shows the exercises that work it as primary. *New week* clears all 4 workouts (including their planned sets).
 - **Sharing:** *Copy link* (on mobile also *Share*) creates the URL `…/hypertrophica/#/trenink?cviky=id1,id2,…` with the active workout. Whoever opens it sees a preview of the workout and can adopt it with *Save as my workout N* (replaces their active workout). The link contains only exercise IDs; nothing is stored on a server.
+
+### Planned sets
+
+A plan is a template of sets for an exercise in one workout, e.g. *Workout 2 → Bench press: 80 kg × 8, 80 kg × 8, 80 kg × 8*. It repeats every week; what you actually lift is logged as normal sets.
+
+- **Planning (workout unlocked):** below every exercise in the workout, *+ Set* adds a set (a copy of the last planned set; the first one copies the last logged set of the exercise, otherwise 20 kg × 8). *Same as last time* (shown while the exercise has no plan) plans the sets from its last workout. The pencil edits a set (weight, reps, optional RIR), × removes it.
+- **Training (workout locked):** each planned set has a checkbox. Ticking it logs the set with the planned values. The pencil first lets you adjust weight, reps or RIR – *Log* then saves the adjusted set; the plan itself stays unchanged. A set logged differently from the plan shows the plan next to it (`20 kg × 7  plan 20 kg × 8`). Unticking deletes the logged set.
+- **Exercise detail:** when the exercise is in the active workout and has a plan, the *Log* section starts with the same checklist (*Plan – Workout N*); the form below (*More sets*) logs sets outside the plan.
+- **Every day starts empty:** a set counts as done only on the day it was logged, so the next training day the checklist is unticked again.
+- Removing an exercise from a workout (or *New week*) also removes its planned sets.
 
 ### Set logging and history
 
@@ -140,12 +151,12 @@ The sliders icon in the header, URL `#/nastaveni`. The end of *History* also lin
 
 - **Theme:** *System* (follows the device setting) / *Light* / *Dark*.
 - **Language:** *System* / *Čeština* / *English*. *System* = based on the browser language (Czech and Slovak → Czech, otherwise English). The page reloads automatically after a change.
-- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites, workouts 1–4 and body measurements. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
+- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites, workouts 1–4 with planned sets and body measurements. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
 - **Import backup:** pick a backup file. The app checks it and shows what it contains. Then choose:
-  - **Merge with data on this device** – adds sets and measurements missing on the device (the same set is never duplicated; for a day measured on both, the more recently edited one wins), combines favourites and fills only empty workouts.
+  - **Merge with data on this device** – adds sets and measurements missing on the device (the same set is never duplicated; for a day measured on both, the more recently edited one wins), combines favourites and fills only empty workouts (planned sets are taken only for workouts without a plan on the device).
   - **Replace all** – after confirmation deletes the data on the device and restores it from the backup.
   - Invalid sets and measurements and sets of exercises no longer in the data are skipped (the preview shows how many).
-  - Backups from older versions (without body measurements) can still be imported.
+  - Backups from older versions (without body measurements or planned sets) can still be imported.
 - **Export sets (CSV):** a table for Excel / Google Sheets. In English the file is `hypertrophica-sets-YYYY-MM-DD.csv` with columns `date;exercise;exercise_id;set;reps;weight_kg;rir` and English exercise names; in Czech `hypertrophica-serie-…csv` with Czech column and exercise names. Both use a semicolon separator and decimal comma. Meant for viewing and charts – **it cannot be imported back**; use the JSON backup for that.
 - **Export body measurements (CSV):** `hypertrophica-measurements-YYYY-MM-DD.csv` (Czech: `hypertrophica-mereni-…csv`), one row per day, columns `date;body_weight_kg;body_fat_pct;neck_cm;chest_cm;waist_cm;hips_cm;arm_cm;thigh_cm;calf_cm`; an empty cell = not measured. Export only, like the sets CSV.
 - **Moving to another device:** export JSON on the old device → transfer the file → import on the new one.
@@ -159,6 +170,7 @@ Everything is stored **only in the browser of the given device**; nothing goes t
 |---|---|
 | Favourites | `localStorage`, key `hw.favorites` |
 | Workouts 1–4 | `localStorage`, key `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
+| Planned sets | `localStorage`, key `hw.targets` (`{ "0": { "<exercise id>": [{ "id", "weightKg", "reps", "rir" }, …] } }`, module `js/targets.js`) |
 | Workout lock | `localStorage`, key `hw.planLocked` |
 | Theme | `localStorage`, key `hw.theme` |
 | Language | `localStorage`, key `hw.lang` (no key = follow the browser) |
@@ -186,7 +198,7 @@ This part is for whoever edits the app – adds exercises or changes the code.
 index.html          # page
 style.css           # styles
 app.js              # entry point, app state, rendering
-js/                 # modules: filters, favourites, body map, workouts, set log, body measurements, backup, theme, texts
+js/                 # modules: filters, favourites, body map, workouts, planned sets, set log, body measurements, backup, theme, texts
 data/
   exercises.json    # exercise database (the main edited file)
   muscles.json      # muscle groups

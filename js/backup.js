@@ -3,8 +3,9 @@
 // Záloha (JSON) obsahuje všechno, co aplikace ukládá v zařízení:
 //   { "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "2026-10-13T18:30:00.000Z",
 //     "sets": [ … série … ], "favorites": [ … ID cviků … ], "week": { "active": 0, "slots": [ … ] },
-//     "body": [ … měření hmotnosti a měr … ] }
+//     "body": [ … měření hmotnosti a měr … ], "targets": { … plánované série, viz js/targets.js … } }
 // Záloha verze 1 (před přidáním pohledu Tělo) pole "body" nemá – importuje se bez měření.
+// Starší zálohy nemají pole "targets" – importují se bez plánovaných sérií.
 // Soubor si uživatel uloží (Stažené soubory, Disk Google…) a později ho může importovat
 // zpět – na stejném nebo jiném zařízení.
 
@@ -13,7 +14,7 @@ import { METRIC_KEYS, normalize as normalizeBody } from './body.js';
 
 const APP_ID = 'hypertrophica';
 
-export function createBackup({ sets, favorites, week, body }) {
+export function createBackup({ sets, favorites, week, body, targets }) {
   return {
     app: APP_ID,
     schemaVersion: SCHEMA_VERSION,
@@ -22,6 +23,7 @@ export function createBackup({ sets, favorites, week, body }) {
     favorites,
     week,
     body,
+    targets,
   };
 }
 
@@ -34,7 +36,7 @@ export class BackupError extends Error {
 }
 
 // Přečte a zkontroluje obsah souboru se zálohou. knownIds = ID existujících cviků.
-// Vrátí { sets, skipped, favorites, week, body, bodySkipped, exportedAt }; skipped = počet vynechaných
+// Vrátí { sets, skipped, favorites, week, body, bodySkipped, targets, exportedAt }; skipped = počet vynechaných
 // sérií (neplatné hodnoty, neznámý cvik, duplicitní id), bodySkipped = počet vynechaných měření
 // (neplatné datum, žádná platná hodnota, stejný den dvakrát). Při zásadní chybě vyhodí BackupError.
 export function parseBackup(text, knownIds) {
@@ -79,6 +81,7 @@ export function parseBackup(text, knownIds) {
     week: data.week ?? null,
     body,
     bodySkipped: rawBody.length - body.length,
+    targets: data.targets ?? null, // zkontroluje js/targets.js při importu
     exportedAt: typeof data.exportedAt === 'string' ? data.exportedAt : null,
   };
 }
