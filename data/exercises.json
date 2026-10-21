@@ -260,6 +260,16 @@
     "notes": { "cs": "", "en": "" }
   },
   {
+    "id": "lat-pulldown-machine",
+    "name": { "cs": "Stahování na stroji", "en": "Machine Lat Pulldown" },
+    "type": "compound",
+    "primary": ["lats"],
+    "secondary": ["biceps", "upper_back"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav sedák tak, abys madla v plném natažení paží ještě pohodlně dosáhl, a stehna zapři pod válce. Uchop madla, hrudník vypni a z plného protažení táhni lokty dolů k bokům, dokud nejsou madla zhruba ve výšce ramen. Pomalu vrať do plného natažení paží.", "en": "Set the seat so you can still comfortably reach the handles with your arms fully extended, and brace your thighs under the pads. Grab the handles, lift your chest and, from a full stretch, drive your elbows down towards your hips until the handles are roughly at shoulder height. Slowly return to full arm extension." },
+    "notes": { "cs": "Pevná dráha pohybu umožňuje soustředit se na široký sval zádový a bezpečně jít do selhání. Stroje s nezávislými madly dovolují cvičit i jednoruč.", "en": "The fixed movement path lets you focus on the lats and safely train to failure. Machines with independent handles also allow single-arm work." }
+  },
+  {
     "id": "barbell-row",
     "name": { "cs": "Přítahy osy v předklonu", "en": "Barbell Row" },
     "type": "compound",
