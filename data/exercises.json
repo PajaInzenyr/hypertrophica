@@ -590,6 +590,16 @@
     "notes": { "cs": "S pokrčenými koleny pracuje hlavně šikmý sval lýtkový (soleus), který vestoje dostává méně. Doplňuje výpony ve stoje.", "en": "With bent knees, mainly the soleus works, which gets less work in standing raises. Complements standing calf raises." }
   },
   {
+    "id": "belt-squat-machine",
+    "name": { "cs": "Dřep s opaskem na stroji", "en": "Belt Squat Machine" },
+    "type": "compound",
+    "primary": ["quads", "glutes"],
+    "secondary": ["adductors"],
+    "equipment": ["machine"],
+    "description": { "cs": "Připni si opasek kolem boků a postav se na plošinu, chodidla zhruba na šířku ramen, špičky mírně ven. Lehce se přidrž madel, uvolni pojistku a spouštěj se do hlubokého dřepu s vzpřímeným trupem, kolena jdou ve směru špiček. Vytlač se celým chodidlem zpět nahoru.", "en": "Attach the belt around your hips and step onto the platform, feet roughly shoulder-width apart, toes slightly out. Hold the handles lightly, release the safety catch and lower yourself into a deep squat with an upright torso, knees tracking in the direction of your toes. Push back up through your whole foot." },
+    "notes": { "cs": "Zátěž visí za boky, takže páteř není zatížená a dolní část zad neomezuje počet opakování – vhodné pro série do selhání. Madla slouží jen k rovnováze, netahej za ně.", "en": "The load hangs from your hips, so your spine isn't loaded and your lower back doesn't limit your reps – well suited to sets taken to failure. The handles are only for balance, don't pull on them." }
+  },
+  {
     "id": "walking-lunge-dumbbell",
     "name": { "cs": "Výpady v chůzi", "en": "Dumbbell Walking Lunge" },
     "type": "compound",
