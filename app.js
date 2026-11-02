@@ -1508,6 +1508,8 @@ function plannedEditor(ctx, row) {
     )
   );
   form.dataset.row = row.id;
+  // tabindex -1: formulář jde zaměřit skriptem (fokus po otevření editoru), ale ne Tabem.
+  form.tabIndex = -1;
   return form;
 }
 
@@ -1516,7 +1518,9 @@ function openPlannedEditor(ctx, rowId) {
   const previous = plannedEdit?.ctx;
   plannedEdit = { ctx, rowId };
   if (previous && previous !== ctx) previous.refresh();
-  ctx.refresh('#planned-weight');
+  // Fokus na celý formulář, ne na pole hmotnosti: zaměřené pole by na mobilu samo
+  // otevřelo klávesnici. Klávesnice se ukáže až po klepnutí do pole.
+  ctx.refresh('.planned-editor');
 }
 
 function closePlannedEditor(ctx, focus) {
