@@ -520,6 +520,16 @@
     "notes": { "cs": "Bradu drž u hrudníku, aby se nepřeklápěla bedra.", "en": "Keep your chin tucked to your chest so your lower back doesn't arch." }
   },
   {
+    "id": "hip-thrust-machine",
+    "name": { "cs": "Hip thrust na stroji", "en": "Machine Hip Thrust" },
+    "type": "compound",
+    "primary": ["glutes"],
+    "secondary": ["hamstrings", "abductors"],
+    "equipment": ["machine"],
+    "description": { "cs": "Opři horní část zad o opěrku, zapni pás nebo nastav polštář přes boky, chodidla na plotně na šířku boků. Vytlač boky nahoru, dokud není trup v rovině se stehny, nahoře stáhni hýždě. Kontrolovaně spusť do protažení.", "en": "Rest your upper back against the pad, fasten the belt or set the pad across your hips, feet on the platform hip-width apart. Drive your hips up until your torso is in line with your thighs and squeeze your glutes at the top. Lower under control into the stretch." },
+    "notes": { "cs": "Oproti variantě s osou odpadá nakládání a stabilizace osy, takže jde snáz cvičit do selhání. Bradu drž u hrudníku, aby se nepřeklápěla bedra. Chodidla dál od těla víc zapojí hamstringy, blíž k tělu víc kvadricepsy.", "en": "Compared with the barbell version there is no bar to load or stabilise, so training to failure is easier. Keep your chin tucked so your lower back doesn't arch. Feet further away work the hamstrings more, closer in work the quads more." }
+  },
+  {
     "id": "glute-kickback-cable",
     "name": { "cs": "Zanožování na kladce", "en": "Cable Glute Kickback" },
     "type": "isolation",
