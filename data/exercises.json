@@ -520,6 +520,26 @@
     "notes": { "cs": "Bradu drž u hrudníku, aby se nepřeklápěla bedra.", "en": "Keep your chin tucked to your chest so your lower back doesn't arch." }
   },
   {
+    "id": "glute-kickback-cable",
+    "name": { "cs": "Zanožování na kladce", "en": "Cable Glute Kickback" },
+    "type": "isolation",
+    "primary": ["glutes"],
+    "secondary": ["hamstrings"],
+    "equipment": ["cable"],
+    "description": { "cs": "Připni manžetu ke kotníku a nastav kladku do nejnižší polohy. Postav se čelem ke kladce, chyť se rámu a mírně se předkloň s neutrálními zády. Nataženou nebo lehce pokrčenou nohu tlač dozadu, dokud nejsi v plném propnutí kyčle, a nahoře stáhni hýžďový sval. Kontrolovaně vrať dopředu do protažení.", "en": "Attach an ankle cuff and set the pulley to its lowest position. Face the pulley, hold the frame and lean forward slightly with a neutral back. Push your straight or slightly bent leg back until your hip is fully extended and squeeze your glute at the top. Return forward under control into the stretch." },
+    "notes": { "cs": "Pohyb veď z kyčle, ne prohnutím beder – nohu zastav, jakmile se začne zaklánět pánev. Mírný předklon umožní větší protažení hýždě v dolní poloze.", "en": "Move from the hip, not by arching your lower back – stop the leg as soon as your pelvis starts to tilt. A slight forward lean allows a deeper glute stretch at the bottom." }
+  },
+  {
+    "id": "glute-kickback-machine",
+    "name": { "cs": "Zanožování na stroji", "en": "Machine Glute Kickback" },
+    "type": "isolation",
+    "primary": ["glutes"],
+    "secondary": ["hamstrings"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav stroj tak, aby polštář nebo plotna byla za chodidlem či na zadní straně stehna pracovní nohy. Opři se hrudníkem nebo předloktími o opěrku, trup drž pevně. Tlač nohu dozadu a nahoru do plného propnutí kyčle, nahoře stáhni hýžďový sval. Kontrolovaně vrať do protažení.", "en": "Set the machine so the pad or footplate sits behind your foot or on the back of the thigh of the working leg. Brace your chest or forearms against the support and keep your torso stable. Drive the leg back and up to full hip extension and squeeze your glute at the top. Return under control into the stretch." },
+    "notes": { "cs": "Opora trupu a pevná dráha umožňují bezpečně jít do selhání. Bedra drž v neutrální poloze – rozsah končí plným propnutím kyčle, ne záklonem.", "en": "The torso support and fixed path let you safely train to failure. Keep your lower back neutral – the range ends at full hip extension, not by arching." }
+  },
+  {
     "id": "hip-abduction-machine",
     "name": { "cs": "Unožování na stroji", "en": "Machine Hip Abduction" },
     "type": "isolation",
