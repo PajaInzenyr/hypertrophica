@@ -280,6 +280,16 @@
     "notes": { "cs": "Záda drž rovná po celou sérii; trhání trupem snižuje účinnost i bezpečnost.", "en": "Keep your back flat throughout the set; jerking with the torso reduces both effectiveness and safety." }
   },
   {
+    "id": "t-bar-row",
+    "name": { "cs": "T-bar přítahy", "en": "T-Bar Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps", "lower_back"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Jeden konec osy zapři do rohu nebo landmine držáku, na druhý nalož kotouče. Postav se nad osu, předklon v kyčlích na 30–45° s neutrálními zády, kolena mírně pokrčená. Uchop osu těsně pod kotouči (úzkým V madlem nebo dlaněmi), táhni ji k hrudníku, lokty veď dozadu a lopatky stáhni k sobě. Kontrolovaně spouštěj do natažení paží.", "en": "Wedge one end of a barbell into a corner or landmine holder and load plates on the other end. Straddle the bar, hinge at the hips to 30–45° with a neutral back and knees slightly bent. Grip the bar just below the plates (with a close V-handle or your hands), pull it towards your chest, driving your elbows back and squeezing your shoulder blades together. Lower under control to straight arms." },
+    "notes": { "cs": "Oblouková dráha a úchop blízko těžiště umožňují vyšší zátěž než přítahy osy s menším nárokem na stabilitu. Menší kotouče prodlouží rozsah pohybu. Na T-bar stroji s oporou hrudníku odpadá zatížení beder.", "en": "The arc-shaped path and grip close to the load allow heavier weights than a barbell row with less demand on stability. Smaller plates increase the range of motion. On a chest-supported T-bar machine the lower-back load is removed." }
+  },
+  {
     "id": "seated-cable-row",
     "name": { "cs": "Přítah kladky vsedě", "en": "Seated Cable Row" },
     "type": "compound",
