@@ -280,6 +280,16 @@
     "notes": { "cs": "Záda drž rovná po celou sérii; trhání trupem snižuje účinnost i bezpečnost.", "en": "Keep your back flat throughout the set; jerking with the torso reduces both effectiveness and safety." }
   },
   {
+    "id": "t-bar-row",
+    "name": { "cs": "T-bar přítahy", "en": "T-Bar Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps", "lower_back"],
+    "equipment": ["barbell"],
+    "description": { "cs": "Jeden konec osy zapři do rohu nebo landmine držáku, na druhý nalož kotouče. Postav se nad osu, předklon v kyčlích na 30–45° s neutrálními zády, kolena mírně pokrčená. Uchop osu těsně pod kotouči (úzkým V madlem nebo dlaněmi), táhni ji k hrudníku, lokty veď dozadu a lopatky stáhni k sobě. Kontrolovaně spouštěj do natažení paží.", "en": "Wedge one end of a barbell into a corner or landmine holder and load plates on the other end. Straddle the bar, hinge at the hips to 30–45° with a neutral back and knees slightly bent. Grip the bar just below the plates (with a close V-handle or your hands), pull it towards your chest, driving your elbows back and squeezing your shoulder blades together. Lower under control to straight arms." },
+    "notes": { "cs": "Oblouková dráha a úchop blízko těžiště umožňují vyšší zátěž než přítahy osy s menším nárokem na stabilitu. Menší kotouče prodlouží rozsah pohybu. Na T-bar stroji s oporou hrudníku odpadá zatížení beder.", "en": "The arc-shaped path and grip close to the load allow heavier weights than a barbell row with less demand on stability. Smaller plates increase the range of motion. On a chest-supported T-bar machine the lower-back load is removed." }
+  },
+  {
     "id": "seated-cable-row",
     "name": { "cs": "Přítah kladky vsedě", "en": "Seated Cable Row" },
     "type": "compound",
@@ -508,6 +518,26 @@
     "equipment": ["barbell", "bench"],
     "description": { "cs": "Opři horní část zad o lavici, osu (s podložkou) polož přes boky, chodidla na šířku boků. Vytlač boky nahoru, dokud není trup v rovině se stehny, nahoře stáhni hýždě. Kontrolovaně spusť.", "en": "Rest your upper back against a bench, place the bar (with a pad) across your hips, feet hip-width apart. Drive your hips up until your torso is in line with your thighs and squeeze your glutes at the top. Lower under control." },
     "notes": { "cs": "Bradu drž u hrudníku, aby se nepřeklápěla bedra.", "en": "Keep your chin tucked to your chest so your lower back doesn't arch." }
+  },
+  {
+    "id": "glute-kickback-cable",
+    "name": { "cs": "Zanožování na kladce", "en": "Cable Glute Kickback" },
+    "type": "isolation",
+    "primary": ["glutes"],
+    "secondary": ["hamstrings"],
+    "equipment": ["cable"],
+    "description": { "cs": "Připni manžetu ke kotníku a nastav kladku do nejnižší polohy. Postav se čelem ke kladce, chyť se rámu a mírně se předkloň s neutrálními zády. Nataženou nebo lehce pokrčenou nohu tlač dozadu, dokud nejsi v plném propnutí kyčle, a nahoře stáhni hýžďový sval. Kontrolovaně vrať dopředu do protažení.", "en": "Attach an ankle cuff and set the pulley to its lowest position. Face the pulley, hold the frame and lean forward slightly with a neutral back. Push your straight or slightly bent leg back until your hip is fully extended and squeeze your glute at the top. Return forward under control into the stretch." },
+    "notes": { "cs": "Pohyb veď z kyčle, ne prohnutím beder – nohu zastav, jakmile se začne zaklánět pánev. Mírný předklon umožní větší protažení hýždě v dolní poloze.", "en": "Move from the hip, not by arching your lower back – stop the leg as soon as your pelvis starts to tilt. A slight forward lean allows a deeper glute stretch at the bottom." }
+  },
+  {
+    "id": "glute-kickback-machine",
+    "name": { "cs": "Zanožování na stroji", "en": "Machine Glute Kickback" },
+    "type": "isolation",
+    "primary": ["glutes"],
+    "secondary": ["hamstrings"],
+    "equipment": ["machine"],
+    "description": { "cs": "Nastav stroj tak, aby polštář nebo plotna byla za chodidlem či na zadní straně stehna pracovní nohy. Opři se hrudníkem nebo předloktími o opěrku, trup drž pevně. Tlač nohu dozadu a nahoru do plného propnutí kyčle, nahoře stáhni hýžďový sval. Kontrolovaně vrať do protažení.", "en": "Set the machine so the pad or footplate sits behind your foot or on the back of the thigh of the working leg. Brace your chest or forearms against the support and keep your torso stable. Drive the leg back and up to full hip extension and squeeze your glute at the top. Return under control into the stretch." },
+    "notes": { "cs": "Opora trupu a pevná dráha umožňují bezpečně jít do selhání. Bedra drž v neutrální poloze – rozsah končí plným propnutím kyčle, ne záklonem.", "en": "The torso support and fixed path let you safely train to failure. Keep your lower back neutral – the range ends at full hip extension, not by arching." }
   },
   {
     "id": "hip-abduction-machine",
