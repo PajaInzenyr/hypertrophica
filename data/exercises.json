@@ -590,6 +590,16 @@
     "notes": { "cs": "S pokrčenými koleny pracuje hlavně šikmý sval lýtkový (soleus), který vestoje dostává méně. Doplňuje výpony ve stoje.", "en": "With bent knees, mainly the soleus works, which gets less work in standing raises. Complements standing calf raises." }
   },
   {
+    "id": "leg-press-calf-raise",
+    "name": { "cs": "Výpony na legpressu", "en": "Leg Press Calf Raise" },
+    "type": "isolation",
+    "primary": ["calves"],
+    "secondary": [],
+    "equipment": ["machine"],
+    "description": { "cs": "Sedni si do legpressu a postav se špičkami na spodní hranu plošiny tak, aby paty přesahovaly, chodidla na šířku boků. Vytlač plošinu do téměř propnutých kolen a pojistky nech zajištěné. Kotníky povol, aby se plošina přiblížila a paty šly co nejvíc do protažení, krátce zastav a pak plošinu vytlač špičkami co nejdál.", "en": "Sit in the leg press and place the balls of your feet on the bottom edge of the platform so your heels hang off, feet hip-width apart. Press the platform until your knees are almost straight and keep the safety catches engaged. Let your ankles flex so the platform comes towards you and your heels go into a deep stretch, pause briefly, then push the platform away with your toes as far as you can." },
+    "notes": { "cs": "Kolena v průběhu série neohýbej – pohyb jde pouze z kotníků. Pozor, aby chodidla nesklouzla z hrany plošiny; pojistky nech zajištěné. Na rozdíl od výponů ve stoje nezatěžuje páteř.", "en": "Do not bend your knees during the set – the movement comes only from the ankles. Make sure your feet don't slip off the edge of the platform; keep the safety catches engaged. Unlike standing calf raises, it doesn't load your spine." }
+  },
+  {
     "id": "belt-squat-machine",
     "name": { "cs": "Dřep s opaskem na stroji", "en": "Belt Squat Machine" },
     "type": "compound",
