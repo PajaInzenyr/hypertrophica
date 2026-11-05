@@ -14,6 +14,9 @@ Jak to funguje:
 - Jeden tvar každého svalu na každém pohledu (u párových levý) má navíc
   data-label-x / data-label-y = místo pro odznak s číslem (počet cviků v tréninku).
   Je to průměr bodů tvaru; kde by odznak vyšel nevhodně, určí ho LABEL_POS.
+
+Druhý výstup: assets/measure-guide.svg – postava zepředu (jen obrázek, bez klikání)
+s vodorovnými čarami v místech, kde se měří obvody v pohledu Tělo (MEASURE_LINES).
 """
 
 from pathlib import Path
@@ -190,6 +193,47 @@ def figure(view, muscles, offset, extra=()):
     return lines
 
 
+# ===== Návod k měření (assets/measure-guide.svg) =====
+# Kde měřit obvody: klíč míry z METRICS v js/body.js → (y, x levého okraje, x pravého okraje),
+# souřadnice před rozšířením postavy. Čára se po rozšíření (widen) protáhne o OVERHANG na obě strany.
+# Paže, stehno a lýtko se měří na jedné straně – na levé polovině obrázku, což je při pohledu
+# zepředu PRAVÁ strana postavy (návod doporučuje měřit pravou stranu).
+MEASURE_LINES = {
+    "neck":  (46, 91.5, 108.5),   # těsně pod ohryzkem
+    "chest": (104, 67, 133),      # přes bradavky, pod podpažím
+    "arm":   (132, 38, 64),       # nejširší místo bicepsu
+    "waist": (190, 70, 130),      # v úrovni pupku
+    "hips":  (226, 65.5, 134.5),  # nejširší místo hýždí
+    "thigh": (252, 61.5, 96),     # těsně pod hýžďovou rýhou
+    "calf":  (362, 60, 89),       # nejširší místo lýtka
+}
+OVERHANG = 4
+
+
+def measure_guide():
+    """SVG návodu: šedá postava zepředu + čáry měření (bez id, aby se nebila s body-map.svg)."""
+    out = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        "<!-- Hypertrophica – návod k měření obvodů. Vygenerováno skriptem tools/generate-body-map.py, ručně neupravovat. -->",
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" class="measure-guide-svg">',
+        f'  <path class="guide-body" d="{smooth_closed(symmetric(SILHOUETTE_HALF))}"/>',
+        '  <ellipse class="guide-body" cx="100" cy="28" rx="17" ry="21"/>',
+        f'  <path class="guide-muscle" d="{abs_path()}"/>',
+    ]
+    for _, half, paired in FRONT:
+        out.append(f'  <path class="guide-muscle" d="{smooth_closed(half)}"/>')
+        if paired:
+            out.append(f'  <path class="guide-muscle" d="{smooth_closed(mirror(half))}"/>')
+    for key, (y, x1, x2) in MEASURE_LINES.items():
+        (a, _), (b, _) = widen([(x1, y), (x2, y)])
+        a, b = a - OVERHANG, b + OVERHANG
+        out.append(f'  <g class="guide-line" data-metric="{key}">'
+                   f'<line x1="{fmt(a)}" y1="{y}" x2="{fmt(b)}" y2="{y}"/>'
+                   f'<circle cx="{fmt(a)}" cy="{y}" r="3"/><circle cx="{fmt(b)}" cy="{y}" r="3"/></g>')
+    out.append("</svg>")
+    return out
+
+
 def main():
     total_width = 2 * WIDTH + GAP
     out = [
@@ -203,6 +247,9 @@ def main():
     target = Path(__file__).resolve().parent.parent / "assets" / "body-map.svg"
     target.write_text("\n".join(out) + "\n", encoding="utf-8")
     print(f"Zapsáno: {target}")
+    guide = target.parent / "measure-guide.svg"
+    guide.write_text("\n".join(measure_guide()) + "\n", encoding="utf-8")
+    print(f"Zapsáno: {guide}")
 
 
 if __name__ == "__main__":
