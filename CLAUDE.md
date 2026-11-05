@@ -48,7 +48,7 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 ## Rozsah v3: hmotnost a tělesné míry
 
 - **Pohled Tělo** (`#/telo`, ikona krejčovského metru v hlavičce): formulář (datum, hmotnost, tělesný tuk, *Míry (cm)* – vše viditelné bez rozbalování), dlaždice *Aktuální stav* s poslední hodnotou a změnou oproti předchozímu měření, graf vývoje vybrané míry (vlastní inline SVG, období 3 měsíce / rok / vše) a seznam měření s úpravou a smazáním.
-- **Úložiště:** IndexedDB, stejná databáze `hypertrophica`, tabulka `body` (od `SCHEMA_VERSION` 2), modul `js/body.js`. Jeden záznam na den (`id` = datum). Seznam měr, jednotky a rozsahy jsou v `METRICS` v `js/body.js`; nová míra = položka v `METRICS`, texty `body.field.<klíč>` a `body.metric.<klíč>` v obou i18n souborech a sloupec v `backup.bodyCsvHeader`.
+- **Úložiště:** IndexedDB, stejná databáze `hypertrophica`, tabulka `body` (od `SCHEMA_VERSION` 2), modul `js/body.js`. Jeden záznam na den (`id` = datum). Seznam měr, jednotky a rozsahy jsou v `METRICS` v `js/body.js`; nová míra = položka v `METRICS`, texty `body.field.<klíč>`, `body.metric.<klíč>` a `body.guide.how.<klíč>` (návod *Jak měřit?*) v obou i18n souborech, sloupec v `backup.bodyCsvHeader` a u obvodu čára v `MEASURE_LINES` v `tools/generate-body-map.py` (výstup `assets/measure-guide.svg`).
 - **Záloha:** pole `body` v JSON záloze (`schemaVersion` 2; zálohy verze 1 jdou importovat bez měření), export měření do CSV.
 
 ## Rozsah v4: plánované série

@@ -138,6 +138,7 @@ Plán je šablona sérií pro cvik v jednom tréninku, např. *Trénink 2 → Be
 
 - **Kde:** ikona krejčovského metru v hlavičce, adresa `#/telo`.
 - **Nové měření:** datum (výchozí dnešek), hmotnost (kg), tělesný tuk (%) a v části *Míry (cm)* krk, hrudník, pas, boky, paže (zatnutá), stehno a lýtko. Všechna pole jsou nepovinná, vyplň aspoň jedno. Tlačítka − a + mění hodnotu bez psaní; + u prázdného políčka začne od poslední zapsané hodnoty.
+- **Jak měřit?:** rozbalovací návod nad formulářem – obecná pravidla (ráno nalačno, uvolněné svaly, stejná strana, 2× změřit) a návod ke každé míře. Postava zepředu ukazuje čarou, kde se která míra měří; klepnutí na míru v návodu nebo do jejího políčka ve formuláři čáru zvýrazní.
 - **Jedno měření na den:** když zvolíš den, pro který už je měření uložené, formulář se jím vyplní a uložení ho upraví.
 - **Aktuální stav:** dlaždice pro každou zapsanou míru s poslední hodnotou a změnou oproti předchozímu měření (např. `−0,6 od 12. 10.`). Klepnutí na dlaždici zobrazí míru v grafu.
 - **Graf:** vývoj vybrané míry v čase (*3 měsíce* / *Rok* / *Vše*); najetí myší nebo klepnutí ukáže hodnotu nejbližšího měření. Na PC je graf v levém sloupci.
@@ -304,7 +305,7 @@ GitHub Pages servíruje soubory přímo z větve `main` (kořenový adresář), 
 
 - **Při každé změně obsahu nebo kódu zvyš `CACHE_VERSION` v `sw.js`** (např. `1` → `2`). Service worker servíruje soubory z cache; novou verzi prohlížeč pozná jen podle změny `sw.js`. Po nasazení se nová verze stáhne při otevření aplikace a zobrazí se po dalším obnovení stránky (u nainstalované aplikace ji zavři a znovu otevři).
 - Přidáš-li nový soubor (JS modul, obrázek…), doplň ho i do seznamu `FILES` v `sw.js`, jinak nebude dostupný offline.
-- Ikony v `assets/icons/` generuje skript `python3 tools/generate-icons.py` (vyžaduje Pillow) – ručně je neupravuj. Schéma `assets/body-map.svg` generuje `python3 tools/generate-body-map.py`.
+- Ikony v `assets/icons/` generuje skript `python3 tools/generate-icons.py` (vyžaduje Pillow) – ručně je neupravuj. Schéma `assets/body-map.svg` i postavu návodu k měření `assets/measure-guide.svg` generuje `python3 tools/generate-body-map.py`.
 
 ### Testování
 
