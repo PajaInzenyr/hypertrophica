@@ -25,8 +25,8 @@
   <g class="guide-line" data-metric="neck"><line x1="86.1" y1="46" x2="113.9" y2="46"/><circle cx="86.1" cy="46" r="3"/><circle cx="113.9" cy="46" r="3"/></g>
   <g class="guide-line" data-metric="chest"><line x1="58.6" y1="104" x2="141.4" y2="104"/><circle cx="58.6" cy="104" r="3"/><circle cx="141.4" cy="104" r="3"/></g>
   <g class="guide-line" data-metric="arm"><line x1="27.6" y1="132" x2="64.3" y2="132"/><circle cx="27.6" cy="132" r="3"/><circle cx="64.3" cy="132" r="3"/></g>
-  <g class="guide-line" data-metric="waist"><line x1="64.9" y1="190" x2="135.1" y2="190"/><circle cx="64.9" cy="190" r="3"/><circle cx="135.1" cy="190" r="3"/></g>
+  <g class="guide-line" data-metric="waist"><line x1="65.5" y1="182" x2="134.5" y2="182"/><circle cx="65.5" cy="182" r="3"/><circle cx="134.5" cy="182" r="3"/></g>
   <g class="guide-line" data-metric="hips"><line x1="59.2" y1="226" x2="140.8" y2="226"/><circle cx="59.2" cy="226" r="3"/><circle cx="140.8" cy="226" r="3"/></g>
-  <g class="guide-line" data-metric="thigh"><line x1="54.2" y1="252" x2="99.7" y2="252"/><circle cx="54.2" cy="252" r="3"/><circle cx="99.7" cy="252" r="3"/></g>
+  <g class="guide-line" data-metric="thigh"><line x1="52.7" y1="274" x2="99.6" y2="274"/><circle cx="52.7" cy="274" r="3"/><circle cx="99.6" cy="274" r="3"/></g>
   <g class="guide-line" data-metric="calf"><line x1="53" y1="362" x2="92.2" y2="362"/><circle cx="53" cy="362" r="3"/><circle cx="92.2" cy="362" r="3"/></g>
 </svg>

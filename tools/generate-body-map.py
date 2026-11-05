@@ -202,9 +202,9 @@ MEASURE_LINES = {
     "neck":  (46, 91.5, 108.5),   # těsně pod ohryzkem
     "chest": (104, 67, 133),      # přes bradavky, pod podpažím
     "arm":   (132, 38, 64),       # nejširší místo bicepsu
-    "waist": (190, 70, 130),      # v úrovni pupku
+    "waist": (182, 70.5, 129.5), # v úrovni pupku
     "hips":  (226, 65.5, 134.5),  # nejširší místo hýždí
-    "thigh": (252, 61.5, 96),     # těsně pod hýžďovou rýhou
+    "thigh": (274, 60.5, 96),    # nejširší místo stehna (horní třetina)
     "calf":  (362, 60, 89),       # nejširší místo lýtka
 }
 OVERHANG = 4
