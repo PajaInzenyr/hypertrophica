@@ -317,6 +317,32 @@
     },
     "rangeLabel": "Chart period",
     "chartTooFew": "The chart needs at least 2 measurements in the selected period.",
-    "chartLabel": "Chart – {metric}: {count} measurements from {from} ({first}) to {to} ({last})."
+    "chartLabel": "Chart – {metric}: {count} measurements from {from} ({first}) to {to} ({last}).",
+    "guide": {
+      "summary": "How to measure?",
+      "intro": "A single measurement doesn't need to be perfect – what matters is measuring the same way every time so the results are comparable.",
+      "rulesTitle": "General rules",
+      "rules": {
+        "time": "In the morning after waking up and using the toilet, before eating, drinking and training. After a workout the muscle is pumped and measures 1–3% larger.",
+        "relaxed": "Stand upright with your weight evenly on both feet, muscles relaxed (except the arm).",
+        "tape": "Keep the tape level; it should sit snugly without compressing the skin.",
+        "side": "Always measure the arm, thigh and calf on the same side (e.g. the right).",
+        "repeat": "Take each measurement twice and record the average. Once every 1–2 weeks is enough."
+      },
+      "listTitle": "Measurements",
+      "listHint": "Tap a measurement to highlight where to measure on the figure.",
+      "figureLabel": "Front view of a figure with circumference measurement sites marked",
+      "how": {
+        "weightKg": "In the morning after using the toilet, on an empty stomach, in underwear, always on the same scale.",
+        "bodyFat": "Always with the same method (calipers, bioimpedance scale). Bioimpedance depends on hydration, so measure in the morning on an empty stomach.",
+        "neck": "Just below the Adam's apple, tape sloping slightly down to the front. Head level, looking ahead.",
+        "chest": "Across the nipples and under the armpits, arms relaxed at your sides. Read at the end of a normal exhale.",
+        "waist": "At the level of the navel. Don't suck in your stomach; read at the end of a normal exhale.",
+        "hips": "Around the widest part of the buttocks, feet together.",
+        "arm": "Flexed: forearm bent to about 90°, fist clenched, biceps contracted. Around the widest part of the biceps.",
+        "thigh": "Widest part just below the gluteal fold, leg relaxed, weight on both feet.",
+        "calf": "Widest part of the calf while standing, weight on both feet, calf relaxed."
+      }
+    }
   }
 }

@@ -317,6 +317,32 @@
     },
     "rangeLabel": "Období grafu",
     "chartTooFew": "Graf potřebuje aspoň 2 měření ve zvoleném období.",
-    "chartLabel": "Graf – {metric}: {count} měření od {from} ({first}) do {to} ({last})."
+    "chartLabel": "Graf – {metric}: {count} měření od {from} ({first}) do {to} ({last}).",
+    "guide": {
+      "summary": "Jak měřit?",
+      "intro": "Na přesnosti jednoho měření tolik nezáleží – důležité je měřit pokaždé stejně, aby šla měření porovnat.",
+      "rulesTitle": "Obecná pravidla",
+      "rules": {
+        "time": "Ráno po probuzení a po WC, před jídlem, pitím a tréninkem. Po tréninku je sval napumpovaný a obvod vychází o 1–3 % větší.",
+        "relaxed": "Stůj rovně, váhu rovnoměrně na obou nohou, svaly uvolněné (kromě paže).",
+        "tape": "Krejčovský metr veď vodorovně, má přiléhat, ale nestlačovat kůži.",
+        "side": "Paži, stehno a lýtko měř vždy na stejné straně (např. pravé).",
+        "repeat": "Každou míru změř 2× a zapiš průměr. Stačí jednou za 1–2 týdny."
+      },
+      "listTitle": "Jednotlivé míry",
+      "listHint": "Klepni na míru – na postavě se zvýrazní místo měření.",
+      "figureLabel": "Postava zepředu s vyznačenými místy měření obvodů",
+      "how": {
+        "weightKg": "Ráno po WC, nalačno, ve spodním prádle, vždy na stejné váze.",
+        "bodyFat": "Vždy stejnou metodou (kaliper, bioimpedanční váha). Bioimpedanci ovlivňuje pitný režim, proto ráno nalačno.",
+        "neck": "Těsně pod ohryzkem, metr mírně šikmo dolů dopředu. Hlava rovně, pohled vpřed.",
+        "chest": "Přes bradavky a pod podpažím, ruce volně podél těla. Odečti na konci normálního výdechu.",
+        "waist": "V úrovni pupku. Břicho nevtahuj, odečti na konci normálního výdechu.",
+        "hips": "Přes nejširší místo hýždí, chodidla u sebe.",
+        "arm": "Zatnutá: předloktí ohnuté asi do 90°, pěst sevřená, biceps zatnutý. Přes nejširší místo bicepsu.",
+        "thigh": "Nejširší místo těsně pod hýžďovou rýhou, noha uvolněná, váha na obou nohou.",
+        "calf": "Nejširší místo lýtka ve stoji, váha na obou nohou, lýtko uvolněné."
+      }
+    }
   }
 }

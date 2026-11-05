@@ -1869,6 +1869,185 @@ a.button-secondary {
   font-size: 0.875rem;
 }
 
+/* ===== Návod „Jak měřit?“ (rozbalovací blok nad formulářem) ===== */
+.measures-guide {
+  margin-bottom: var(--gap);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.measures-guide summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 0 12px;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none; /* vlastní šipka místo výchozího trojúhelníku */
+}
+
+.measures-guide summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Šipka: ▸ zavřeno, otočená ▾ otevřeno */
+.measures-guide summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid currentColor;
+  transition: transform 0.15s;
+}
+
+.measures-guide[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.measures-guide summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+
+.measures-guide-body {
+  padding: 0 12px 12px;
+  font-size: 0.9375rem;
+}
+
+.measures-guide-intro,
+.measures-guide-hint {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+}
+
+.measures-guide h3 {
+  margin: 12px 0 6px;
+  font-size: 1rem;
+}
+
+.measures-guide-rules {
+  margin: 0;
+  padding-left: 1.25em;
+}
+
+.measures-guide-rules li + li {
+  margin-top: 4px;
+}
+
+/* Postava vlevo, seznam měr vpravo – i na mobilu, aby bylo zvýraznění vidět hned
+   vedle klepnuté míry. Postava je „přilepená“ a při scrollování seznamem zůstává na místě. */
+.measures-guide-layout {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: var(--gap);
+  align-items: start;
+}
+
+.measures-guide-figure {
+  position: sticky;
+  top: calc(var(--header-h, 56px) + 8px);
+  aspect-ratio: 200 / 440; /* místo pro obrázek ještě před jeho načtením */
+}
+
+.measures-guide-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.measure-guide-svg .guide-body {
+  fill: var(--map-body);
+}
+
+.measure-guide-svg .guide-muscle {
+  fill: var(--map-muscle);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+
+.measure-guide-svg .guide-line {
+  color: var(--text-muted);
+  transition: opacity 0.15s;
+}
+
+.measure-guide-svg .guide-line line {
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.measure-guide-svg .guide-line circle {
+  fill: currentColor;
+}
+
+/* Se zvýrazněnou mírou ostatní čáry ustoupí do pozadí. */
+.has-active .measure-guide-svg .guide-line {
+  opacity: 0.35;
+}
+
+.measure-guide-svg .guide-line.is-active {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.measure-guide-svg .guide-line.is-active line {
+  stroke-width: 5;
+}
+
+.measures-guide-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.measures-guide-item {
+  display: block;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.measures-guide-item[aria-pressed="true"] {
+  background: var(--chip-primary-bg);
+  border-color: var(--accent);
+}
+
+.measures-guide-item:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.measures-guide-name {
+  display: block;
+  font-weight: 600;
+}
+
+.measures-guide-text {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.measures-guide-item[aria-pressed="true"] .measures-guide-text {
+  color: var(--chip-primary-text);
+}
+
+@media (min-width: 480px) {
+  .measures-guide-layout {
+    grid-template-columns: 140px 1fr;
+  }
+}
+
 /* Dlaždice „Aktuální stav“: 2 vedle sebe na mobilu, 3 od 640 px */
 .measures-latest {
   display: grid;

@@ -102,6 +102,7 @@ const ui = {
   bodyTitle: $('body-title'),
   bodyIntro: $('body-intro'),
   bodyForm: $('body-form'),
+  bodyGuide: $('body-guide'),
   bodyFeedback: $('body-feedback'),
   bodyLatestSection: $('body-latest-section'),
   bodyLatest: $('body-latest'),
@@ -195,6 +196,7 @@ async function init() {
   ui.bodyLink.title = t('body.headerLabel');
   ui.bodyLink.hidden = false;
   createBodyForm();
+  createBodyGuide();
   createBodyRange();
   createPlanTabs();
   ui.planLink.hidden = false;
@@ -1836,6 +1838,75 @@ function createBodyForm() {
     ),
     el('button', { type: 'submit', className: 'button-primary log-submit', textContent: t('body.save') })
   );
+}
+
+// ===== Návod „Jak měřit?“ =====
+// Rozbalovací blok nad formulářem: obecná pravidla, postava s čarami v místech měření
+// (assets/measure-guide.svg, generuje tools/generate-body-map.py) a návod ke každé míře.
+// Klepnutí na míru v seznamu nebo do jejího políčka ve formuláři zvýrazní její čáru.
+const bodyGuide = {
+  figure: null, // <div>, do kterého se vloží SVG postavy
+  items: new Map(), // klíč míry → tlačítko v seznamu
+  loaded: false, // SVG se stahuje až při prvním rozbalení
+  active: null, // klíč zvýrazněné míry
+};
+
+function createBodyGuide() {
+  const rules = ['time', 'relaxed', 'tape', 'side', 'repeat'];
+  bodyGuide.figure = el('div', { className: 'measures-guide-figure' });
+  bodyGuide.figure.setAttribute('role', 'img');
+  bodyGuide.figure.setAttribute('aria-label', t('body.guide.figureLabel'));
+  const list = el('ul', { className: 'measures-guide-list', role: 'list' }, ...body.METRICS.map((m) => {
+    const button = el('button', { type: 'button', className: 'measures-guide-item' },
+      el('span', { className: 'measures-guide-name', textContent: t(`body.field.${m.key}`) }),
+      el('span', { className: 'measures-guide-text', textContent: t(`body.guide.how.${m.key}`) })
+    );
+    button.setAttribute('aria-pressed', 'false');
+    // Druhé klepnutí na zvýrazněnou míru zvýraznění zruší.
+    button.addEventListener('click', () => highlightGuide(button.getAttribute('aria-pressed') === 'true' ? null : m.key));
+    bodyGuide.items.set(m.key, button);
+    return el('li', {}, button);
+  }));
+  ui.bodyGuide.replaceChildren(
+    el('summary', { textContent: t('body.guide.summary') }),
+    el('div', { className: 'measures-guide-body' },
+      el('p', { className: 'measures-guide-intro', textContent: t('body.guide.intro') }),
+      el('h3', { textContent: t('body.guide.rulesTitle') }),
+      el('ul', { className: 'measures-guide-rules' }, ...rules.map((key) => el('li', { textContent: t(`body.guide.rules.${key}`) }))),
+      el('h3', { textContent: t('body.guide.listTitle') }),
+      el('p', { className: 'measures-guide-hint', textContent: t('body.guide.listHint') }),
+      el('div', { className: 'measures-guide-layout' }, bodyGuide.figure, list)
+    )
+  );
+  ui.bodyGuide.addEventListener('toggle', () => { if (ui.bodyGuide.open) loadGuideFigure(); });
+  // Fokus v políčku míry (klepnutí, Tab) zvýrazní její čáru, když je návod otevřený.
+  bodyForm.inputs.forEach((input, key) => input.addEventListener('focus', () => highlightGuide(key)));
+}
+
+async function loadGuideFigure() {
+  if (bodyGuide.loaded) return;
+  bodyGuide.loaded = true;
+  try {
+    const response = await fetch('./assets/measure-guide.svg');
+    if (!response.ok) throw new Error(response.status);
+    bodyGuide.figure.innerHTML = await response.text(); // vlastní soubor aplikace, ne uživatelská data
+    bodyGuide.figure.querySelector('svg')?.setAttribute('aria-hidden', 'true');
+    highlightGuide(bodyGuide.active ?? null);
+  } catch (error) {
+    // Bez obrázku návod funguje dál (texty zůstanou), při dalším rozbalení se zkusí znovu.
+    console.error('Návod k měření: obrázek se nepodařilo načíst', error);
+    bodyGuide.loaded = false;
+  }
+}
+
+// Zvýrazní míru `key` v seznamu i na postavě (null = nic). Hmotnost a tuk čáru nemají.
+function highlightGuide(key) {
+  bodyGuide.active = key;
+  bodyGuide.items.forEach((button, k) => button.setAttribute('aria-pressed', String(k === key)));
+  bodyGuide.figure.classList.toggle('has-active', key !== null && BODY_CM_KEYS.includes(key));
+  bodyGuide.figure.querySelectorAll('.guide-line').forEach((line) => {
+    line.classList.toggle('is-active', line.dataset.metric === key);
+  });
 }
 
 // Předvyplní formulář uloženým měřením zvoleného dne. Když pro den nic uložené není,
