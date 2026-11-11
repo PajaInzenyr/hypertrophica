@@ -280,6 +280,16 @@
     "notes": { "cs": "Záda drž rovná po celou sérii; trhání trupem snižuje účinnost i bezpečnost.", "en": "Keep your back flat throughout the set; jerking with the torso reduces both effectiveness and safety." }
   },
   {
+    "id": "smith-machine-row",
+    "name": { "cs": "Přítahy v předklonu v Smithově stroji", "en": "Smith Machine Row" },
+    "type": "compound",
+    "primary": ["upper_back", "lats"],
+    "secondary": ["rear_delts", "biceps", "lower_back"],
+    "equipment": ["smith_machine"],
+    "description": { "cs": "Nastav osu Smithova stroje zhruba do výšky kolen. Stoj na šířku boků těsně za osou, kolena mírně pokrčená, předklon v kyčlích na 30–45° s neutrálními zády. Uchop osu nadhmatem o něco šíř než ramena a odjisti ji otočením zápěstí. Táhni osu ke spodní části břicha, lokty veď dozadu a lopatky stáhni k sobě. Kontrolovaně spouštěj do natažení paží.", "en": "Set the Smith machine bar at about knee height. Stand hip-width apart just behind the bar, knees slightly bent, hinged at the hips to 30–45° with a neutral back. Take an overhand grip slightly wider than shoulder width and unrack the bar by rotating your wrists. Pull the bar to your lower abdomen, driving your elbows back and squeezing your shoulder blades together. Lower under control to straight arms." },
+    "notes": { "cs": "Alternativa k přítahům osy v předklonu: díky pevné dráze odpadá nutnost osu vyvažovat, takže se můžeš soustředit na záda a bezpečně jít do selhání. Osa jede svisle, proto se postav tak, aby se v horní poloze dotkla spodní části břicha. Bezpečnostní zarážky nastav těsně pod spodní polohu.", "en": "An alternative to the barbell row: the fixed path removes the need to balance the bar, so you can focus on your back and safely train to failure. The bar travels vertically, so stand where it touches your lower abdomen at the top. Set the safety stops just below the bottom position." }
+  },
+  {
     "id": "t-bar-row",
     "name": { "cs": "T-bar přítahy", "en": "T-Bar Row" },
     "type": "compound",
