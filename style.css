@@ -720,6 +720,20 @@ select:disabled {
   font-size: 0.875rem;
 }
 
+/* Značka „cvik má vlastní poznámku“ za názvem cviku */
+.note-mark {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--text-muted);
+  vertical-align: -1px;
+}
+
+.note-mark svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
 /* Položka seznamu: odkaz na cvik + hvězdička vedle */
 .exercise-item {
   display: flex;

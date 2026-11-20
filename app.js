@@ -350,12 +350,27 @@ function renderList() {
   ui.list.replaceChildren(...results.map(exerciseItem));
 }
 
+// Ikona „cvik má vlastní poznámku“ (list papíru s řádky) za názvem cviku v seznamu.
+// Rozměry přímo v atributech SVG – stejně jako u hvězdičky, kvůli staršímu style.css v cache.
+const NOTE_MARK_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"'
+  + ' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+  + '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/></svg>';
+
+// Značka poznámky: ikona pro oči, skrytý text pro čtečku obrazovky. Bez poznámky null.
+function noteMark(id) {
+  if (!notes.hasNote(id)) return null;
+  const mark = el('span', { className: 'note-mark', title: t('note.mark') });
+  mark.innerHTML = NOTE_MARK_SVG; // pevný text z kódu, ne z dat
+  mark.append(el('span', { className: 'visually-hidden', textContent: ` (${t('note.mark')})` }));
+  return mark;
+}
+
 // Jedna položka seznamu: odkaz na detail + tlačítko „do tréninku“ + hvězdička.
 function exerciseItem(ex) {
   const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
   return el('li', { className: 'exercise-item' },
     el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
-      el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
+      el('span', { className: 'exercise-name' }, localized(ex.name), noteMark(ex.id)),
       el('span', { className: 'exercise-meta', textContent: meta })
     ),
     planButton(ex.id),
