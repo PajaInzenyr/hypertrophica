@@ -25,6 +25,7 @@ const FILES = [
   './js/filters.js',
   './js/i18n.js',
   './js/log.js',
+  './js/notes.js',
   './js/plan.js',
   './js/targets.js',
   './js/theme.js',
