@@ -26,7 +26,7 @@ Hypertrophica je dává na jedno místo:
 Zásady, na kterých aplikace stojí:
 
 - **Jednoduchost.** Žádné účty, registrace ani reklamy. Otevřeš a používáš.
-- **Soukromí.** Data (oblíbené, tréninky, série) zůstávají jen ve tvém zařízení. Nic se neodesílá na server; přenos mezi zařízeními jde přes soubor zálohy.
+- **Soukromí.** Data (oblíbené, tréninky, série, poznámky) zůstávají jen ve tvém zařízení. Nic se neodesílá na server; přenos mezi zařízeními jde přes soubor zálohy.
 - **Offline.** Po prvním načtení funguje i v posilovně bez signálu.
 - **Mobil na prvním místě.** Velká tlačítka pro ovládání palcem, světlý i tmavý režim.
 
@@ -39,7 +39,8 @@ Zásady, na kterých aplikace stojí:
 | 🔎 **Vyhledávání** | Hledání cviku podle názvu, nezáleží na diakritice ani velikosti písmen („drep“ najde „Dřep“). |
 | 🎛️ **Filtry** | Sval (primární / sekundární zapojení), typ (vícekloubový / izolovaný), vybavení, oblíbené. Filtry se kombinují. |
 | 🧍 **Schéma svalů** | Postava zepředu a zezadu. Klepnutí na sval = filtr podle svalu, aktivní sval je zvýrazněný. |
-| 📖 **Detail cviku** | Provedení, zapojené svaly (i na schématu), typ, vybavení, poznámky a tipy. |
+| 📖 **Detail cviku** | Provedení, zapojené svaly (i na schématu), typ, vybavení a tipy. |
+| 📝 **Moje poznámka** | Vlastní poznámka ke cviku (nastavení stroje, úchop…), upravitelná přímo v aplikaci. |
 | ⭐ **Oblíbené** | Hvězdička u cviku, rychlý seznam oblíbených. |
 | 📋 **Tréninky 1–4** | Seřazené seznamy cviků, schéma zapojených partií, sdílení odkazem, zámek proti nechtěným úpravám. |
 | ✅ **Plánované série** | Naplánuj hmotnost × opakování ke každému cviku v tréninku a při cvičení série odškrtávej (nebo je předtím uprav). |
@@ -90,7 +91,9 @@ Databáze obsahuje desítky cviků na 19 svalových skupin a průběžně se roz
 
 ### Detail cviku
 
-Popis provedení, primární a sekundární svaly (i barevně na schématu), typ, vybavení a poznámky (varianty, tipy, bezpečnost). Hvězdička přidá cvik do oblíbených, ⊕ do aktivního tréninku. Pod tím je sekce *Záznam* pro zápis sérií.
+Popis provedení, primární a sekundární svaly (i barevně na schématu), typ, vybavení a *Tipy* (varianty, bezpečnost – píše je autor v `data/exercises.json`). Hvězdička přidá cvik do oblíbených, ⊕ do aktivního tréninku. Pod tím jsou sekce *Moje poznámka* a *Záznam*.
+
+**Moje poznámka:** vlastní text ke cviku, např. nastavení stroje nebo úchop (*sedák 4, opěrka 2*). *+ Přidat poznámku* / *Upravit* otevře textové pole (max. 1000 znaků); *Uložit* nebo **Ctrl+Enter** uloží, *Zrušit* nebo **Esc** změnu zahodí. Uložením prázdného pole se poznámka smaže. Cvik s poznámkou má v seznamu malou ikonku poznámky.
 
 **Návrat z detailu:** odkaz *← Zpět na …* nahoře, klávesa **Esc**, nebo na PC (šířka od 900 px) klik do prázdného místa vlevo či vpravo od obsahu. Když je kurzor v políčku formuláře *Záznam*, první Esc políčko jen opustí, druhý se vrátí zpět. Na mobilu jen odkazem (okraje jsou úzké a hrozilo by nechtěné zavření detailu).
 
@@ -150,12 +153,12 @@ Ikona posuvníků v hlavičce, adresa `#/nastaveni`. Z konce *Historie* sem vede
 
 - **Motiv:** *Systém* (podle nastavení zařízení) / *Světlý* / *Tmavý*.
 - **Jazyk:** *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (čeština a slovenština → česky, jinak anglicky). Po změně se stránka sama znovu načte. Vyhledávání najde cvik podle českého i anglického názvu bez ohledu na zvolený jazyk.
-- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené, tréninky 1–4 s plánovanými sériemi i měření těla. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
+- **Exportovat zálohu (JSON):** stáhne soubor `hypertrophica-zaloha-RRRR-MM-DD.json` se **všemi** daty – série, oblíbené, tréninky 1–4 s plánovanými sériemi, měření těla i vlastní poznámky. Ulož ho na bezpečné místo (Disk Google, e-mail sám sobě…).
 - **Importovat zálohu:** vyber soubor zálohy. Aplikace ho zkontroluje a ukáže, co obsahuje. Pak zvol:
-  - **Sloučit s daty v zařízení** – přidá série a měření, které v zařízení chybí (stejná série se nezdvojí; u dne změřeného v obou se ponechá naposledy upravené měření), sjednotí oblíbené a doplní jen prázdné tréninky (plánované série převezme jen u tréninků, které v zařízení plán nemají).
+  - **Sloučit s daty v zařízení** – přidá série a měření, které v zařízení chybí (stejná série se nezdvojí; u dne změřeného v obou se ponechá naposledy upravené měření), sjednotí oblíbené a doplní jen prázdné tréninky (plánované série převezme jen u tréninků, které v zařízení plán nemají). U cviku s poznámkou v zařízení i v záloze zůstane naposledy upravená poznámka.
   - **Nahradit vše** – po potvrzení smaže data v zařízení a obnoví je ze zálohy.
   - Neplatné série a měření a série cviků, které už v datech nejsou, se vynechají (náhled uvede jejich počet).
-  - Zálohy ze starších verzí (bez měření těla nebo plánovaných sérií) jdou importovat i nadále.
+  - Zálohy ze starších verzí (bez měření těla, plánovaných sérií nebo poznámek) jdou importovat i nadále.
 - **Exportovat série (CSV):** tabulka pro Excel / Tabulky Google (`hypertrophica-serie-RRRR-MM-DD.csv`, sloupce `datum;cvik;id_cviku;série;opakování;hmotnost_kg;rir`, středník a desetinná čárka; v angličtině `hypertrophica-sets-…csv` s anglickými názvy sloupců a cviků, formát stejný). Slouží k prohlížení a grafům – **zpět importovat nejde**, na to je záloha JSON.
 - **Exportovat měření těla (CSV):** `hypertrophica-mereni-RRRR-MM-DD.csv` (v angličtině `hypertrophica-measurements-…csv`), jeden řádek = jeden den, sloupce `datum;hmotnost_kg;tuk_procent;krk_cm;hrudnik_cm;pas_cm;boky_cm;paze_cm;stehno_cm;lytko_cm`; prázdná buňka = neměřeno. Stejně jako CSV sérií jen pro export.
 - **Přenos na jiné zařízení:** export JSON na starém zařízení → přenést soubor → import na novém.
@@ -169,6 +172,7 @@ Všechno se ukládá **jen v prohlížeči daného zařízení**, nic neodcház�
 |---|---|
 | Oblíbené | `localStorage`, klíč `hw.favorites` |
 | Tréninky 1–4 | `localStorage`, klíč `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
+| Moje poznámky | `localStorage`, klíč `hw.notes` (`{ "<id cviku>": { "text", "updatedAt" } }`, modul `js/notes.js`) |
 | Plánované série | `localStorage`, klíč `hw.targets` (`{ "0": { "<id cviku>": [{ "id", "weightKg", "reps", "rir" }, …] } }`, modul `js/targets.js`) |
 | Zámek tréninků | `localStorage`, klíč `hw.planLocked` |
 | Motiv | `localStorage`, klíč `hw.theme` |
@@ -197,7 +201,7 @@ Tato část je pro toho, kdo aplikaci upravuje – přidává cviky nebo mění 
 index.html          # stránka
 style.css           # vzhled
 app.js              # vstupní bod, stav aplikace, vykreslování
-js/                 # moduly: filtry, oblíbené, schéma, tréninky, plánované série, záznam sérií, míry těla, záloha, motiv, texty
+js/                 # moduly: filtry, oblíbené, schéma, tréninky, plánované série, záznam sérií, míry těla, poznámky, záloha, motiv, texty
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # svalové skupiny
@@ -239,7 +243,7 @@ Cviky jsou v souboru `data/exercises.json`. Je to seznam (pole) objektů odděle
 | `secondary` | Pomocné svaly – ID z tabulky níže, může být prázdné `[]`. Stejný sval nedávej do `primary` i `secondary`. |
 | `equipment` | Potřebné vybavení – ID z tabulky níže. Uveď **vše, co je potřeba současně** (např. `["dumbbell", "bench"]`). |
 | `description` | Popis provedení česky (`cs`) a anglicky (`en`). |
-| `notes` | Poznámky (varianty, tipy) česky a anglicky. Může zůstat `""`. |
+| `notes` | Tipy (varianty, bezpečnost) česky a anglicky, v detailu pod nadpisem *Tipy*. Může zůstat `""`. (Vlastní poznámky uživatele jsou něco jiného – v tomto souboru nejsou.) |
 
 Chybí-li anglický text, aplikace v angličtině zobrazí český – nový cvik proto ideálně vyplň v obou jazycích. Cviky, které už v datech nejsou, se z tréninků i sdílených odkazů tiše vynechají.
 

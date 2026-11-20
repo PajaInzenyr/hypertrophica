@@ -28,7 +28,7 @@ Hypertrophica puts them in one place:
 Principles behind the app:
 
 - **Simplicity.** No accounts, sign-ups or ads. Open it and use it.
-- **Privacy.** Your data (favourites, workouts, sets) stays on your device only. Nothing is sent to a server; moving data between devices works through a backup file.
+- **Privacy.** Your data (favourites, workouts, sets, notes) stays on your device only. Nothing is sent to a server; moving data between devices works through a backup file.
 - **Offline.** After the first load it works even in a gym with no signal.
 - **Mobile first.** Large thumb-friendly buttons, light and dark mode.
 
@@ -41,7 +41,8 @@ Principles behind the app:
 | 🔎 **Search** | Find exercises by name, ignoring diacritics and letter case ("drep" finds "Dřep"). Searches both Czech and English names. |
 | 🎛️ **Filters** | Muscle (primary / secondary involvement), type (compound / isolation), equipment, favourites. Filters combine. |
 | 🧍 **Muscle map** | Front and back view of the body. Tapping a muscle filters by it; the active muscle is highlighted. |
-| 📖 **Exercise detail** | Execution, muscles involved (also shown on the map), type, equipment, notes and tips. |
+| 📖 **Exercise detail** | Execution, muscles involved (also shown on the map), type, equipment and tips. |
+| 📝 **My note** | Your own note on an exercise (machine settings, grip…), editable right in the app. |
 | ⭐ **Favourites** | Star an exercise, quick list of favourites. |
 | 📋 **Workouts 1–4** | Ordered exercise lists, map of muscles involved, sharing via link, lock against accidental edits. |
 | ✅ **Planned sets** | Plan weight × reps for each exercise in a workout, then tick sets off while training (or adjust them first). |
@@ -92,7 +93,9 @@ The database contains dozens of exercises across 19 muscle groups and keeps grow
 
 ### Exercise detail
 
-Execution, primary and secondary muscles (also colour-coded on the map), type, equipment and notes (variations, tips, safety). The star adds the exercise to favourites, ⊕ to the active workout. Below is the *Log* section for recording sets.
+Execution, primary and secondary muscles (also colour-coded on the map), type, equipment and *Tips* (variations, safety – written by the author in `data/exercises.json`). The star adds the exercise to favourites, ⊕ to the active workout. Below are the *My note* and *Log* sections.
+
+**My note:** your own text for the exercise, e.g. machine settings or grip (*seat 4, back pad 2*). *+ Add note* / *Edit* opens a text field (max. 1000 characters); *Save* or **Ctrl+Enter** saves, *Cancel* or **Esc** discards the change. Saving an empty field deletes the note. Exercises with a note show a small note icon in the list.
 
 **Leaving the detail:** the *← Back to …* link at the top, the **Esc** key, or on desktop (width 900 px and up) a click into the empty space left or right of the content. When the cursor is in a *Log* form field, the first Esc only leaves the field, the second goes back. On mobile only via the link (the margins are narrow and the detail could close by accident).
 
@@ -152,12 +155,12 @@ The sliders icon in the header, URL `#/nastaveni`. The end of *History* also lin
 
 - **Theme:** *System* (follows the device setting) / *Light* / *Dark*.
 - **Language:** *System* / *Čeština* / *English*. *System* = based on the browser language (Czech and Slovak → Czech, otherwise English). The page reloads automatically after a change.
-- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites, workouts 1–4 with planned sets and body measurements. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
+- **Export backup (JSON):** downloads the file `hypertrophica-zaloha-YYYY-MM-DD.json` with **all** data – sets, favourites, workouts 1–4 with planned sets, body measurements and your notes. Keep it somewhere safe (Google Drive, an e-mail to yourself…).
 - **Import backup:** pick a backup file. The app checks it and shows what it contains. Then choose:
-  - **Merge with data on this device** – adds sets and measurements missing on the device (the same set is never duplicated; for a day measured on both, the more recently edited one wins), combines favourites and fills only empty workouts (planned sets are taken only for workouts without a plan on the device).
+  - **Merge with data on this device** – adds sets and measurements missing on the device (the same set is never duplicated; for a day measured on both, the more recently edited one wins), combines favourites and fills only empty workouts (planned sets are taken only for workouts without a plan on the device). For an exercise with a note in both, the more recently edited note wins.
   - **Replace all** – after confirmation deletes the data on the device and restores it from the backup.
   - Invalid sets and measurements and sets of exercises no longer in the data are skipped (the preview shows how many).
-  - Backups from older versions (without body measurements or planned sets) can still be imported.
+  - Backups from older versions (without body measurements, planned sets or notes) can still be imported.
 - **Export sets (CSV):** a table for Excel / Google Sheets. In English the file is `hypertrophica-sets-YYYY-MM-DD.csv` with columns `date;exercise;exercise_id;set;reps;weight_kg;rir` and English exercise names; in Czech `hypertrophica-serie-…csv` with Czech column and exercise names. Both use a semicolon separator and decimal comma. Meant for viewing and charts – **it cannot be imported back**; use the JSON backup for that.
 - **Export body measurements (CSV):** `hypertrophica-measurements-YYYY-MM-DD.csv` (Czech: `hypertrophica-mereni-…csv`), one row per day, columns `date;body_weight_kg;body_fat_pct;neck_cm;chest_cm;waist_cm;hips_cm;arm_cm;thigh_cm;calf_cm`; an empty cell = not measured. Export only, like the sets CSV.
 - **Moving to another device:** export JSON on the old device → transfer the file → import on the new one.
@@ -173,6 +176,7 @@ Everything is stored **only in the browser of the given device**; nothing goes t
 | Workouts 1–4 | `localStorage`, key `hw.week` (`{ "active": 0, "slots": [[…], […], […], […]] }`) |
 | Planned sets | `localStorage`, key `hw.targets` (`{ "0": { "<exercise id>": [{ "id", "weightKg", "reps", "rir" }, …] } }`, module `js/targets.js`) |
 | Workout lock | `localStorage`, key `hw.planLocked` |
+| My notes | `localStorage`, key `hw.notes` (`{ "<exercise id>": { "text", "updatedAt" } }`, module `js/notes.js`) |
 | Theme | `localStorage`, key `hw.theme` |
 | Language | `localStorage`, key `hw.lang` (no key = follow the browser) |
 | Sets | IndexedDB, database `hypertrophica`, table `sets` (module `js/log.js`) |
@@ -199,7 +203,7 @@ This part is for whoever edits the app – adds exercises or changes the code.
 index.html          # page
 style.css           # styles
 app.js              # entry point, app state, rendering
-js/                 # modules: filters, favourites, body map, workouts, planned sets, set log, body measurements, backup, theme, texts
+js/                 # modules: filters, favourites, body map, workouts, planned sets, set log, body measurements, notes, backup, theme, texts
 data/
   exercises.json    # exercise database (the main edited file)
   muscles.json      # muscle groups
@@ -241,7 +245,7 @@ Exercises are in `data/exercises.json`. It is a list (array) of objects separate
 | `secondary` | Assisting muscles – IDs from the table below, may be empty `[]`. Do not put the same muscle in both `primary` and `secondary`. |
 | `equipment` | Required equipment – IDs from the table below. List **everything needed at the same time** (e.g. `["dumbbell", "bench"]`). |
 | `description` | Execution in Czech (`cs`) and English (`en`). |
-| `notes` | Notes (variations, tips) in Czech and English. May stay `""`. |
+| `notes` | Tips (variations, safety) in Czech and English, shown in the detail under *Tips*. May stay `""`. (The user's own notes are separate – they are not stored in this file.) |
 
 If an English text is missing, the English UI shows the Czech one – so ideally fill in both languages for a new exercise. Exercises no longer in the data are silently skipped in workouts and shared links.
 

@@ -41,7 +41,7 @@ Mimo rozsah v1: uživatelské účty, backend, synchronizace oblíbených mezi z
 
 7. **Záznam sérií:** v detailu cviku formulář hmotnost (kg) / opakování / RIR (nepovinné), dnešní série a souhrn posledních tréninků. Pohled **Historie** (`#/historie`) seskupený po dnech.
 8. **Úložiště:** IndexedDB (databáze `hypertrophica`, tabulka `sets`, modul `js/log.js`), jeden záznam = jedna série. Při změně struktury zvyš `SCHEMA_VERSION` v `js/log.js` a doplň převod v `upgrade()`. Bez IndexedDB aplikace funguje se záznamy jen v paměti a upozorní na to.
-9. **Záloha:** v pohledu **Nastavení** (`#/nastaveni`, spolu s volbou motivu a jazyka) export/import JSON se všemi daty (série, oblíbené, tréninky) a export sérií do CSV (`js/backup.js`). Import kontroluje data a nabízí *Sloučit* / *Nahradit vše*.
+9. **Záloha:** v pohledu **Nastavení** (`#/nastaveni`, spolu s volbou motivu a jazyka) export/import JSON se všemi daty (série, oblíbené, tréninky, měření, plán, poznámky) a export sérií do CSV (`js/backup.js`). Import kontroluje data a nabízí *Sloučit* / *Nahradit vše*.
 
 Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zařízeními (přenos jen přes soubor zálohy), jednotky lb.
 
@@ -59,6 +59,15 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 - **Záloha:** pole `targets` v JSON (starší zálohy bez něj jdou importovat).
 - Princip: **jednoduchost** – žádné rozsahy opakování, automatická progrese ani plán ve sdíleném odkazu.
 
+## Rozsah v5: vlastní poznámky ke cvikům
+
+- **Moje poznámka** = vlastní text uživatele ke cviku (nastavení stroje, úchop…), jedna na cvik, max. 1000 znaků (`MAX_LENGTH`). Odlišuj od pole `notes` v `data/exercises.json` (píše autor, v UI nadpis *Tipy*).
+- **Detail cviku:** sekce *Moje poznámka* nad sekcí *Záznam*. Režim zobrazení (text + *Upravit*, bez poznámky *+ Přidat poznámku*) a úpravy (textové pole, *Uložit* / *Zrušit*, Ctrl+Enter / Esc). Prázdný text poznámku smaže. Text vždy přes `textContent`, nikdy jako HTML.
+- **Seznam cviků:** cvik s poznámkou má ikonku za názvem (+ skrytý text pro čtečku).
+- **Úložiště:** `localStorage`, klíč `hw.notes`, modul `js/notes.js`: `{ "<id cviku>": { "text", "updatedAt" } }`. Přístup v `try/catch`.
+- **Záloha:** pole `notes` v JSON (starší zálohy bez něj jdou importovat, `schemaVersion` se nemění). Poznámky neznámých cviků se vynechají. *Sloučit* = u stejného cviku vyhraje novější `updatedAt`; *Nahradit vše* = poznámky ze zálohy.
+- Poznámky nejsou ve sdíleném odkazu tréninku ani v CSV a vyhledávání v nich nehledá.
+
 ## Jazyky
 
 10. **Čeština a angličtina.** Volba v **Nastavení** (sekce *Jazyk*): *Systém* / *Čeština* / *English*. *Systém* = podle jazyka prohlížeče (`cs`, `sk` → čeština, jinak angličtina). Ukládá se do `localStorage` (klíč `hw.lang`, „Systém“ = klíč smazaný); po změně se stránka znovu načte. Logika je v `js/i18n.js`.
@@ -74,7 +83,7 @@ Mimo rozsah v2: uživatelské účty a profily, backend, synchronizace mezi zař
 index.html
 style.css
 app.js              # vstupní bod, stav aplikace, render
-js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, plan.js, targets.js, theme.js, log.js, body.js, backup.js
+js/                 # moduly: filters.js, favorites.js, bodymap.js, i18n.js, notes.js, plan.js, targets.js, theme.js, log.js, body.js, backup.js
 data/
   exercises.json    # databáze cviků (hlavní editovaný soubor)
   muscles.json      # seznam svalových skupin (ID, názvy, latinské názvy, pohledy front/back)
@@ -146,7 +155,7 @@ Série (IndexedDB, tabulka `sets`, ne soubor v repozitáři) – objekt:
 - `id`: UUID, podle něj se při importu zálohy párují stejné série.
 - `planRowId`: jen u série zapsané odškrtnutím plánu (viz *Rozsah v4*), jinak pole chybí.
 - `date`: den tréninku v místním čase; `reps` 1–100; `weightKg` 0–1000 (0 = vlastní váha); `rir` 0–10 nebo `null`.
-- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] }, "body": […], "targets": { … } }`.
+- Záloha (JSON): `{ "app": "hypertrophica", "schemaVersion": 2, "exportedAt": "…", "sets": […], "favorites": […], "week": { "active": 0, "slots": [[…], …] }, "body": […], "targets": { … }, "notes": { … } }`.
 
 Měření těla (IndexedDB, tabulka `body`) – objekt:
 

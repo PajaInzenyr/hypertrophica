@@ -11,6 +11,7 @@ import { initTheme } from './js/theme.js';
 import * as log from './js/log.js';
 import * as backup from './js/backup.js';
 import * as body from './js/body.js';
+import * as notes from './js/notes.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -276,6 +277,14 @@ function bindEvents() {
     renderFavorites();
     document.querySelectorAll('.star-button').forEach(updateStarButton);
   });
+  // Změna poznámek v jiné záložce: překresli značky v seznamu a otevřenou poznámku
+  // (rozepsanou úpravu nechej být, aby se uživateli neztratil text).
+  notes.onExternalChange(() => {
+    renderList();
+    renderFavorites();
+    const section = ui.detailView.querySelector('.note');
+    if (section && !section.querySelector('form')) renderNoteView(section);
+  });
   ui.backupExport.addEventListener('click', onExportBackup);
   ui.backupExportCsv.addEventListener('click', onExportCsv);
   ui.backupExportBodyCsv.addEventListener('click', onExportBodyCsv);
@@ -341,12 +350,27 @@ function renderList() {
   ui.list.replaceChildren(...results.map(exerciseItem));
 }
 
+// Ikona „cvik má vlastní poznámku“ (list papíru s řádky) za názvem cviku v seznamu.
+// Rozměry přímo v atributech SVG – stejně jako u hvězdičky, kvůli staršímu style.css v cache.
+const NOTE_MARK_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"'
+  + ' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+  + '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/></svg>';
+
+// Značka poznámky: ikona pro oči, skrytý text pro čtečku obrazovky. Bez poznámky null.
+function noteMark(id) {
+  if (!notes.hasNote(id)) return null;
+  const mark = el('span', { className: 'note-mark', title: t('note.mark') });
+  mark.innerHTML = NOTE_MARK_SVG; // pevný text z kódu, ne z dat
+  mark.append(el('span', { className: 'visually-hidden', textContent: ` (${t('note.mark')})` }));
+  return mark;
+}
+
 // Jedna položka seznamu: odkaz na detail + tlačítko „do tréninku“ + hvězdička.
 function exerciseItem(ex) {
   const meta = `${t(`type.${ex.type}`)} · ${ex.primary.map(muscleName).join(', ')}`;
   return el('li', { className: 'exercise-item' },
     el('a', { className: 'exercise-link', href: `#/cvik/${ex.id}` },
-      el('span', { className: 'exercise-name', textContent: localized(ex.name) }),
+      el('span', { className: 'exercise-name' }, localized(ex.name), noteMark(ex.id)),
       el('span', { className: 'exercise-meta', textContent: meta })
     ),
     planButton(ex.id),
@@ -1090,6 +1114,7 @@ function detailContent(ex) {
     ...fact(t('detail.secondary'), chipList(ex.secondary.map(muscleName))),
     ...fact(t('detail.equipment'), chipList(ex.equipment.map((e) => t(`equipment.${e}`))))
   ));
+  nodes.push(noteSection(ex));
   nodes.push(logSection(ex));
   nodes.push(engagementMap(ex));
 
@@ -1102,6 +1127,106 @@ function detailContent(ex) {
     nodes.push(el('h2', { textContent: t('detail.notes') }), el('p', { textContent: notes }));
   }
   return nodes;
+}
+
+// ===== Moje poznámka (v detailu cviku) =====
+// Vlastní poznámka uživatele ke cviku, ukládá ji js/notes.js. Sekce má dva režimy:
+// zobrazení (text + tlačítko „Upravit“, nebo jen „+ Přidat poznámku“) a úpravu (textové pole).
+// Úprava je schválně až po klepnutí: kdyby bylo textové pole vidět pořád, na mobilu by
+// každé klepnutí při posouvání stránky otevřelo klávesnici.
+
+function noteSection(ex) {
+  const feedback = el('p', { className: 'note-feedback' });
+  feedback.setAttribute('role', 'status');
+  const section = el('section', { className: 'note' },
+    el('h2', { id: 'note-heading', textContent: t('note.heading') }),
+    el('div', { className: 'note-body' }),
+    feedback
+  );
+  section.setAttribute('aria-labelledby', 'note-heading');
+  section.dataset.id = ex.id;
+  renderNoteView(section);
+  return section;
+}
+
+// Režim zobrazení. focus = přesunout fokus na tlačítko (po uložení nebo zrušení úpravy).
+function renderNoteView(section, focus = false) {
+  const id = section.dataset.id;
+  const text = notes.getNote(id);
+  const name = localized(state.byId.get(id)?.name);
+  const edit = () => renderNoteEditor(section);
+  const button = text
+    ? actionButton('button-secondary note-edit', t('note.edit'), edit)
+    : actionButton('button-secondary note-add', t('note.add'), edit);
+  button.setAttribute('aria-label', t(text ? 'note.editLabel' : 'note.addLabel', { name }));
+  section.querySelector('.note-body').replaceChildren(
+    // Text se vkládá přes textContent (nikdy jako HTML); zalomení řádků zachová CSS (white-space).
+    ...(text ? [el('p', { className: 'note-text', textContent: text })] : []),
+    button
+  );
+  if (focus) button.focus();
+}
+
+// Režim úpravy: textové pole s počítadlem znaků, Uložit / Zrušit.
+// Klávesy: Ctrl+Enter (na Macu Cmd+Enter) = Uložit, Esc = Zrušit.
+function renderNoteEditor(section) {
+  const id = section.dataset.id;
+  const feedback = section.querySelector('.note-feedback');
+  const textarea = el('textarea', {
+    id: 'note-input',
+    className: 'note-input',
+    rows: 4,
+    maxLength: notes.MAX_LENGTH,
+    value: notes.getNote(id),
+    placeholder: t('note.placeholder'),
+  });
+  const counter = el('p', { id: 'note-counter', className: 'note-counter' });
+  textarea.setAttribute('aria-describedby', 'note-counter');
+  const updateCounter = () => {
+    counter.textContent = t('note.counter', { count: textarea.value.length, max: notes.MAX_LENGTH });
+  };
+  updateCounter();
+
+  const cancel = () => {
+    feedback.textContent = '';
+    renderNoteView(section, true);
+  };
+  const form = el('form', { className: 'note-form', noValidate: true },
+    el('label', { className: 'visually-hidden', htmlFor: 'note-input', textContent: t('note.fieldLabel') }),
+    textarea,
+    counter,
+    el('div', { className: 'note-actions' },
+      el('button', { type: 'submit', className: 'button-primary', textContent: t('note.save') }),
+      actionButton('button-secondary', t('note.cancel'), cancel)
+    )
+  );
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
+    const hadNote = notes.hasNote(id);
+    const saved = notes.setNote(id, textarea.value);
+    feedback.textContent = saved ? t('note.saved') : (hadNote ? t('note.deleted') : '');
+    renderNoteView(section, true);
+    renderList(); // značka poznámky v seznamu cviků
+    renderFavorites();
+  });
+  textarea.addEventListener('input', updateCounter);
+  textarea.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      form.requestSubmit();
+    } else if (event.key === 'Escape') {
+      // preventDefault: detail cviku pak Esc nebere jako „Zpět“ (viz onDetailEscape).
+      event.preventDefault();
+      cancel();
+    }
+  });
+
+  section.querySelector('.note-body').replaceChildren(form);
+  feedback.textContent = '';
+  textarea.focus();
+  // Kurzor na konec textu, aby šlo rovnou připisovat.
+  textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 }
 
 // Malé schéma v detailu: primární svaly plnou barvou, sekundární světlejší.
@@ -2265,6 +2390,7 @@ async function onExportBackup() {
       week: plan.getWeek(),
       body: await body.getAll(),
       targets: targets.getAll(),
+      notes: notes.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -2345,6 +2471,7 @@ function showImportPreview(parsed) {
   ui.backupConfirm.replaceChildren(
     el('p', { textContent: t('backup.preview', {
       date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts, body: parsed.body.length,
+      notes: Object.keys(parsed.notes).length,
     }) }),
     ...(parsed.skipped ? [el('p', { textContent: t('backup.previewSkipped', { count: parsed.skipped }) })] : []),
     ...(parsed.bodySkipped ? [el('p', { textContent: t('backup.previewBodySkipped', { count: parsed.bodySkipped }) })] : []),
@@ -2390,12 +2517,17 @@ async function onImportChoice(parsed, mode) {
     : [...new Set([...getFavorites(), ...parsed.favorites])]);
   plan.importWeek(parsed.week, mode, new Set(state.byId.keys()));
   targets.importTargets(parsed.targets, mode); // plán cviků, které v tréninku nejsou, vyřadí afterPlanChange
+  const notesChanged = notes.importNotes(parsed.notes, mode, new Set(state.byId.keys()));
 
-  // Překresli vše, co oblíbené a tréninky zobrazuje.
+  // Překresli vše, co oblíbené, tréninky a značky poznámek zobrazuje.
   syncFilterControls();
   renderList();
   renderFavorites();
   afterPlanChange();
   // Historii a Tělo není třeba překreslovat – při otevření se načtou vždy znovu.
-  ui.backupFeedback.textContent = `${t('backup.imported', result)} ${t('backup.importedBody', bodyResult)}`;
+  ui.backupFeedback.textContent = [
+    t('backup.imported', result),
+    t('backup.importedBody', bodyResult),
+    t('backup.importedNotes', { count: notesChanged }),
+  ].join(' ');
 }

@@ -419,9 +419,9 @@ a {
     min-height: calc(100dvh - var(--header-h) - 2 * var(--page-pad-y));
   }
 
-  /* Detail má o řádek víc (sekce Záznam). */
+  /* Detail má o dva řádky víc (sekce Moje poznámka a Záznam). */
   .detail {
-    grid-template-rows: 1fr repeat(9, auto) 1fr;
+    grid-template-rows: 1fr repeat(10, auto) 1fr;
   }
 
   /* Trénink: horní mezera se nepočítá podle právě zobrazeného obsahu, ale podle
@@ -452,11 +452,12 @@ a {
   .detail > .detail-heading { grid-row: 3; }
   .detail > .detail-subtitle { grid-row: 4; }
   .detail > .detail-facts { grid-row: 5; }
-  .detail > .log { grid-row: 6; }
-  .detail > figure + h2 { grid-row: 7; }
-  .detail > figure + h2 + p { grid-row: 8; }
-  .detail > figure + h2 + p + h2 { grid-row: 9; }
-  .detail > figure + h2 + p + h2 + p { grid-row: 10; }
+  .detail > .note { grid-row: 6; }
+  .detail > .log { grid-row: 7; }
+  .detail > figure + h2 { grid-row: 8; }
+  .detail > figure + h2 + p { grid-row: 9; }
+  .detail > figure + h2 + p + h2 { grid-row: 10; }
+  .detail > figure + h2 + p + h2 + p { grid-row: 11; }
 
 }
 
@@ -719,6 +720,20 @@ select:disabled {
   font-size: 0.875rem;
 }
 
+/* Značka „cvik má vlastní poznámku“ za názvem cviku */
+.note-mark {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--text-muted);
+  vertical-align: -1px;
+}
+
+.note-mark svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
 /* Položka seznamu: odkaz na cvik + hvězdička vedle */
 .exercise-item {
   display: flex;
@@ -936,6 +951,70 @@ select:disabled {
 
 .legend .legend-secondary::before {
   background: var(--map-secondary);
+}
+
+/* ===== Moje poznámka (detail cviku) =====
+   Rámeček jako sekce Záznam. Text poznámky zachovává zalomení řádků (pre-wrap). */
+.note {
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.detail .note h2 {
+  margin-top: 0;
+}
+
+.detail .note-text {
+  margin: 0 0 var(--gap);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere; /* dlouhé slovo nebo odkaz nerozbije šířku stránky */
+}
+
+.note-input {
+  display: block;
+  width: 100%;
+  min-height: calc(4 * 1.5em + 20px);
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 1.0625rem; /* ≥ 16 px: iOS pak při psaní nezoomuje stránku */
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.detail .note-counter {
+  margin: 4px 0 var(--gap);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.note-actions {
+  display: flex;
+  gap: var(--gap);
+}
+
+.note-actions button {
+  flex: 1;
+}
+
+.detail .note-feedback {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Prázdné hlášení nezabírá místo. Neskrývá se přes display: none – čtečka obrazovky
+   by pak nemusela ohlásit text, který se do něj vloží. */
+.detail .note-feedback:empty {
+  margin: 0;
 }
 
 /* ===== Záznam sérií (detail cviku) =====
