@@ -140,11 +140,26 @@
     "secondary": "Sekundární svaly",
     "equipment": "Vybavení",
     "description": "Provedení",
-    "notes": "Poznámky",
+    "notes": "Tipy",
     "notFound": "Cvik nebyl nalezen.",
     "none": "–",
     "backToPlan": "Zpět na trénink",
     "backToHistory": "Zpět na historii"
+  },
+  "note": {
+    "heading": "Moje poznámka",
+    "add": "+ Přidat poznámku",
+    "addLabel": "Přidat vlastní poznámku: {name}",
+    "edit": "Upravit",
+    "editLabel": "Upravit vlastní poznámku: {name}",
+    "fieldLabel": "Text poznámky",
+    "placeholder": "Např. sedák 4, opěrka 2, úzký úchop",
+    "counter": "{count} / {max} znaků",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "saved": "Poznámka uložena.",
+    "deleted": "Poznámka smazána.",
+    "mark": "má vlastní poznámku"
   },
   "week": {
     "tabsLabel": "Tréninky v týdnu",

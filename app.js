@@ -11,6 +11,7 @@ import { initTheme } from './js/theme.js';
 import * as log from './js/log.js';
 import * as backup from './js/backup.js';
 import * as body from './js/body.js';
+import * as notes from './js/notes.js';
 
 // ===== Stav aplikace =====
 const state = {
@@ -275,6 +276,14 @@ function bindEvents() {
     renderList();
     renderFavorites();
     document.querySelectorAll('.star-button').forEach(updateStarButton);
+  });
+  // Změna poznámek v jiné záložce: překresli značky v seznamu a otevřenou poznámku
+  // (rozepsanou úpravu nechej být, aby se uživateli neztratil text).
+  notes.onExternalChange(() => {
+    renderList();
+    renderFavorites();
+    const section = ui.detailView.querySelector('.note');
+    if (section && !section.querySelector('form')) renderNoteView(section);
   });
   ui.backupExport.addEventListener('click', onExportBackup);
   ui.backupExportCsv.addEventListener('click', onExportCsv);
@@ -1090,6 +1099,7 @@ function detailContent(ex) {
     ...fact(t('detail.secondary'), chipList(ex.secondary.map(muscleName))),
     ...fact(t('detail.equipment'), chipList(ex.equipment.map((e) => t(`equipment.${e}`))))
   ));
+  nodes.push(noteSection(ex));
   nodes.push(logSection(ex));
   nodes.push(engagementMap(ex));
 
@@ -1102,6 +1112,106 @@ function detailContent(ex) {
     nodes.push(el('h2', { textContent: t('detail.notes') }), el('p', { textContent: notes }));
   }
   return nodes;
+}
+
+// ===== Moje poznámka (v detailu cviku) =====
+// Vlastní poznámka uživatele ke cviku, ukládá ji js/notes.js. Sekce má dva režimy:
+// zobrazení (text + tlačítko „Upravit“, nebo jen „+ Přidat poznámku“) a úpravu (textové pole).
+// Úprava je schválně až po klepnutí: kdyby bylo textové pole vidět pořád, na mobilu by
+// každé klepnutí při posouvání stránky otevřelo klávesnici.
+
+function noteSection(ex) {
+  const feedback = el('p', { className: 'note-feedback' });
+  feedback.setAttribute('role', 'status');
+  const section = el('section', { className: 'note' },
+    el('h2', { id: 'note-heading', textContent: t('note.heading') }),
+    el('div', { className: 'note-body' }),
+    feedback
+  );
+  section.setAttribute('aria-labelledby', 'note-heading');
+  section.dataset.id = ex.id;
+  renderNoteView(section);
+  return section;
+}
+
+// Režim zobrazení. focus = přesunout fokus na tlačítko (po uložení nebo zrušení úpravy).
+function renderNoteView(section, focus = false) {
+  const id = section.dataset.id;
+  const text = notes.getNote(id);
+  const name = localized(state.byId.get(id)?.name);
+  const edit = () => renderNoteEditor(section);
+  const button = text
+    ? actionButton('button-secondary note-edit', t('note.edit'), edit)
+    : actionButton('button-secondary note-add', t('note.add'), edit);
+  button.setAttribute('aria-label', t(text ? 'note.editLabel' : 'note.addLabel', { name }));
+  section.querySelector('.note-body').replaceChildren(
+    // Text se vkládá přes textContent (nikdy jako HTML); zalomení řádků zachová CSS (white-space).
+    ...(text ? [el('p', { className: 'note-text', textContent: text })] : []),
+    button
+  );
+  if (focus) button.focus();
+}
+
+// Režim úpravy: textové pole s počítadlem znaků, Uložit / Zrušit.
+// Klávesy: Ctrl+Enter (na Macu Cmd+Enter) = Uložit, Esc = Zrušit.
+function renderNoteEditor(section) {
+  const id = section.dataset.id;
+  const feedback = section.querySelector('.note-feedback');
+  const textarea = el('textarea', {
+    id: 'note-input',
+    className: 'note-input',
+    rows: 4,
+    maxLength: notes.MAX_LENGTH,
+    value: notes.getNote(id),
+    placeholder: t('note.placeholder'),
+  });
+  const counter = el('p', { id: 'note-counter', className: 'note-counter' });
+  textarea.setAttribute('aria-describedby', 'note-counter');
+  const updateCounter = () => {
+    counter.textContent = t('note.counter', { count: textarea.value.length, max: notes.MAX_LENGTH });
+  };
+  updateCounter();
+
+  const cancel = () => {
+    feedback.textContent = '';
+    renderNoteView(section, true);
+  };
+  const form = el('form', { className: 'note-form', noValidate: true },
+    el('label', { className: 'visually-hidden', htmlFor: 'note-input', textContent: t('note.fieldLabel') }),
+    textarea,
+    counter,
+    el('div', { className: 'note-actions' },
+      el('button', { type: 'submit', className: 'button-primary', textContent: t('note.save') }),
+      actionButton('button-secondary', t('note.cancel'), cancel)
+    )
+  );
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault(); // jinak by prohlížeč stránku znovu načetl
+    const hadNote = notes.hasNote(id);
+    const saved = notes.setNote(id, textarea.value);
+    feedback.textContent = saved ? t('note.saved') : (hadNote ? t('note.deleted') : '');
+    renderNoteView(section, true);
+    renderList(); // značka poznámky v seznamu cviků
+    renderFavorites();
+  });
+  textarea.addEventListener('input', updateCounter);
+  textarea.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      form.requestSubmit();
+    } else if (event.key === 'Escape') {
+      // preventDefault: detail cviku pak Esc nebere jako „Zpět“ (viz onDetailEscape).
+      event.preventDefault();
+      cancel();
+    }
+  });
+
+  section.querySelector('.note-body').replaceChildren(form);
+  feedback.textContent = '';
+  textarea.focus();
+  // Kurzor na konec textu, aby šlo rovnou připisovat.
+  textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 }
 
 // Malé schéma v detailu: primární svaly plnou barvou, sekundární světlejší.

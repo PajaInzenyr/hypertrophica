@@ -140,11 +140,26 @@
     "secondary": "Secondary muscles",
     "equipment": "Equipment",
     "description": "Execution",
-    "notes": "Notes",
+    "notes": "Tips",
     "notFound": "Exercise not found.",
     "none": "–",
     "backToPlan": "Back to workout",
     "backToHistory": "Back to history"
+  },
+  "note": {
+    "heading": "My note",
+    "add": "+ Add note",
+    "addLabel": "Add your note: {name}",
+    "edit": "Edit",
+    "editLabel": "Edit your note: {name}",
+    "fieldLabel": "Note text",
+    "placeholder": "E.g. seat 4, back pad 2, narrow grip",
+    "counter": "{count} / {max} characters",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Note saved.",
+    "deleted": "Note deleted.",
+    "mark": "has your note"
   },
   "week": {
     "tabsLabel": "Workouts in the week",
