@@ -2390,6 +2390,7 @@ async function onExportBackup() {
       week: plan.getWeek(),
       body: await body.getAll(),
       targets: targets.getAll(),
+      notes: notes.getAll(),
     });
     // Odsazení 2 mezerami: soubor jde v případě potřeby přečíst i v textovém editoru.
     const result = await backup.saveFile(filename, JSON.stringify(data, null, 2), 'application/json');
@@ -2470,6 +2471,7 @@ function showImportPreview(parsed) {
   ui.backupConfirm.replaceChildren(
     el('p', { textContent: t('backup.preview', {
       date, sets: parsed.sets.length, favorites: parsed.favorites.length, workouts, body: parsed.body.length,
+      notes: Object.keys(parsed.notes).length,
     }) }),
     ...(parsed.skipped ? [el('p', { textContent: t('backup.previewSkipped', { count: parsed.skipped }) })] : []),
     ...(parsed.bodySkipped ? [el('p', { textContent: t('backup.previewBodySkipped', { count: parsed.bodySkipped }) })] : []),
@@ -2515,12 +2517,17 @@ async function onImportChoice(parsed, mode) {
     : [...new Set([...getFavorites(), ...parsed.favorites])]);
   plan.importWeek(parsed.week, mode, new Set(state.byId.keys()));
   targets.importTargets(parsed.targets, mode); // plán cviků, které v tréninku nejsou, vyřadí afterPlanChange
+  const notesChanged = notes.importNotes(parsed.notes, mode, new Set(state.byId.keys()));
 
-  // Překresli vše, co oblíbené a tréninky zobrazuje.
+  // Překresli vše, co oblíbené, tréninky a značky poznámek zobrazuje.
   syncFilterControls();
   renderList();
   renderFavorites();
   afterPlanChange();
   // Historii a Tělo není třeba překreslovat – při otevření se načtou vždy znovu.
-  ui.backupFeedback.textContent = `${t('backup.imported', result)} ${t('backup.importedBody', bodyResult)}`;
+  ui.backupFeedback.textContent = [
+    t('backup.imported', result),
+    t('backup.importedBody', bodyResult),
+    t('backup.importedNotes', { count: notesChanged }),
+  ].join(' ');
 }
